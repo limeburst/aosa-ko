@@ -101,3 +101,43 @@ Bash는 어떤 명령의 표준 입력, 출력, 그리고 표준 에러 스트�
 Bash allows shell programs to be stored and used more than once. Shell functions and shell scripts are both ways to name a group of commands and execute the group, just like executing any other command. Shell functions are declared using a special syntax and stored and executed in the same shell's context; shell scripts are created by putting commands into a file and executing a new instance of the shell to interpret them. Shell functions share most of the execution context with the shell that calls them, but shell scripts, since they are interpreted by a new shell invocation, share only what is passed between processes in the environment.
 
 Bash는 셸 프로그램이 저장되어 여러 번 사용할 수 있게 합니다. 셸 함수와 셸 스크립트는 모두 명령의 집합에 이름을 주고 다른 여느 명령처럼 실행하는 방법입니다. 셸 함수들은 같은 셸의 문맥에서 특별한 구문을 이용해 정의, 저장, 그리고 실행됩니다. 셸 스크립트들은 파일 내에 명령을 쓰고, 그 파일을 해석할 새로운 셸 인스턴스를 실행킴으로서 생성됩니다. 셸 함수들은 대부분의 실행 문맥을 자신을 호출한 셸과 공유하지만, 셸 스크립트들은 새로운 셸을 호출하여 해석되기 때문에 환경 간 프로세스끼리 전달된 것들만 공유합니다.
+
+### 3.2.4. A Further Note
+
+### 3.2.4. 읽으면서
+
+As you read further, keep in mind that the shell implements its features using only a few data structures: arrays, trees, singly-linked and doubly-linked lists, and hash tables. Nearly all of the shell constructs are implemented using these primitives.
+
+앞으로 이 장을 읽어 나가는 동안, 셸의 기능은 몇가지 배열, 트리, 연결 리스트, 그리고 해시 테이블 등 몇가지 자료구조만을 사용하여 구현된다는 사실을 염두해 주시길 바랍니다. 거의 모든 셸의 구문들은 이러한 기본형들로 구현되어 있습니다.
+
+The basic data structure the shell uses to pass information from one stage to the next, and to operate on data units within each processing stage, is the WORD_DESC:
+
+셸이 정보를 스테이지간 옮기고, 각 스테이지에서 데이터 단위를 다루는 데 사용하는데 WORD_DESC 라는 자료 구조를 사용합니다. 
+
+	typedef struct word_desc {
+	  char *word;           /* Zero terminated string. */
+	  int flags;            /* Flags associated with this word. */
+	} WORD_DESC;
+
+	typedef struct word_desc {
+	  char *word;           /* 널 종료 문자열. */
+	  int flags;            /* 이 단어와 연관된 플래그들. */
+	} WORD_DESC;
+
+Words are combined into, for example, argument lists, using simple linked lists:
+
+파라미터 목록과 같은 단어들은 간단한 연결 리스트로 합쳐집니다:
+
+	typedef struct word_list {
+	  struct word_list *next;
+	  WORD_DESC *word;
+	} WORD_LIST;
+
+	typedef struct word_list {
+	  struct word_list *next;
+	  WORD_DESC *word;
+	} WORD_LIST;
+
+WORD_LISTs are pervasive throughout the shell. A simple command is a word list, the result of expansion is a word list, and the built-in commands each take a word list of arguments.
+
+WORD_LIST는 셸 어디에서나 찾아볼 수 있을 정도로 흔합니다. 간단한 명령도 word list이며, 확장의 결과도 word list이며, 내장 명령어들도 각각 word list의 파라미터들을 받습니다.
