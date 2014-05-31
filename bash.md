@@ -149,3 +149,19 @@ WORD_LIST는 셸 어디에서나 찾아볼 수 있을 정도로 흔합니다. �
 The first stage of the bash processing pipeline is input processing: taking characters from the terminal or a file, breaking them into lines, and passing the lines to the shell parser to transform into commands. As you would expect, the lines are sequences of characters terminated by newlines.
 
 Bash 처리 파이프라인의 첫 번째 단계는 파일이나 터미널로부터 문자열을 가져와, 줄 단위로 분리하고, 명령으로 변환시키기 위해 셸 파서에 넘겨주는 입력 처리입니다. 예상하셨듯이, 이 줄들은 개행 문자로 끝나는 문자열들의 서열입니다.
+
+### 3.3.1. Readline and Command Line Editing
+
+### 3.3.1. Readline과 커맨드 라인 편집
+
+Bash reads input from the terminal when interactive, and from the script file specified as an argument otherwise. When interactive, bash allows the user to edit command lines as they are typed in, using familiar key sequences and editing commands similar to the Unix emacs and vi editors.
+
+Bash는 대화식으로 작동할 때엔 터미널로부터 입력을 받고, 그 외의 경우엔 파라미터로 지정된 스크립트 파일로부터 입력을 받습니다. 대화식으로 작동할 때 bash는 사용자에게 익숙한 유닉스 emacs나 vi 편집기와 비슷한 입력 서열과 편집 명령을 사용하여 커맨드 라인을 조작할 수 있게 합니다.
+
+Bash uses the readline library to implement command line editing. This provides a set of functions allowing users to edit command lines, functions to save command lines as they are entered, to recall previous commands, and to perform csh-like history expansion. Bash is readline's primary client, and they are developed together, but there is no bash-specific code in readline. Many other projects have adopted readline to provide a terminal-based line editing interface.
+
+Bash는 커맨드 라인 편집을 구현하기 위해 readline 라이브러리를 사용합니다. Readline은 사용자들이 커맨드 라인을 편집하고, 명령이 입력되는 것을 저장하고, 이전 커맨드를 불러오고, csh와 유사한 방식의 히스토리 확장을 하기 위한 함수들을 제공합니다. Bash는 readline의 주 사용자이며, 함께 개발되지만, readline에 bash에 특정한 코드는 없습니다. 수많은 다른 프로젝트들도 터미널 기반 편집 인터페이스를 구현하기 위해 readline을 사용합니다.
+
+Readline also allows users to bind key sequences of unlimited length to any of a large number of readline commands. Readline has commands to move the cursor around the line, insert and remove text, retrieve previous lines, and complete partially-typed words. On top of this, users may define macros, which are strings of characters that are inserted into the line in response to a key sequence, using the same syntax as key bindings. Macros afford readline users a simple string substitution and shorthand facility.
+
+Readline은 사용자들이 입력 서열을 길이 제한 없이 수많은 readline 명령에 바인딩 할 수 있게 해주기도 합니다. 줄 위에서 커서를 옮기고, 문자를 입력하고 삭제하고, 이전 줄을 가져오고, 일부만 입력된 단어를 완성할 수 있는 명령도 제공합니다. 거기에다, 사용자들은 키 바인딩과 같은 구문을 사용해서, 입력 서열에 반응하여 입력되는 문자열인 매크로를 정의할 수도 있습니다. 매크로는 readline 사용자들이 간편한 문자열 치환 및 약칭을 정의할 수 있게 도와줍니다.
