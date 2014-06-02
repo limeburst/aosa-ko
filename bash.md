@@ -193,3 +193,15 @@ The redisplay engine is without question the one piece of readline that has been
 Readline returns the contents of the editing buffer to the calling application, which is then responsible for saving the possibly-modified results in the history list.
 
 Readline은 편집 버퍼를 자신을 호출한 프로그램에 전달하며, 변경되었을 수도 있는 버퍼를 히스토리 목록에 저장하는 것은 해당 프로그램의 몫입니다.
+
+#### Applications Extending Readline
+
+#### Readline을 확장하는 프로그램
+
+Just as readline offers users a variety of ways to customize and extend readline's default behavior, it provides a number of mechanisms for applications to extend its default feature set. First, bindable readline functions accept a standard set of arguments and return a specified set of results, making it easy for applications to extend readline with application-specific functions. Bash, for instance, adds more than thirty bindable commands, from bash-specific word completions to interfaces to shell built-in commands.
+
+Readline이 사용자들에게 readline의 기본 작동 방식을 커스터마이즈하고 확장할 수 있는 다양한 수단을 제공하는 것처럼, 응용 프로그램들에도 readline의 기본적인 기능 집합을 확장할 수 있는 몇 가지 방법을 제공합니다. 첫 번째로, 바인딩 가능한 readline 함수들은 표준적인 파라미터 집합을 받아 특정한 결과를 전달할 수 있어, 응용 프로그램들이 해당 프로그램에 종속적인 함수로 readline을 확장하기 쉽게 해 줍니다. 예를 들어, Bash는 bash에 종속적인 단어 완성부터, 셸 내장 명령 인터페이스까지, 30가지 이상의 바인딩 가능한 함수를 더합니다.
+
+The second way readline allows applications to modify its behavior is through the pervasive use of pointers to hook functions with well-known names and calling interfaces. Applications can replace some portions of readline's internals, interpose functionality in front of readline, and perform application-specific transformations.
+
+응용 프로그램이 readline의 작동 방식을 변경할 수 있게 해주는 두 번째 방법은, 포인터를 여러 곳에서 사용하여, 함수를 잘 알려진 이름과 호출 인터페이스에 후킹 하는 것입니다. 응용 프로그램들은 readline 내부 일부를 교체하고, readline 앞에 기능을 끼워 넣거나, 응용 프로그램에 종속적인 변형을 가할 수 있습니다.
