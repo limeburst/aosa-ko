@@ -30,9 +30,9 @@ Bash is the shell that appears in the GNU operating system, commonly implemented
 
 Bash는 리눅스 커널 기반으로 구현된 GNU 운영체제와 몇몇 다른 일반적인 운영체제, 특히 OS X에 탑재된 셸입니다. Bash는 대화식 사용은 물론 프로그래밍 용도로도 sh와 비교되는 개선사항을 제공합니다.
 
-The name is an acronym for Bourne-Again SHell, a pun combining the name of Stephen Bourne (the author of the direct ancestor of the current Unix shell /bin/sh, which appeared in the Bell Labs Seventh Edition Research version of Unix) with the notion of rebirth through reimplementation. The original author of bash was Brian Fox, an employee of the Free Software Foundation. I am the current developer and maintainer, a volunteer who works at Case Western Reserve University in Cleveland, Ohio.
+The name is an acronym for Bourne-Again SHell, a pun combining the name of Stephen Bourne (the author of the direct ancestor of the current Unix shell `/bin/sh`, which appeared in the Bell Labs Seventh Edition Research version of Unix) with the notion of rebirth through reimplementation. The original author of bash was Brian Fox, an employee of the Free Software Foundation. I am the current developer and maintainer, a volunteer who works at Case Western Reserve University in Cleveland, Ohio.
 
-Bash의 이름은 스티븐 본(현 유닉스 셸인 /bin/sh의, Bell Labs 유닉스 7판의 연구용 버전에서 처음 등장한, 직속 조상 프로그램의 개발자이다)의 이름과 재구현을 통한 재탄생의 개념을 합친 말장난인 Bourne-Again SHell의 두문자어입니다. bash의 원저작자는 자유 소프트웨어 재단의 직원인 브라이언 폭스이며, 지금은 오하이오 클리브랜드에 있는 베이스 웨스턴 리저브 대학에서 자원봉사를 하고 있는 제가 개발과 유지를 맡고 있습니다.
+Bash의 이름은 스티븐 본(현 유닉스 셸인 `/bin/sh`의, Bell Labs 유닉스 7판의 연구용 버전에서 처음 등장한, 직속 조상 프로그램의 개발자이다)의 이름과 재구현을 통한 재탄생의 개념을 합친 말장난인 Bourne-Again SHell의 두문자어입니다. bash의 원저작자는 자유 소프트웨어 재단의 직원인 브라이언 폭스이며, 지금은 오하이오 클리브랜드에 있는 베이스 웨스턴 리저브 대학에서 자원봉사를 하고 있는 제가 개발과 유지를 맡고 있습니다.
 
 Like other GNU software, bash is quite portable. It currently runs on nearly every version of Unix and a few other operating systems—independently-supported ports exist for hosted Windows environments such as Cygwin and MinGW, and ports to Unix-like systems such as QNX and Minix are part of the distribution. It only requires a Posix environment to build and run, such as one provided by Microsoft's Services for Unix (SFU).
 
@@ -46,9 +46,9 @@ Like other GNU software, bash is quite portable. It currently runs on nearly eve
 
 ### 3.2.1. 기본형
 
-To bash, there are basically three kinds of tokens: reserved words, words, and operators. Reserved words are those that have meaning to the shell and its programming language; usually these words introduce flow control constructs, like if and while. Operators are composed of one or more metacharacters: characters that have special meaning to the shell on their own, such as | and >. The rest of the shell's input consists of ordinary words, some of which have special meaning—assignment statements or numbers, for instance—depending on where they appear on the command line.
+To bash, there are basically three kinds of tokens: reserved words, words, and operators. Reserved words are those that have meaning to the shell and its programming language; usually these words introduce flow control constructs, like `if` and `while`. Operators are composed of one or more metacharacters: characters that have special meaning to the shell on their own, such as `|` and `>`. The rest of the shell's input consists of ordinary words, some of which have special meaning—assignment statements or numbers, for instance—depending on where they appear on the command line.
 
-Bash에는 예약어, 단어, 연산자의 세 종류의 토큰이 있습니다. 예약어는 if나 while 등의 흐름 제어 구문을 제공하기 위한 셸과 셸의 프로그래밍 언어에서 의미를 지니는 단어들입니다. 연산자들은 |와 > , 셸에서 독립적으로 의미를 가지는 문자들이며, 하나 이상의 메타 문자로 이루어져 있습니다. 셸의 나머지 입력은 보통의 단어들로 이루어져 있으며, 그중 몇몇 단어들은 커맨드 라인에서 나타나는 위치에 따라 의미를 가지는 등, 특별한 의미를 부여하는 대입문이나 숫자들입니다.
+Bash에는 예약어, 단어, 연산자의 세 종류의 토큰이 있습니다. 예약어는 `if`나 `while` 등의 흐름 제어 구문을 제공하기 위한 셸과 셸의 프로그래밍 언어에서 의미를 지니는 단어들입니다. 연산자들은 `|`와 `>` , 셸에서 독립적으로 의미를 가지는 문자들이며, 하나 이상의 메타 문자로 이루어져 있습니다. 셸의 나머지 입력은 보통의 단어들로 이루어져 있으며, 그중 몇몇 단어들은 커맨드 라인에서 나타나는 위치에 따라 의미를 가지는 등, 특별한 의미를 부여하는 대입문이나 숫자들입니다.
 
 ### 3.2.2. Variables and Parameters
 
@@ -58,9 +58,9 @@ As in any programming language, shells provide variables: names to refer to stor
 
 다른 프로그래밍 언어들과 마찬가지로, 셸도 저장된 자료를 가리키고 관리하기 위한 변수를 제공합니다. 셸은 사용자가 설정 가능한 기본적인 변수와 파라미터라고 불리는 내장 변수를 제공합니다. 셸 파라미터는 대부분의 경우 셸의 내부 상태 일부를 반영하며, 자동으로 설정되거나 다른 작업의 작용으로 설정됩니다.
 
-Variable values are strings. Some values are treated specially depending on context; these will be explained later. Variables are assigned using statements of the form name=value. The value is optional; omitting it assigns the empty string to name. If the value is supplied, the shell expands the value and assigns it to name. The shell can perform different operations based on whether or not a variable is set, but assigning a value is the only way to set a variable. Variables that have not been assigned a value, even if they have been declared and given attributes, are referred to as unset.
+Variable values are strings. Some values are treated specially depending on context; these will be explained later. Variables are assigned using statements of the form `name=value`. The `value` is optional; omitting it assigns the empty string to `name`. If the value is supplied, the shell expands the value and assigns it to `name`. The shell can perform different operations based on whether or not a variable is set, but assigning a value is the only way to set a variable. Variables that have not been assigned a value, even if they have been declared and given attributes, are referred to as unset.
 
-변수들의 값은 문자열입니다. 몇몇 변수들은 문맥에 따라 특별하게 다뤄지는데, 이러한 값들에 대해서는 나중에 다뤄집니다. 변수들은 이름=값의 형태로 지정됩니다. 이 값은 선택적이며, 생략할 경우 이름에 빈 문자열이 지정됩니다. 값이 지정된 경우 셸은 값을 확장한 후에 확장된 값을 이름에 지정합니다. 셸은 변수의 설정 여부에 따라 다른 작업을 할 수 있지만, 변수를 설정하기 위해서는 값을 지정하는 방법이 유일합니다. 값이 지정되지 않은 변수들은 속성이 선언되어 지정되어도 설정되지 않았다고 합니다.
+변수들의 값은 문자열입니다. 몇몇 변수들은 문맥에 따라 특별하게 다뤄지는데, 이러한 값들에 대해서는 나중에 다뤄집니다. 변수들은 `name=value`의 형태로 지정됩니다. `value`는 선택적이며, 생략할 경우 `name`에 빈 문자열이 지정됩니다. 값이 지정된 경우 셸은 값을 확장한 후에 확장된 값을 `name`에 지정합니다. 셸은 변수의 설정 여부에 따라 다른 작업을 할 수 있지만, 변수를 설정하기 위해서는 값을 지정하는 방법이 유일합니다. 값이 지정되지 않은 변수들은 속성이 선언되어 지정되어도 설정되지 않았다고 합니다.
 
 A word beginning with a dollar sign introduces a variable or parameter reference. The word, including the dollar sign, is replaced with the value of the named variable. The shell provides a rich set of expansion operators, from simple value replacement to changing or removing portions of a variable's value that match a pattern.
 
@@ -82,13 +82,13 @@ Bash는 셸 변수를 저장하기 위해 해시 테이블을, 변수 영역을 
 
 ### 3.2.3. 셸 프로그래밍 언어
 
-A simple shell command, one with which most readers are most familiar, consists of a command name, such as echo or cd, and a list of zero or more arguments and redirections. Redirections allow the shell user to control the input to and output from invoked commands. As noted above, users can define variables local to simple commands.
+A simple shell command, one with which most readers are most familiar, consists of a command name, such as `echo` or `cd`, and a list of zero or more arguments and redirections. Redirections allow the shell user to control the input to and output from invoked commands. As noted above, users can define variables local to simple commands.
 
-대부분의 독자가 알만한 간단한 셸 명령은, echo 나 ed와 같은 명령 이름, 그리고 0개 이상의 파라미터와 리다이렉션으로 이루어져 있습니다. 리다이렉션은 명령으로 주어지는 입력과 명령의 출력을 셸 사용자가 제어할 수 있게 합니다. 위에서 언급했던 것처럼, 사용자들은 이러한 간단한 명령에 지역 변수를 설정할 수 있습니다. 
+대부분의 독자가 알만한 간단한 셸 명령은, `echo` 나 `ed`와 같은 명령 이름, 그리고 0개 이상의 파라미터와 리다이렉션으로 이루어져 있습니다. 리다이렉션은 명령으로 주어지는 입력과 명령의 출력을 셸 사용자가 제어할 수 있게 합니다. 위에서 언급했던 것처럼, 사용자들은 이러한 간단한 명령에 지역 변수를 설정할 수 있습니다. 
 
-Reserved words introduce more complex shell commands. There are constructs common to any high-level programming language, such as if-then-else, while, a for loop that iterates over a list of values, and a C-like arithmetic for loop. These more complex commands allow the shell to execute a command or otherwise test a condition and perform different operations based on the result, or execute commands multiple times.
+Reserved words introduce more complex shell commands. There are constructs common to any high-level programming language, such as `if-then-else`, `while`, a `for` loop that iterates over a list of values, and a C-like arithmetic for loop. These more complex commands allow the shell to execute a command or otherwise test a condition and perform different operations based on the result, or execute commands multiple times.
 
-예약어는 조금 더 복잡한 셸 명령을 도입합니다. 여느 다른 고수준 프로그래밍 언어처럼 if-then-else, while, 값의 목록을 탐색하는 for loop, 그리고 C와 유사한 for loop 연산자 등의 구문이 있습니다. 이러한 조금 더 복잡한 명령들은 셸이 명령을 실행하거나, 조건의 만족 여부를 확인하여 그 결과에 따라 다른 작업을 하거나, 명령을 여러 번 실행할 수 있게 합니다. 
+예약어는 조금 더 복잡한 셸 명령을 도입합니다. 여느 다른 고수준 프로그래밍 언어처럼 `if-then-else`, `while`, 값의 목록을 탐색하는 `for` 반복문, 그리고 C와 유사한 for loop 연산자 등의 구문이 있습니다. 이러한 조금 더 복잡한 명령들은 셸이 명령을 실행하거나, 조건의 만족 여부를 확인하여 그 결과에 따라 다른 작업을 하거나, 명령을 여러 번 실행할 수 있게 합니다. 
 
 One of the gifts Unix brought the computing world is the pipeline: a linear list of commands, in which the output of one command in the list becomes the input of the next. Any shell construct can be used in a pipeline, and it's not uncommon to see pipelines in which a command feeds data to a loop.
 
@@ -110,9 +110,9 @@ As you read further, keep in mind that the shell implements its features using o
 
 앞으로 이 장을 읽어 나가는 동안, 셸의 기능은 몇가지 배열, 트리, 연결 리스트, 그리고 해시 테이블 등 몇가지 자료구조만을 사용하여 구현된다는 사실을 염두해 주시길 바랍니다. 거의 모든 셸의 구문들은 이러한 기본형들로 구현되어 있습니다.
 
-The basic data structure the shell uses to pass information from one stage to the next, and to operate on data units within each processing stage, is the WORD_DESC:
+The basic data structure the shell uses to pass information from one stage to the next, and to operate on data units within each processing stage, is the `WORD_DESC`:
 
-셸이 정보를 스테이지간 옮기고, 각 스테이지에서 데이터 단위를 다루는 데 사용하는데 WORD_DESC 라는 자료 구조를 사용합니다. 
+셸이 정보를 스테이지간 옮기고, 각 스테이지에서 데이터 단위를 다루는 데 사용하는데 `WORD_DESC` 이라는 자료 구조를 사용합니다. 
 
 	typedef struct word_desc {
 	  char *word;           /* Zero terminated string. */
@@ -138,9 +138,9 @@ Words are combined into, for example, argument lists, using simple linked lists:
 	  WORD_DESC *word;
 	} WORD_LIST;
 
-WORD_LISTs are pervasive throughout the shell. A simple command is a word list, the result of expansion is a word list, and the built-in commands each take a word list of arguments.
+`WORD_LIST`s are pervasive throughout the shell. A simple command is a word list, the result of expansion is a word list, and the built-in commands each take a word list of arguments.
 
-WORD_LIST는 셸 어디에서나 찾아볼 수 있을 정도로 흔합니다. 간단한 명령도 word list이며, 확장의 결과도 word list이며, 내장 명령어들도 각각 word list의 파라미터들을 받습니다.
+`WORD_LIST`는 셸 어디에서나 찾아볼 수 있을 정도로 많이 사용됩니다. 간단한 명령도 word list이며, 확장의 결과도 word list이며, 내장 명령어들도 각각 word list의 파라미터들을 받습니다.
 
 ## 3.3. Input Processing
 
@@ -170,13 +170,13 @@ Readline은 사용자들이 입력 서열을 길이 제한 없이 수많은 read
 
 #### Readline의 구조
 
-Readline is structured as a basic read/dispatch/execute/redisplay loop. It reads characters from the keyboard using read or equivalent, or obtains input from a macro. Each character is used as an index into a keymap, or dispatch table. Though indexed by a single eight-bit character, the contents of each element of the keymap can be several things. The characters can resolve to additional keymaps, which is how multiple-character key sequences are possible. Resolving to a readline command, such as beginning-of-line, causes that command to be executed. A character bound to the self-insert command is stored into the editing buffer. It's also possible to bind a key sequence to a command while simultaneously binding subsequences to different commands (a relatively recently-added feature); there is a special index into a keymap to indicate that this is done. Binding a key sequence to a macro provides a great deal of flexibility, from inserting arbitrary strings into a command line to creating keyboard shortcuts for complex editing sequences. Readline stores each character bound to self-insert in the editing buffer, which when displayed may occupy one or more lines on the screen.
+Readline is structured as a basic read/dispatch/execute/redisplay loop. It reads characters from the keyboard using `read` or equivalent, or obtains input from a macro. Each character is used as an index into a keymap, or dispatch table. Though indexed by a single eight-bit character, the contents of each element of the keymap can be several things. The characters can resolve to additional keymaps, which is how multiple-character key sequences are possible. Resolving to a readline command, such as `beginning-of-line`, causes that command to be executed. A character bound to the `self-insert` command is stored into the editing buffer. It's also possible to bind a key sequence to a command while simultaneously binding subsequences to different commands (a relatively recently-added feature); there is a special index into a keymap to indicate that this is done. Binding a key sequence to a macro provides a great deal of flexibility, from inserting arbitrary strings into a command line to creating keyboard shortcuts for complex editing sequences. Readline stores each character bound to `self-insert` in the editing buffer, which when displayed may occupy one or more lines on the screen.
 
-Readline은 간단한 읽기, 발송, 실행, 재표현의 반복 구조로 되어 있습니다. Readline은 read나, 같은 기능의 함수를 사용하여 키보드로부터 문자열을 읽거나 매크로로부터의 입력을 받습니다. 문자열 하나하나는 키맵이나 발송 테이블의 인덱스로 사용됩니다. 키맵은 하나의 8bit 문자열을 인덱스로 가지지만, 키맵의 각 원소는 여러 가지가 될 수도 있습니다. 문자열들은 추가적인 키맵을 참조할 수 있으며, 이것이 서열이 가능한 이유입니다. 
+Readline은 간단한 읽기, 발송, 실행, 재표현의 반복 구조로 되어 있습니다. Readline은 `read`나, 같은 기능의 함수를 사용하여 키보드로부터 문자열을 읽거나 매크로로부터의 입력을 받습니다. 문자열 하나하나는 키맵이나 발송 테이블의 인덱스로 사용됩니다. 키맵은 하나의 8bit 문자열을 인덱스로 가지지만, 키맵의 각 원소는 여러 가지가 될 수도 있습니다. 문자열들은 추가적인 키맵을 참조할 수 있으며, 이것이 서열이 가능한 이유입니다. 
 
-Readline manages only character buffers and strings using C chars, and builds multibyte characters out of them if necessary. It does not use wchar_t internally for both speed and storage reasons, and because the editing code existed before multibyte character support became widespread. When in a locale that supports multibyte characters, readline automatically reads an entire multibyte character and inserts it into the editing buffer. It's possible to bind multibyte characters to editing commands, but one has to bind such a character as a key sequence; this is possible, but difficult and usually not wanted. The existing emacs and vi command sets do not use multibyte characters, for instance.
+Readline manages only character buffers and strings using C `char`s, and builds multibyte characters out of them if necessary. It does not use `wchar_t` internally for both speed and storage reasons, and because the editing code existed before multibyte character support became widespread. When in a locale that supports multibyte characters, readline automatically reads an entire multibyte character and inserts it into the editing buffer. It's possible to bind multibyte characters to editing commands, but one has to bind such a character as a key sequence; this is possible, but difficult and usually not wanted. The existing emacs and vi command sets do not use multibyte characters, for instance.
 
-Readline은 C char 버퍼와 문자열만 다루고, 필요할 시 같은 타입을 사용하여 멀티바이트 문자열을 만듭니다. 성능과 저장 문제, 그리고 멀티바이트 문자열 지원이 널리 퍼지기 전에 편집 기능을 구현하는 코드가 있었기 때문에 내부적으로 wchar_t를 사용하지 않습니다. Readline은 멀티바이트 문자열을 지원하는 로케일에서는 자동으로 멀티바이트 문자열을 그대로 편집 버퍼에 삽입합니다. 멀티바이트 문자열을 편집 명령에 바인딩할 수는 있지만, 입력 서열로서 바인딩 해야 하며, 어렵고, 주로 원하는 결과를 가져오지 않습니다. 예를 들어, emacs와 vi 명령 집합에서도 멀티바이트 문자열은 사용하지 않습니다.
+Readline은 C `char` 버퍼와 문자열만 다루고, 필요할 시 같은 타입을 사용하여 멀티바이트 문자열을 만듭니다. 성능과 저장 문제, 그리고 멀티바이트 문자열 지원이 널리 퍼지기 전에 편집 기능을 구현하는 코드가 있었기 때문에 내부적으로 `wchar_t`를 사용하지 않습니다. Readline은 멀티바이트 문자열을 지원하는 로케일에서는 자동으로 멀티바이트 문자열을 그대로 편집 버퍼에 삽입합니다. 멀티바이트 문자열을 편집 명령에 바인딩할 수는 있지만, 입력 서열로서 바인딩 해야 하며, 어렵고, 주로 원하는 결과를 가져오지 않습니다. 예를 들어, emacs와 vi 명령 집합에서도 멀티바이트 문자열은 사용하지 않습니다.
 
 Once a key sequence finally resolves to an editing command, readline updates the terminal display to reflect the results. This happens regardless of whether the command results in characters being inserted into the buffer, the editing position being moved, or the line being partially or completely replaced. Some bindable editing commands, such as those that modify the history file, do not cause any change to the contents of the editing buffer.
 
