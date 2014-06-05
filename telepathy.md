@@ -33,3 +33,49 @@ Telepathy는 2005년도에 로버트 맥퀸에 의해 만들어졌으며, 그 �
 > > For more information on D-Bus, see [http://www.freedesktop.org/wiki/Software/dbus](http://www.freedesktop.org/wiki/Software/dbus).
 
 > > D-Bus에 대해 더 알아보고 싶으시다면, [http://www.freedesktop.org/wiki/Software/dbus](http://www.freedesktop.org/wiki/Software/dbus)를 보세요.
+
+## 20.1. Components of the Telepathy Framework
+
+## 20.1. Telepathy 프레임워크의 구성 요소
+
+Telepathy is modular, with each module communicating with the others via a D-Bus messaging bus. Most usually via the user's session bus. This communication is detailed in the Telepathy specification. The components of the Telepathy framework are as shown in Figure 20.1:
+
+Telepathy는 모듈식이며, 모듈들은 서로간 D-Bus 메시징 버스를 통해 통신합니다. 대부분의 모듈들은 사용자의 세션 버스를 사용합니다. 이 커뮤니케이션은 Telepathy 명세에 상세히 설명되어 있습니다. 그림 20.1에 Telepathy 프레임워크의 구성 요소들이 나와 있습니다.
+
+![Telepathy 구성 요소 예시](http://aosabook.org/images/telepathy/telepathy-components.png)
+
+* A Connection Manager provides the interface between Telepathy and the individual communication services. For instance, there is a Connection Manager for XMPP, one for SIP, one for IRC, and so on. Adding support for a new protocol to Telepathy is simply a matter of writing a new Connection Manager.
+* The Account Manager service is responsible for storing the user's communications accounts and establishing a connection to each account via the appropriate Connection Manager when requested.
+* The Channel Dispatcher's role is to listen for incoming channels signalled by each Connection Manager and dispatch them to clients that indicate their ability to handle that type of channel, such as text, voice, video, file transfer, tubes. The Channel Dispatcher also provides a service so that applications, most importantly applications that are not Telepathy clients, can request outgoing channels and have them handled locally by the appropriate client. This allows an application, such as an email application, to request a text chat with a contact, and have your IM client show a chat window.
+* Telepathy clients handle or observe communications channels. They include both user interfaces like IM and VoIP clients and services such the chat logger. Clients register themselves with the Channel Dispatcher, giving a list of channel types they wish to handle or observe.
+
+* Connection Manager는 Telepathy와 커뮤니케이션 서비스 하나 하나와의 인터페이스를 제공합니다. 예를 들어, XMPP를 위한 Connection Manager가 있으며, SIP, IRC 등을 위한 Connection Manager가 하나씩 있습니다. 새로운 프로토콜에 대한 지원을 추가하는 것은 새로운 Connection Manager를 작성하면 되는 문제입니다. Account Manager 서비스는 사용자의 커뮤니케이션 계정들과 각 계정을 요청이 들어왔을 때 적합한 Connection Manager에 연결되는 역할을 합니다.
+* Account Manager 서비스는 사용자의 커뮤니케이션 계정을 저장하고, 요청을 받았을 때 적합한 Connection Manager를 통해 연결하는 역할을 합니다.
+* Channel Dispatcher는 각 Connection Manager로부터. Channel Dispatcher는, 특히 Telepathy 클라이언트가 아닌 응용 프로그램이, 발송 채널을 요청하고, 적절한 클라이언트가 그것을 지역적으로 처리할 수 있게 합니다. 이것은 응용 프로그램이, 예를 들어 이메일 클라이언트가 연락처와의 텍스트 채팅을 요청하면, 인스턴스 메시징 클라이언트가 채팅 창을 보여주게 만들 수 있습니다.
+* Telepathy 클라이언트는 커뮤니케이션 채널을 처리하거나 관찰합니다. 클라이언트는 인스턴스 메신저, VoIP 클라이언트 등 사용자 인터페이스와, 대화 로거 등의 서비스를 포함합니다. 클라이언트는 처리하거나 관찰하고자 하는 채널 종류의 목록을 전달하며 자신을 Channel Dispatcher에 등록합니다.
+
+Within the current implementation of Telepathy, the Account Manager and the Channel Dispatcher are both provided by a single process known as Mission Control.
+
+현재 Telepathy 구현에서, Account Manager와 Channel Dispatcher는 Mission Control이라는 하나의 프로세스가 제공합니다.
+
+This modular design was based on Doug McIlroy's philosophy, "Write programs that do one thing and do it well," and has several important advantages:
+
+이러한 모듈화 설계는, 더그 맥일로이의 철학인 "단 한 가지 일만을 훌륭하게 처리하는 프로그램을 작성하라" 에 기반하였고, 몇 가지 중요한 이점을 가집니다:
+
+* Robustness: a fault in one component won't crash the entire service.
+* Ease of development: components can be replaced within a running system without affecting others. It's possible to test a development version of one module against another known to be good.
+* Language independence: components can be written in any language that has a D-Bus binding. If the best implementation of a given communications protocol is in a certain language, you are able to write your Connection Manager in that language, and still have it available to all Telepathy clients. Similarly, if you wish to develop your user interface in a certain language, you have access to all available protocols.
+* License independence: components can be under different software licenses that would be incompatible if everything was running as one process.
+* Interface independence: multiple user interfaces can be developed on top of the same Telepathy components. This allows native interfaces for desktop environments and hardware devices (e.g., GNOME, KDE, Meego, Sugar).
+* Security: Components run in separate address spaces and with very limited privileges. For example, a typical Connection Manager only needs access to the network and the D-Bus session bus, making it possible to use something like SELinux to limit what a component can access.
+
+* 견고함: 단일 요소의 결함은 전체 서비스를 무너지게 하지 않습니다.
+* 개발의 편리함: 구성 요소들은 동작 중인 시스템 내에서 다른 구성 요소에 영향을 주지 않으면서 교체될 수 있습니다. 개발 중인 모듈을 안정된 버전의 모듈과 비교하며 테스트할 수도 있습니다.
+* 언어 독립성: 구성 요소들은 D-Bus 바인딩이 있는 어떠한 언어로도 작성될 수 있습니다. 주어진 커뮤니케이션 프로토콜의 가장 좋은 구현체가 특정 언어로 작성되었다면, 그 언어로 Connection Manager를 작성할 수 있으며, 모든 Telepathy 클라이언트에서 사용될 수 있습니다. 비슷한 맥락에서, 어떠한 언어로 사용자 인터페이스를 개발하더라도 모든 프로토콜을 이용할 수 있습니다.
+* 라이센스 독립성: 시스템이 하나의 프로세스로 동작한다면 라이센스가 호환되지 않았겠지만, 서로 별개인 구성 요소로 이루어져 있기 때문에 구성 요소들은 서로 다른 소프트웨어 라이센스를 가질 수 있습니다.
+* 인터페이스 독립성: 같은 Telepathy 구성 요소 위에서 다양한 사용자 인터페이스를 개발할 수 있습니다. 이것은 데스크톱 환경과 하드웨어 장치를 위한 네이티브 인터페이스를 가능하게 합니다. (GNOME, KDE, Meego, Sugar 등).
+* 보안: 구성 요소들은 각각의 주소공간에서 제한된 권한을 가지고 실행됩니다. 예를 들어, 전형적인 Connection Manager는 네트워크와 D-Bus 세션 버스에 대한 접근 권한만 필요로 하며, SELinux 같은 프로그램을 사용하여 구성 요소의 자원 접근 권한을 제한할 수 있습니다.
+
+The Connection Manager manages a number of Connections, where each Connection represents a logical connection to a communications service. There is one Connection per configured account. A Connection will contain multiple Channels. Channels are the mechanism through which communications are carried out. A channel might be an IM conversation, voice or video call, file transfer or some other stateful operation. Connections and channels are discussed in detail in Section 20.3.
+
+Connection Manager는 여러 개의 Connection을 관리하며, 각 Connection은 커뮤니케이션 장치와의 논리적인 연결을 나타냅니다. 설정된 계정 하나당 하나의 Connection이 존재하며, 하나의 Connection은 커뮤니케이션이 이루어지는 작동 메커니즘인, Channel을 여러 개 포함합니다. Channel은 인스턴스 메신저 대화, 음성, 영상 통화, 파일 전송, 혹은 다른 상태 유지 작업일 수 있습니다. Connection과 Channel에 대해서는 20.3. 에서 자세히 다뤄집니다.
