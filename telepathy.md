@@ -79,3 +79,79 @@ This modular design was based on Doug McIlroy's philosophy, "Write programs that
 The Connection Manager manages a number of Connections, where each Connection represents a logical connection to a communications service. There is one Connection per configured account. A Connection will contain multiple Channels. Channels are the mechanism through which communications are carried out. A channel might be an IM conversation, voice or video call, file transfer or some other stateful operation. Connections and channels are discussed in detail in Section 20.3.
 
 Connection Manager는 여러 개의 Connection을 관리하며, 각 Connection은 커뮤니케이션 장치와의 논리적인 연결을 나타냅니다. 설정된 계정 하나당 하나의 Connection이 존재하며, 하나의 Connection은 커뮤니케이션이 이루어지는 작동 메커니즘인, Channel을 여러 개 포함합니다. Channel은 인스턴스 메신저 대화, 음성, 영상 통화, 파일 전송, 혹은 다른 상태 유지 작업일 수 있습니다. Connection과 Channel에 대해서는 20.3. 에서 자세히 다뤄집니다.
+
+## 20.2. How Telepathy uses D-Bus
+
+## 20.2. Telepathy가 D-Bus를 사용하는 방식
+
+Telepathy components communicate via a D-Bus messaging bus, which is usually the user's session bus. D-Bus provides features common to many IPC systems: each service publishes objects which have a strictly namespaced object path, like `/org/freedesktop/Telepathy/AccountManager3`. Each object implements a number of interfaces. Again strictly namespaced, these have forms like `org.freedesktop.DBus.Properties and ofdT.Connection`. Each interface provides methods, signals and properties that you can call, listen to, or request.
+
+Telepathy 구성 요소들은 D-Bus 메시징 버스를 통해 통신하며, 주로 사용자의 세션 버스를 사용합니다. D-Bus는 많은 IPC 시스템에서 공통으로 찾아볼 수 있는 기능을 제공합니다. 서비스는 `/org/freedesktop/Telepathy/AccountManager3`처럼, 엄격히 정해진 이름공간의 객체 경로를 가진 객체를 발행하며, 각 객체는 몇 가지 인터페이스를 구현합니다. 이들 역시 `org.freedesktop.DBus.Properties and ofdT.Connection` 같은 형식의 엄격한 이름공간을 가지며, 인터페이스는 호출, 듣기, 또는 요청 가능한 메서드, 시그널, 그리고 속성을 제공합니다.
+
+![D-Bus 서비스가 발행한 객체들의 개념적 표현](http://aosabook.org/images/telepathy/bus-hierarchy-conceptual.png)
+
+> Publishing D-Bus Objects
+
+> D-Bus 객체 발행하기
+
+> > Publishing D-Bus objects is handled entirely by the D-Bus library being used. In effect it is a mapping from a D-Bus object path to the software object implementing those interfaces. The paths of objects being published by a service are exposed by the optional `org.freedesktop.DBus.Introspectable` interface.
+
+> > D-Bus 객체 발행은 사용하는 온전히 D-Bus 라이브러리에 의해 처리됩니다. 결과적으로 볼 때, 객체 발행은 D-Bus 객체 경로를, 해당하는 인터페이스를 구현하는 소프트웨어 객체로 대응시키는 것입니다. 서비스가 발행하는 객체의 경로는 `org.freedesktop.DBus.Introspectable`이라는 선택적인 인터페이스에 의해 노출됩니다.
+
+> > When a service receives an incoming method call with a given destination path (e.g., `/ofdT/AccountManager`), the D-Bus library is responsible for locating the software object providing that D-Bus object and then making the appropriate method call on that object.
+
+> > 서비스가 `/ofdT/AccountManager`와 같이 지정된 목적지 경로를 가진 메서드 호출을 받으면, D-Bus 라이브러리는 해당하는 D-Bus 객체를 제공하는 소프트웨어 객체를 찾고, 찾은 객체에 대한 올바른 메서드 호출을 하는 역할을 합니다.
+
+The interfaces, methods, signal and properties provided by Telepathy are detailed in an XML-based D-Bus IDL that has been expanded to include more information. The specification can be parsed to generate documentation and language bindings.
+
+Telepathy가 제공하는 인터페이스, 메서드, 시그널, 속성들은, 더 많은 정보를 포함하기 위해 확장된, XML 기반의 D-Bus IDL로 명시되어 있습니다. 이 명세는 구문 분석 되어 문서와 언어 바인딩을 생성할 수 있습니다.
+
+Telepathy services publish a number of objects onto the bus. Mission Control publishes objects for the Account Manager and Channel Dispatcher so that their services can be accessed. Clients publish a Client object that can be accessed by the Channel Dispatcher. Finally, Connection Managers publish a number of objects: a service object that can be used by the Account Manager to request new connections, an object per open connection, and an object per open channel.
+
+Telepathy 서비스들은 버스에 몇 가지 객체를 발행할 수 있습니다. Mission Control은 Account Manager와 Channel Dispatcher의 서비스에 접근하기 위한 객체를, 클라이언트는 Channel Dispatcher가 접근 가능한 Client 객체를, 그리고 마지막으로 Connection Manager는, Account Manager가 새로운 연결을 요청하기 위해 사용하는 서비스 객체, 열린 연결당 하나의 객체, 그리고 열린 채널당 하나의 객체를 발행할 수 있습니다.
+
+Although D-Bus objects do not have a type (only interfaces), Telepathy simulates types several ways. The object's path tells us whether the object is a connection, channel, client, and so on, though generally you already know this when you request a proxy to it. Each object implements the base interface for that type, e.g., `ofdT.Connection `or `ofdT.Channel`. For channels this is sort of like an abstract base class. Channel objects then have a concrete class defining their channel type. Again, this is represented by a D-Bus interface. The channel type can be learned by reading the `ChannelType` property on the Channel interface.
+
+D-Bus 객체는 타입이 없지만(인터페이스만 있음) Telepathy는 몇 가지 방법으로 타입을 가장합니다. 객체의 경로는, 이미 프락시를 요청 할 때 알 수 있지만, 객체가 연결인지, 채널인지, 클라이언트인지 등의 정보를 알려줍니다. 각 객체는 `ofdT.Connection `또는 `ofdT.Channel`처럼 해당되는 타입의 기초 인터페이스를 구현합니다. 이 인터페이스는 채널에겐 추상화된 기반 클래스와 비슷합니다. 이제 채널 객체는 채널 타입을 정의하는 구상 클래스를 가지며, 이 역시 D-Bus 인터페이스에 의해 표현됩니다. 채널 타입은 Channel 인터페이스의 `ChannelType` 속성을 읽음으로서 알 수 있습니다.
+
+Finally, each object implements a number of optional interfaces (unsurprisingly also represented as D-Bus interfaces), which depend on the capabilities of the protocol and the Connection Manager. The interfaces available on a given object are available via the `Interfaces` property on the object's base class.
+
+마지막으로, 각 객체는 프로토콜과 Connection Manager의 기능에 의존하는 몇 가지 선택적인 인터페이스를 구현합니다(이 역시 D-Bus 인터페이스에 의해 표현됩니다). 주어진 객체 위에서 제공되는 인터페이스는 객체의 기반 클래스의 `Interface` 속성을 통해 사용할 수 있습니다.
+
+For Connection objects of type `ofdT.Connection`, the optional interfaces have names like `ofdT.Connection.Interface.Avatars` (if the protocol has a concept of avatars), `odfT.Connection.Interface.ContactList` (if the protocol provides a contact roster—not all do) and `odfT.Connection.Interface.Location` (if a protocol provides geolocation information). For Channel objects, of type `ofdT.Channel`, the concrete classes have interface names of the form `ofdT.Channel.Type.Text`, `odfT.Channel.Type.Call` and `odfT.Channel.Type.FileTransfer`. Like Connections, optional interface have names likes `odfT.Channel.Interface.Messages` (if this channel can send and receive text messages) and `odfT.Channel.Interface.Group` (if this channel is to a group containing multiple contacts, e.g., a multi-user chat). So, for example, a text channel implements at least the `ofdT.Channel`, `ofdT.Channel.Type.Text` and `Channel.Interface.Messages` interfaces. If it's a multi-user chat, it will also implement `odfT.Channel.Interface.Group`.
+
+`ofdT.Connection` 타입을 가진 Connection 객체의 선택적 인터페이스는 `ofdT.Connection.Interface.Avatars` (프로토콜에 아바타라는 개념이 있으면), `odfT.Connection.Interface.ContactList` (프로토콜이 연락처 목록을 제공한다면(모든 프로토콜이 제공하지는 않습니다)) and `odfT.Connection.Interface.Location` (프로토콜이 위치 정보를 제공하면) 과 같은 이름을 가집니다. `ofdT.Channel` 타입을 가진 Channel 객체의 구상 클래스는 `ofdT.Channel.Type.Text`, `odfT.Channel.Type.Call` 그리고 `odfT.Channel.Type.FileTransfer`의 형식의 인터페이스 이름을 가집니다. Connection과 비슷하게, 선택적 인터페이스는 `odfT.Channel.Interface.Messages` (채널이 문자 메시지를 송수신 할 수 있으면), 그리고 `odfT.Channel.Interface.Group` (채널이 다수의 연락처를 포함하는 그룹을 대상으로 하면, 예를 들어, 단체 채팅방) 과 같은 이름을 가집니다. 예를 들면, 문자 채널은 최소한 `ofdT.Channel`, `ofdT.Channel.Type.Text`, 그리고 `Channel.Interface.Messages` 인터페이스를 구현합니다. 단체 채팅방일 경우 `odfT.Channel.Interface.Group` 도 구현합니다.
+
+> Why an Interfaces Property and not D-Bus Introspection?
+
+> 왜 D-Bus 인트로스펙션이 있는데 Interface 속성을 사용하나요?
+
+> > You might wonder why each base class implements an `Interfaces` property, instead of relying on D-Bus' introspection capabilities to tell us what interfaces are available. The answer is that different channel and connection objects may offer different interfaces to each other, depending on the capabilities of the channel or connection, but that most of the implementations of D-Bus introspection assume that all objects of the same object class will have the same interfaces. For example, in `telepathy-glib`, the D-Bus interfaces listed by D-Bus introspection are retrieved from the object interfaces a class implements, which is statically defined at compile time. We work around this by having D-Bus introspection provide data for all the interfaces that could exist on an object, and use the `Interfaces` property to indicate which ones actually do.
+
+> > 왜 각 기반 클래스가, 사용 가능한 인터페이스들을 알려주는 D-Bus의 인트로스펙션 기능을 사용하지 않고 `Interfaces` 속성을 구현하는지 궁금하실 수도 있습니다. 그 이유는 서로 다른 채널과 커넥션 객체들은 가지는 기능에 따라 서로 다른 인터페이스를 가질 수 있지만, 대부분의 D-Bus 인트로스펙션 구현체들은 같은 객체 클래스의 모든 객체는 같은 인터페이스를 가진다고 가정하기 때문입니다. 예를 들어 `telepathy-glib`에선, D-Bus 인트로스펙션이 나열한 D-Bus 인터페이스들은 컴파일 타임에 정적으로 정의된 클래스가 구현하는 인터페이스들로부터 가져옵니다. 우리는 이 문제를 D-Bus 인트로스펙션에서 객체에 있을 수 있는 모든 인터페이스에 대한 정보를 제공하게 하고, `Interfaces` 속성이 실제로 객체가 가진 인터페이스를 정의하게 하여 회피합니다.
+
+Although D-Bus itself provides no sanity checking that connection objects only have connection-related interfaces and so forth (since D-Bus has no concept of types, only arbitrarily named interfaces), we can use the information contained within the Telepathy specification to provide sanity checking within the Telepathy language bindings.
+
+D-Bus 자체는 커넥션 객체가 커넥션과 관련된 인터페이스만 가지는지(D-Bus에는 임의의 기명 인터페이스만 있고 자료형에 대한 개념은 존재하지 않기 때문에) 따위에 대한 온전성을 확인해 주지 않지만, Telepathy 언어 바인딩 내 Telepathy 명세에 있는 정보를 사용하여 온전성 검사를 할 수 있습니다.
+
+> Why and How the Specification IDL was Expanded
+
+> IDL 명세가 왜, 어떻게 확장되었는가에 대해
+
+> > The existing D-Bus specification IDL defines the names, arguments, access restrictions and D-Bus type signatures of methods, properties and signals. It provides no support for documentation, binding hints or named types.
+
+> > 기존 D-Bus IDL 명세는 이름, 파라미터, 접근 제한, 메서드의 D-Bus 타입 시그니쳐, 속성, 그리고 시그널을 정의하지만, 문서, 바인딩 힌트, 기명 타입은 지원하지 않습니다.
+
+> > To resolve these limitations, a new XML namespace was added to provide the required information. This namespace was designed to be generic so that it could be used by other D-Bus APIs. New elements were added to include inline documentation, rationales, introduction and deprecation versions and potential exceptions from methods.
+
+> > 이러한 한계를 극복하기 위해, 필요한 정보를 제공하기 위한 새로운 XML 이름공간이 추가되었습니다. 이 이름공간은 제네릭 하게, 다른 D-Bus API들이 사용할 수 있도록 설계되었습니다. 인라인 문서, 근거, 서론, 대체된 버전들, 그리고 메서드에서 발생할 수 있는 예외를 포함하기 위한 엘리먼트들이 추가되었습니다.
+
+> > D-Bus type signatures are the low-level type notation of what is serialized over the bus. A D-Bus type signature may look like (ii) (which is a structure containing two int32s), or it may be more complex. For example, `a{sa(usuu)}`, is a map from string to an array of structures containing uint32, string, uint32, uint32 (Figure 20.3). These types, while descriptive of the data format, provide no semantic meaning to the information contained in the type.
+
+> > D-Bus 타입 시그니쳐는 버스 위에서 직렬화된 것들의 로우 레벨 타입 표기입니다. D-Bus 타입 시그니쳐는 `(ii)`(두개의 int32를 포함하는 구조체) 처럼 생겼거나, 더 복잡할 수도 있습니다. 예를 들어, `a{sa(usuu)}`는 uint32, string, uint32, uint32를 포함하는 구조체의 배열로 매핑된 string의 맵입니다(그림 20.3). 이 타입들은, 데이터 형식에 관해서 기술하지만, 타입에 저장된 정보에 대한 의미는 전혀 제공하지 않습니다.
+
+> > In an effort to provide semantic clarity for programmers and strengthen the typing for language bindings, new elements were added to name simple types, structs, maps, enums, and flags, providing their type signature, as well as documentation. Elements were also added in order to simulate object inheritance for D-Bus objects.
+
+> > 프로그래머들에게 의미론적 명료함을 제공하고 언어 바인딩을 위한 타이핑을 강화하기 위해 문서는 물론 간단한 타입, 구조체, 맵, 열거형, 플래그의 타입 시그니쳐를 제공하고, 들에 이름을 붙이기 위해, 새로운 엘리먼트들이 추가되었습니다.
+
+![D-Bus 타입 (ii)와 a{sa(usuu)}](http://aosabook.org/images/telepathy/telepathy-types-unpacked.png)
