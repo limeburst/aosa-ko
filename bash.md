@@ -205,3 +205,15 @@ Readline이 사용자들에게 readline의 기본 작동 방식을 커스터마�
 The second way readline allows applications to modify its behavior is through the pervasive use of pointers to hook functions with well-known names and calling interfaces. Applications can replace some portions of readline's internals, interpose functionality in front of readline, and perform application-specific transformations.
 
 응용 프로그램이 readline의 작동 방식을 변경할 수 있게 해주는 두 번째 방법은, 포인터를 여러 곳에서 사용하여, 함수를 잘 알려진 이름과 호출 인터페이스에 후킹 하는 것입니다. 응용 프로그램들은 readline 내부 일부를 교체하고, readline 앞에 기능을 끼워 넣거나, 응용 프로그램에 종속적인 변형을 가할 수 있습니다.
+
+### 3.3.2. Non-interactive Input Processing
+
+### 3.3.2. 비대화식 입력 처리
+
+When the shell is not using readline, it uses either `stdio` or its own buffered input routines to obtain input. The bash buffered input package is preferable to `stdio` when the shell is not interactive because of the somewhat peculiar restrictions Posix imposes on input consumption: the shell must consume only the input necessary to parse a command and leave the rest for executed programs. This is particularly important when the shell is reading a script from the standard input. The shell is allowed to buffer input as much as it wants, as long as it is able to roll the file offset back to just after the last character the parser consumes. As a practical matter, this means that the shell must read scripts a character at a time when reading from non-seekable devices such as pipes, but may buffer as many characters as it likes when reading from files.
+
+셸이 readline을 사용하지 않을 땐 `stdio`나 셸 자체의 버퍼링된 입력 루틴을 사용하여 입력을 받습니다. 셸이 비대화식으로 동작할 땐, `stdio`에 비해 Bash의 버퍼팅된 입력 패키지가 선호되는데, 셸이 명령을 구문분석하는 데 필요한 입력만 소비하고 나머지는 실행되는 프로그램을 위해 남기게 하는 Posix의 까다로운 제한 때문입니다. 셸이 스크립트를 표준 입력으로부터 받을 때 특히 중요한데, 셸은 구문 분석기가 마지막으로 읽은 문자열 바로 앞으로 파일 오프셋을 되돌릴 수 있는 이상 원하는 만큼 입력을 버퍼링할 수 있습니다. 실용적인 관점에서 볼 때, 이것은 셸이 파이프 등 탐색 불가능한 디바이스로부터 읽을 때엔 스크립트들을 한 번에 문자열 하나씩만을 읽어야 하지만, 파일을 읽을 때엔 원하는 만큼 문자열 버퍼링을 할 수 있다는 의미를 가집니다.
+
+These idiosyncrasies aside, the output of the non-interactive input portion of shell processing is the same as readline: a buffer of characters terminated by a newline.
+
+이런 특성은 제쳐두고, 셸의 비대화식 입력 처리의 출력은, 개행문자로 끝나는 문자열 버퍼라는 점에서 readline과 같습니다.
