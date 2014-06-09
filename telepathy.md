@@ -155,3 +155,19 @@ D-Bus 자체는 커넥션 객체가 커넥션과 관련된 인터페이스만 �
 > > 프로그래머들에게 의미론적 명료함을 제공하고 언어 바인딩을 위한 타이핑을 강화하기 위해 문서는 물론 간단한 타입, 구조체, 맵, 열거형, 플래그의 타입 시그니쳐를 제공하고, 들에 이름을 붙이기 위해, 새로운 엘리먼트들이 추가되었습니다.
 
 ![D-Bus 타입 (ii)와 a{sa(usuu)}](http://aosabook.org/images/telepathy/telepathy-types-unpacked.png)
+
+### 20.2.1. Handles
+
+### 20.2.1. 핸들
+
+Handles are used in Telepathy to represent identifiers (e.g., contacts and room names). They are an unsigned integer value assigned by the connection manager, such that the tuple (connection, handle type, handle) uniquely refers to a given contact or room.
+
+Telepathy에서는 식별자(e.g., 연락처와 대화방 이름)를 표현하기 위해 핸들을 사용합니다. 핸들은 Connection Manager에 의해 부호가 없는 정수 값이, 튜플(연결, 핸들 종류, 핸들)이 주어진 연락처나 대화방을 고유하게 참조할 수 있도록 할당됩니다.
+
+Because different communications protocols normalize identifiers in different ways (e.g., case sensitivity, resources), handles provide a way for clients to determine if two identifiers are the same. They can request the handle for two different identifiers, and if the handle numbers match, then the identifiers refer to the same contact or room.
+
+식별자를 표준화시는 방법이 통신 프로토콜마다 다르기 때문에(e.g., 대소문자 구분, 리소스), 핸들은 클라이언트에서 두 식별자가 같은지 확인할 수 있는 방법을 제공합니다. 클라이언트는 두 개의 서로 다른 식별자에 대한 핸들을 요청하고, 핸들 번호가 같은 경우 식별자가 같은 연락처나 대화방을 가리킨다는 것을 알 수 있습니다.
+
+Identifier normalization rules are different for each protocol, so it is a mistake for clients to compare identifier strings to compare identifiers. For example, `escher@tuxedo.cat/bed` and `escher@tuxedo.cat/litterbox` are two instances of the same contact (`escher@tuxedo.cat`) in the XMPP protocol, and therefore have the same handle. It is possible for clients to request channels by either identifier or handle, but they should only ever use handles for comparison.
+
+식별자의 표준화 규칙은 프로토콜마다 다르므로 식별자 문자열로 식별자를 구분하는 클라이언트는 잘못된 것입니다. 예를 들어, `escher@tuxedo.cat/bed`와 `escher@tuxedo.cat/litterbox`는 XMPP 프로토콜 내 같은 연락처(`escher@tuxedo.cat`)의 인스턴스이므로 같은 핸들을 가집니다. 클라이언트가 식별자나 핸들로 채널을 요청할 수는 있지만, 구분을 위해서는 핸들만을 사용해야 합니다.
