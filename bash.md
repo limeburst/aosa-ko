@@ -217,3 +217,11 @@ When the shell is not using readline, it uses either `stdio` or its own buffered
 These idiosyncrasies aside, the output of the non-interactive input portion of shell processing is the same as readline: a buffer of characters terminated by a newline.
 
 이런 특성은 제쳐두고, 셸의 비대화식 입력 처리의 출력은, 개행문자로 끝나는 문자열 버퍼라는 점에서 readline과 같습니다.
+
+### 3.3.3. Multibyte Characters
+
+### 3.3.3. 멀티바이트 문자열
+
+Multibyte character processing was added to the shell a long time after its initial implementation, and it was done in a way designed to minimize its impact on the existing code. When in a locale that supports multibyte characters, the shell stores its input in a buffer of bytes (C `char`s), but treats these bytes as potentially multibyte characters. Readline understands how to display multibyte characters (the key is knowing how many screen positions a multibyte character occupies, and how many bytes to consume from a buffer when displaying a character on the screen), how to move forward and backward in the line a character at a time, as opposed to a byte at a time, and so on. Other than that, multibyte characters don't have much effect on shell input processing. Other parts of the shell, described later, need to be aware of multibyte characters and take them into account when processing their input.
+
+멀티바이트 문자열 처리는 셸의 초기 구현이 생긴지 한참 뒤에 기존 코드에 미치는 영향을 최소화시키는 방향으로 추가되었습니다. 멀티바이트 문자열을 지원하는 로케일에서 셸은 입력을 바이트 버퍼(C `char`)에 저장하지만, 이 바이트 열이 멀티바이트 문자열일 수 있다고 가정합니다. Readline은 멀티바이트 문자열을 화면에 표시하는 방법(멀티바이트 문자열이 화면 영역을 얼마나 차지하고 있는지, 문자를 화면에 표시할 때 버퍼에서 읽어야 할 바이트 수를 알고 있는 것이 핵심), 줄 위에서 바이트 단위가 아니라, 한 문자씩 왔다 갔다 하는 방법, 등을 알고 있습니다. 그 외에는, 멀티바이트 문자열은 셸의 입력 처리에 별다른 영향을 미치지 않습니다. 이후에 다뤄질 셸의 다른 부분에서는 멀티바이트 문자열을 인식할 수 있어야 하며, 입력 처리를 할 때 고려해야 합니다.
