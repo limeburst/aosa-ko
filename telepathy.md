@@ -171,3 +171,31 @@ Because different communications protocols normalize identifiers in different wa
 Identifier normalization rules are different for each protocol, so it is a mistake for clients to compare identifier strings to compare identifiers. For example, `escher@tuxedo.cat/bed` and `escher@tuxedo.cat/litterbox` are two instances of the same contact (`escher@tuxedo.cat`) in the XMPP protocol, and therefore have the same handle. It is possible for clients to request channels by either identifier or handle, but they should only ever use handles for comparison.
 
 식별자의 표준화 규칙은 프로토콜마다 다르므로 식별자 문자열로 식별자를 구분하는 클라이언트는 잘못된 것입니다. 예를 들어, `escher@tuxedo.cat/bed`와 `escher@tuxedo.cat/litterbox`는 XMPP 프로토콜 내 같은 연락처(`escher@tuxedo.cat`)의 인스턴스이므로 같은 핸들을 가집니다. 클라이언트가 식별자나 핸들로 채널을 요청할 수는 있지만, 구분을 위해서는 핸들만을 사용해야 합니다.
+
+### 20.2.2. Discovering Telepathy Services
+
+### 20.2.2. Telepathy 서비스 발견
+
+Some services, such as the Account Manager and the Channel Dispatcher, which always exist, have well known names that are defined in the Telepathy specification. However, the names of Connection Managers and clients are not well-known, and must be discovered.
+
+Account Manager나 Channel Dispatcher같이 일부 상존하는 서비스들은 Telepathy 명세에 정의된 잘 알려진 이름을 가지고 있지만, Connection Manager들의 이름은 잘 알려지지 않았으며, 발견되어야 합니다.
+
+There's no service in Telepathy responsible for the registration of running Connection Managers and Clients. Instead, interested parties listen on the D-Bus for the announcement of a new service. The D-Bus bus daemon will emit a signal whenever a new named D-Bus service appears on the bus. The names of Clients and Connection Managers begin with known prefixes, defined by the specification, and new names can be matched against these.
+
+Telepathy에는 실행 중인 Connection Manager와 Client의 등록 관리를 하는 서비스가 없습니다. 대신, D-Bus 데몬은 새로운 D-Bus 서비스가 버스에 나타났을 때 신호를 발신하므로, 이해관계자들이 D-Bus 위에서 새로운 서비스의 선언을 들을 수 있습니다. 클라이언트와 Connection Manager들의 이름은 명세에 정의된, 알려진 접두어로 시작하며, 새로운 이름들은 이들과 비교할 수 있습니다.
+
+The advantage of this design is that it's completely stateless. When a Telepathy component is starting up, it can ask the bus daemon (which has a canonical list, based on its open connections) what services are currently running. For instance, if the Account Manager crashes, it can look to see what connections are running, and reassociate those with its account objects.
+
+이러한 디자인은, 상태를 가지지 않는다는 장점을 가집니다. Telepathy 구성 요소가 시작할 때, 버스 데몬(열려 있는 연결들을 기반으로, 규범적인 목록을 가지고 있음)에 어떤 서비스들이 실행 중인지 물어볼 수 있습니다. 예를 들어, Account Manager가 비정상적으로 종료되어도 실행 중인 연결들을 확인하여 다시 계정 객체들과 연관시킬 수 있습니다.
+
+> Connections are Services Too
+
+> Connection도 서비스다
+
+> > As well as the Connection Managers themselves, the connections are also advertised as D-Bus services. This hypothetically allows for the Connection Manager to fork each connection off as a separate process, but to date no Connection Manager like this has been implemented. More practically, it allows all running connections to be discovered by querying the D-Bus bus daemon for all services beginning with `ofdT.Connection`.
+
+> > Connection Manager는 물론, Connection 자체도 D-Bus 서비스로 선언됩니다. 이것은 이론적으로 Connection Manager가 각 연결을 개별 프로세스로 포크 할 수 있게 해주지만, 아직 그런 Connection Manager는 존재하지 않습니다. 좀 더 실용적인 면에선, 모든 D-Bus 데몬에 요청을 보냄으로써 이름이 `ofdT.Connection`으로 시작하는 실행 중인 모든 연결들을 발견할 수 있게 해줍니다.
+
+> > The Channel Dispatcher also uses this method to discover Telepathy clients. These begin with the name ofdT.Client, e.g., ofdT.Client.Logger.
+
+> > Channel Dispatcher 역시 Telepathy 클라이언트들을 발견하기 위해 이 방법을 사용합니다. 이러한 클라이언트들은 `ofdT.Client.Logger` 처럼 `ofdT.Client`로 시작합니다.
