@@ -18,21 +18,21 @@ Telepathy는 2005년도에 로버트 맥퀸에 의해 만들어졌으며, 그 �
 
 > D-Bus 메시지 버스
 
-> > D-Bus is an asynchronous message bus for interprocess communication that forms the backbone of most GNU/Linux systems including the GNOME and KDE desktop environments. D-Bus is a primarily a shared bus architecture: applications connect to a bus (identified by a socket address) and can either transmit a targeted message to another application on the bus, or broadcast a signal to all bus members. Applications on the bus have a bus address, similar to an IP address, and can claim a number of well-known names, like DNS names, for example `org.freedesktop.Telepathy.AccountManager`. All processes communicate via the D-Bus daemon, which handles message passing, and name registration.
+> D-Bus is an asynchronous message bus for interprocess communication that forms the backbone of most GNU/Linux systems including the GNOME and KDE desktop environments. D-Bus is a primarily a shared bus architecture: applications connect to a bus (identified by a socket address) and can either transmit a targeted message to another application on the bus, or broadcast a signal to all bus members. Applications on the bus have a bus address, similar to an IP address, and can claim a number of well-known names, like DNS names, for example `org.freedesktop.Telepathy.AccountManager`. All processes communicate via the D-Bus daemon, which handles message passing, and name registration.
 
-> > D-Bus는 GNOME, KDE 데스크톱 환경을 포함한 대부분의 GNU/Linux 시스템의 백본을 구성하는 프로세스 간 커뮤니케이션을 위한 비동기적인 메시지 버스입니다. D-Bus는 공유 버스 설계를 주로 합니다. 응용 프로그램들은 (소켓 주소로 구분되는) 버스에 연결하여 버스에 연결된 다른 응용 프로그램을 대상으로 메시지를 보내거나 모든 버스 구성원에게 브로드캐스트 신호를 보낼 수 있습니다. 버스에 연결된 응용 프로그램에게는 IP 주소와 유사한 버스 주소가 있으며, `org.freedesktop.Telepathy.AccountManager` 등, DNS 이름처럼 다수의 잘 알려진 이름을 차지할 수 있습니다. 모든 프로세스는 메시지 전달과 이름 등록을 처리하는 D-Bus 데몬을 통해 통신합니다.
+> D-Bus는 GNOME, KDE 데스크톱 환경을 포함한 대부분의 GNU/Linux 시스템의 백본을 구성하는 프로세스 간 커뮤니케이션을 위한 비동기적인 메시지 버스입니다. D-Bus는 공유 버스 설계를 주로 합니다. 응용 프로그램들은 (소켓 주소로 구분되는) 버스에 연결하여 버스에 연결된 다른 응용 프로그램을 대상으로 메시지를 보내거나 모든 버스 구성원에게 브로드캐스트 신호를 보낼 수 있습니다. 버스에 연결된 응용 프로그램에게는 IP 주소와 유사한 버스 주소가 있으며, `org.freedesktop.Telepathy.AccountManager` 등, DNS 이름처럼 다수의 잘 알려진 이름을 차지할 수 있습니다. 모든 프로세스는 메시지 전달과 이름 등록을 처리하는 D-Bus 데몬을 통해 통신합니다.
 
-> > From the user's perspective, there are two buses available on every system. The system bus is a bus that allows the user to communicate with system-wide components (printers, bluetooth, hardware management, etc.) and is shared by all users on the system. The session bus is unique to that user—i.e., there is a session bus per logged-in user—and is used for the user's applications to communicate with each other. When a lot of traffic is to be transmitted over the bus, it's also possible for applications to create their own private bus, or to create a peer-to-peer, unarbitrated bus with no `dbus-daemon`.
+> From the user's perspective, there are two buses available on every system. The system bus is a bus that allows the user to communicate with system-wide components (printers, bluetooth, hardware management, etc.) and is shared by all users on the system. The session bus is unique to that user—i.e., there is a session bus per logged-in user—and is used for the user's applications to communicate with each other. When a lot of traffic is to be transmitted over the bus, it's also possible for applications to create their own private bus, or to create a peer-to-peer, unarbitrated bus with no `dbus-daemon`.
 
-> > 사용자의 관점에서 볼 때, 모든 시스템에는 사용 가능한 두 개의 버스가 있습니다. 시스템 버스는 사용자가 시스템 전체에 걸쳐 있는 구성 요소(프린터, 블루투스, 하드웨어 관리 등)들과 통신하게 해 주며, 해당 시스템을 사용하는 모든 사용자와 공유됩니다. 세션 버스는 사용자에게 유일하며, 즉, 로그인된 사용자당 하나의 세션 버스가 있으며, 사용자의 응용 프로그램 간의 통신을 위해 사용됩니다. 대량의 트래픽이 버스를 통해 전달되어야 할 경우, 응용 프로그램들은 사설 버스나, 중재자인 `dbus-daemon`이 없는 P2P 버스를 생성하여 통신할 수도 있습니다.
+> 사용자의 관점에서 볼 때, 모든 시스템에는 사용 가능한 두 개의 버스가 있습니다. 시스템 버스는 사용자가 시스템 전체에 걸쳐 있는 구성 요소(프린터, 블루투스, 하드웨어 관리 등)들과 통신하게 해 주며, 해당 시스템을 사용하는 모든 사용자와 공유됩니다. 세션 버스는 사용자에게 유일하며, 즉, 로그인된 사용자당 하나의 세션 버스가 있으며, 사용자의 응용 프로그램 간의 통신을 위해 사용됩니다. 대량의 트래픽이 버스를 통해 전달되어야 할 경우, 응용 프로그램들은 사설 버스나, 중재자인 `dbus-daemon`이 없는 P2P 버스를 생성하여 통신할 수도 있습니다.
 
-> > Several libraries implement the D-Bus protocol and can communicate with the D-Bus daemon, including libdbus, GDBus, QtDBus, and python-dbus. These libraries are responsible for sending and receiving D-Bus messages, marshalling types from the language's type system into D-Bus' type format and publishing objects on the bus. Usually, the libraries also provide convenience APIs for listing connected applications and activatable applications, and requesting well-known names on the bus. At the D-Bus level, all of these are done by making method calls on an object published by dbus-daemon itself.
+> Several libraries implement the D-Bus protocol and can communicate with the D-Bus daemon, including libdbus, GDBus, QtDBus, and python-dbus. These libraries are responsible for sending and receiving D-Bus messages, marshalling types from the language's type system into D-Bus' type format and publishing objects on the bus. Usually, the libraries also provide convenience APIs for listing connected applications and activatable applications, and requesting well-known names on the bus. At the D-Bus level, all of these are done by making method calls on an object published by dbus-daemon itself.
 
-> > libdus, GDBus, QtDBus, python-dbus 등 다수의 라이브러리가 D-Bus 데몬과 통신할 수 있는 D-Bus 프로토콜을 구현합니다. 이 라이브러리들은 D-Bus 메시지를 송수신하고, 언어의 타입 시스템을 D-Bus의 타입 형식으로 마샬링하고, 객체를 버스에 발행하는 역할을 합니다. 이러한 라이브러리들은 주로, 연결됐거나 활성화 가능한 응용 프로그램들의 목록을 받아오거나, 버스에서 잘 알려진 이름들을 요청하는 편의성 API도 제공합니다.
+> libdus, GDBus, QtDBus, python-dbus 등 다수의 라이브러리가 D-Bus 데몬과 통신할 수 있는 D-Bus 프로토콜을 구현합니다. 이 라이브러리들은 D-Bus 메시지를 송수신하고, 언어의 타입 시스템을 D-Bus의 타입 형식으로 마샬링하고, 객체를 버스에 발행하는 역할을 합니다. 이러한 라이브러리들은 주로, 연결됐거나 활성화 가능한 응용 프로그램들의 목록을 받아오거나, 버스에서 잘 알려진 이름들을 요청하는 편의성 API도 제공합니다.
 
-> > For more information on D-Bus, see [http://www.freedesktop.org/wiki/Software/dbus](http://www.freedesktop.org/wiki/Software/dbus).
+> For more information on D-Bus, see [http://www.freedesktop.org/wiki/Software/dbus](http://www.freedesktop.org/wiki/Software/dbus).
 
-> > D-Bus에 대해 더 알아보고 싶으시다면, [http://www.freedesktop.org/wiki/Software/dbus](http://www.freedesktop.org/wiki/Software/dbus)를 보세요.
+> D-Bus에 대해 더 알아보고 싶으시다면, [http://www.freedesktop.org/wiki/Software/dbus](http://www.freedesktop.org/wiki/Software/dbus)를 보세요.
 
 ## 20.1. Components of the Telepathy Framework
 
@@ -94,13 +94,13 @@ Telepathy 구성 요소들은 D-Bus 메시징 버스를 통해 통신하며, 주
 
 > D-Bus 객체 발행하기
 
-> > Publishing D-Bus objects is handled entirely by the D-Bus library being used. In effect it is a mapping from a D-Bus object path to the software object implementing those interfaces. The paths of objects being published by a service are exposed by the optional `org.freedesktop.DBus.Introspectable` interface.
+> Publishing D-Bus objects is handled entirely by the D-Bus library being used. In effect it is a mapping from a D-Bus object path to the software object implementing those interfaces. The paths of objects being published by a service are exposed by the optional `org.freedesktop.DBus.Introspectable` interface.
 
-> > D-Bus 객체 발행은 사용하는 온전히 D-Bus 라이브러리에 의해 처리됩니다. 결과적으로 볼 때, 객체 발행은 D-Bus 객체 경로를, 해당하는 인터페이스를 구현하는 소프트웨어 객체로 대응시키는 것입니다. 서비스가 발행하는 객체의 경로는 `org.freedesktop.DBus.Introspectable`이라는 선택적인 인터페이스에 의해 노출됩니다.
+> D-Bus 객체 발행은 사용하는 온전히 D-Bus 라이브러리에 의해 처리됩니다. 결과적으로 볼 때, 객체 발행은 D-Bus 객체 경로를, 해당하는 인터페이스를 구현하는 소프트웨어 객체로 대응시키는 것입니다. 서비스가 발행하는 객체의 경로는 `org.freedesktop.DBus.Introspectable`이라는 선택적인 인터페이스에 의해 노출됩니다.
 
-> > When a service receives an incoming method call with a given destination path (e.g., `/ofdT/AccountManager`), the D-Bus library is responsible for locating the software object providing that D-Bus object and then making the appropriate method call on that object.
+> When a service receives an incoming method call with a given destination path (e.g., `/ofdT/AccountManager`), the D-Bus library is responsible for locating the software object providing that D-Bus object and then making the appropriate method call on that object.
 
-> > 서비스가 `/ofdT/AccountManager`와 같이 지정된 목적지 경로를 가진 메서드 호출을 받으면, D-Bus 라이브러리는 해당하는 D-Bus 객체를 제공하는 소프트웨어 객체를 찾고, 찾은 객체에 대한 올바른 메서드 호출을 하는 역할을 합니다.
+> 서비스가 `/ofdT/AccountManager`와 같이 지정된 목적지 경로를 가진 메서드 호출을 받으면, D-Bus 라이브러리는 해당하는 D-Bus 객체를 제공하는 소프트웨어 객체를 찾고, 찾은 객체에 대한 올바른 메서드 호출을 하는 역할을 합니다.
 
 The interfaces, methods, signal and properties provided by Telepathy are detailed in an XML-based D-Bus IDL that has been expanded to include more information. The specification can be parsed to generate documentation and language bindings.
 
@@ -126,9 +126,9 @@ For Connection objects of type `ofdT.Connection`, the optional interfaces have n
 
 > 왜 D-Bus 인트로스펙션이 있는데 Interface 속성을 사용하나요?
 
-> > You might wonder why each base class implements an `Interfaces` property, instead of relying on D-Bus' introspection capabilities to tell us what interfaces are available. The answer is that different channel and connection objects may offer different interfaces to each other, depending on the capabilities of the channel or connection, but that most of the implementations of D-Bus introspection assume that all objects of the same object class will have the same interfaces. For example, in `telepathy-glib`, the D-Bus interfaces listed by D-Bus introspection are retrieved from the object interfaces a class implements, which is statically defined at compile time. We work around this by having D-Bus introspection provide data for all the interfaces that could exist on an object, and use the `Interfaces` property to indicate which ones actually do.
+> You might wonder why each base class implements an `Interfaces` property, instead of relying on D-Bus' introspection capabilities to tell us what interfaces are available. The answer is that different channel and connection objects may offer different interfaces to each other, depending on the capabilities of the channel or connection, but that most of the implementations of D-Bus introspection assume that all objects of the same object class will have the same interfaces. For example, in `telepathy-glib`, the D-Bus interfaces listed by D-Bus introspection are retrieved from the object interfaces a class implements, which is statically defined at compile time. We work around this by having D-Bus introspection provide data for all the interfaces that could exist on an object, and use the `Interfaces` property to indicate which ones actually do.
 
-> > 왜 각 기반 클래스가, 사용 가능한 인터페이스들을 알려주는 D-Bus의 인트로스펙션 기능을 사용하지 않고 `Interfaces` 속성을 구현하는지 궁금하실 수도 있습니다. 그 이유는 서로 다른 채널과 커넥션 객체들은 가지는 기능에 따라 서로 다른 인터페이스를 가질 수 있지만, 대부분의 D-Bus 인트로스펙션 구현체들은 같은 객체 클래스의 모든 객체는 같은 인터페이스를 가진다고 가정하기 때문입니다. 예를 들어 `telepathy-glib`에선, D-Bus 인트로스펙션이 나열한 D-Bus 인터페이스들은 컴파일 타임에 정적으로 정의된 클래스가 구현하는 인터페이스들로부터 가져옵니다. 우리는 이 문제를 D-Bus 인트로스펙션에서 객체에 있을 수 있는 모든 인터페이스에 대한 정보를 제공하게 하고, `Interfaces` 속성이 실제로 객체가 가진 인터페이스를 정의하게 하여 회피합니다.
+> 왜 각 기반 클래스가, 사용 가능한 인터페이스들을 알려주는 D-Bus의 인트로스펙션 기능을 사용하지 않고 `Interfaces` 속성을 구현하는지 궁금하실 수도 있습니다. 그 이유는 서로 다른 채널과 커넥션 객체들은 가지는 기능에 따라 서로 다른 인터페이스를 가질 수 있지만, 대부분의 D-Bus 인트로스펙션 구현체들은 같은 객체 클래스의 모든 객체는 같은 인터페이스를 가진다고 가정하기 때문입니다. 예를 들어 `telepathy-glib`에선, D-Bus 인트로스펙션이 나열한 D-Bus 인터페이스들은 컴파일 타임에 정적으로 정의된 클래스가 구현하는 인터페이스들로부터 가져옵니다. 우리는 이 문제를 D-Bus 인트로스펙션에서 객체에 있을 수 있는 모든 인터페이스에 대한 정보를 제공하게 하고, `Interfaces` 속성이 실제로 객체가 가진 인터페이스를 정의하게 하여 회피합니다.
 
 Although D-Bus itself provides no sanity checking that connection objects only have connection-related interfaces and so forth (since D-Bus has no concept of types, only arbitrarily named interfaces), we can use the information contained within the Telepathy specification to provide sanity checking within the Telepathy language bindings.
 
@@ -138,21 +138,21 @@ D-Bus 자체는 커넥션 객체가 커넥션과 관련된 인터페이스만 �
 
 > IDL 명세가 왜, 어떻게 확장되었는가에 대해
 
-> > The existing D-Bus specification IDL defines the names, arguments, access restrictions and D-Bus type signatures of methods, properties and signals. It provides no support for documentation, binding hints or named types.
+> The existing D-Bus specification IDL defines the names, arguments, access restrictions and D-Bus type signatures of methods, properties and signals. It provides no support for documentation, binding hints or named types.
 
-> > 기존 D-Bus IDL 명세는 이름, 파라미터, 접근 제한, 메서드의 D-Bus 타입 시그니쳐, 속성, 그리고 시그널을 정의하지만, 문서, 바인딩 힌트, 기명 타입은 지원하지 않습니다.
+> 기존 D-Bus IDL 명세는 이름, 파라미터, 접근 제한, 메서드의 D-Bus 타입 시그니쳐, 속성, 그리고 시그널을 정의하지만, 문서, 바인딩 힌트, 기명 타입은 지원하지 않습니다.
 
-> > To resolve these limitations, a new XML namespace was added to provide the required information. This namespace was designed to be generic so that it could be used by other D-Bus APIs. New elements were added to include inline documentation, rationales, introduction and deprecation versions and potential exceptions from methods.
+> To resolve these limitations, a new XML namespace was added to provide the required information. This namespace was designed to be generic so that it could be used by other D-Bus APIs. New elements were added to include inline documentation, rationales, introduction and deprecation versions and potential exceptions from methods.
 
-> > 이러한 한계를 극복하기 위해, 필요한 정보를 제공하기 위한 새로운 XML 이름공간이 추가되었습니다. 이 이름공간은 제네릭 하게, 다른 D-Bus API들이 사용할 수 있도록 설계되었습니다. 인라인 문서, 근거, 서론, 대체된 버전들, 그리고 메서드에서 발생할 수 있는 예외를 포함하기 위한 엘리먼트들이 추가되었습니다.
+> 이러한 한계를 극복하기 위해, 필요한 정보를 제공하기 위한 새로운 XML 이름공간이 추가되었습니다. 이 이름공간은 제네릭 하게, 다른 D-Bus API들이 사용할 수 있도록 설계되었습니다. 인라인 문서, 근거, 서론, 대체된 버전들, 그리고 메서드에서 발생할 수 있는 예외를 포함하기 위한 엘리먼트들이 추가되었습니다.
 
-> > D-Bus type signatures are the low-level type notation of what is serialized over the bus. A D-Bus type signature may look like (ii) (which is a structure containing two int32s), or it may be more complex. For example, `a{sa(usuu)}`, is a map from string to an array of structures containing uint32, string, uint32, uint32 (Figure 20.3). These types, while descriptive of the data format, provide no semantic meaning to the information contained in the type.
+> D-Bus type signatures are the low-level type notation of what is serialized over the bus. A D-Bus type signature may look like (ii) (which is a structure containing two int32s), or it may be more complex. For example, `a{sa(usuu)}`, is a map from string to an array of structures containing uint32, string, uint32, uint32 (Figure 20.3). These types, while descriptive of the data format, provide no semantic meaning to the information contained in the type.
 
-> > D-Bus 타입 시그니쳐는 버스 위에서 직렬화된 것들의 로우 레벨 타입 표기입니다. D-Bus 타입 시그니쳐는 `(ii)`(두개의 int32를 포함하는 구조체) 처럼 생겼거나, 더 복잡할 수도 있습니다. 예를 들어, `a{sa(usuu)}`는 uint32, string, uint32, uint32를 포함하는 구조체의 배열로 매핑된 string의 맵입니다(그림 20.3). 이 타입들은, 데이터 형식에 관해서 기술하지만, 타입에 저장된 정보에 대한 의미는 전혀 제공하지 않습니다.
+> D-Bus 타입 시그니쳐는 버스 위에서 직렬화된 것들의 로우 레벨 타입 표기입니다. D-Bus 타입 시그니쳐는 `(ii)`(두개의 int32를 포함하는 구조체) 처럼 생겼거나, 더 복잡할 수도 있습니다. 예를 들어, `a{sa(usuu)}`는 uint32, string, uint32, uint32를 포함하는 구조체의 배열로 매핑된 string의 맵입니다(그림 20.3). 이 타입들은, 데이터 형식에 관해서 기술하지만, 타입에 저장된 정보에 대한 의미는 전혀 제공하지 않습니다.
 
-> > In an effort to provide semantic clarity for programmers and strengthen the typing for language bindings, new elements were added to name simple types, structs, maps, enums, and flags, providing their type signature, as well as documentation. Elements were also added in order to simulate object inheritance for D-Bus objects.
+> In an effort to provide semantic clarity for programmers and strengthen the typing for language bindings, new elements were added to name simple types, structs, maps, enums, and flags, providing their type signature, as well as documentation. Elements were also added in order to simulate object inheritance for D-Bus objects.
 
-> > 프로그래머들에게 의미론적 명료함을 제공하고 언어 바인딩을 위한 타이핑을 강화하기 위해 문서는 물론 간단한 타입, 구조체, 맵, 열거형, 플래그의 타입 시그니쳐를 제공하고, 들에 이름을 붙이기 위해, 새로운 엘리먼트들이 추가되었습니다.
+> 프로그래머들에게 의미론적 명료함을 제공하고 언어 바인딩을 위한 타이핑을 강화하기 위해 문서는 물론 간단한 타입, 구조체, 맵, 열거형, 플래그의 타입 시그니쳐를 제공하고, 들에 이름을 붙이기 위해, 새로운 엘리먼트들이 추가되었습니다.
 
 ![D-Bus 타입 (ii)와 a{sa(usuu)}](http://aosabook.org/images/telepathy/telepathy-types-unpacked.png)
 
@@ -192,10 +192,10 @@ The advantage of this design is that it's completely stateless. When a Telepathy
 
 > Connection도 서비스다
 
-> > As well as the Connection Managers themselves, the connections are also advertised as D-Bus services. This hypothetically allows for the Connection Manager to fork each connection off as a separate process, but to date no Connection Manager like this has been implemented. More practically, it allows all running connections to be discovered by querying the D-Bus bus daemon for all services beginning with `ofdT.Connection`.
+> As well as the Connection Managers themselves, the connections are also advertised as D-Bus services. This hypothetically allows for the Connection Manager to fork each connection off as a separate process, but to date no Connection Manager like this has been implemented. More practically, it allows all running connections to be discovered by querying the D-Bus bus daemon for all services beginning with `ofdT.Connection`.
 
-> > Connection Manager는 물론, Connection 자체도 D-Bus 서비스로 선언됩니다. 이것은 이론적으로 Connection Manager가 각 연결을 개별 프로세스로 포크 할 수 있게 해주지만, 아직 그런 Connection Manager는 존재하지 않습니다. 좀 더 실용적인 면에선, 모든 D-Bus 데몬에 요청을 보냄으로써 이름이 `ofdT.Connection`으로 시작하는 실행 중인 모든 연결들을 발견할 수 있게 해줍니다.
+> Connection Manager는 물론, Connection 자체도 D-Bus 서비스로 선언됩니다. 이것은 이론적으로 Connection Manager가 각 연결을 개별 프로세스로 포크 할 수 있게 해주지만, 아직 그런 Connection Manager는 존재하지 않습니다. 좀 더 실용적인 면에선, 모든 D-Bus 데몬에 요청을 보냄으로써 이름이 `ofdT.Connection`으로 시작하는 실행 중인 모든 연결들을 발견할 수 있게 해줍니다.
 
-> > The Channel Dispatcher also uses this method to discover Telepathy clients. These begin with the name ofdT.Client, e.g., ofdT.Client.Logger.
+> The Channel Dispatcher also uses this method to discover Telepathy clients. These begin with the name ofdT.Client, e.g., ofdT.Client.Logger.
 
-> > Channel Dispatcher 역시 Telepathy 클라이언트들을 발견하기 위해 이 방법을 사용합니다. 이러한 클라이언트들은 `ofdT.Client.Logger` 처럼 `ofdT.Client`로 시작합니다.
+> Channel Dispatcher 역시 Telepathy 클라이언트들을 발견하기 위해 이 방법을 사용합니다. 이러한 클라이언트들은 `ofdT.Client.Logger` 처럼 `ofdT.Client`로 시작합니다.
