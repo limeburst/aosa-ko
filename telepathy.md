@@ -290,3 +290,23 @@ Connection은 연결 상태를 관찰, 관리하고, 채널을 요청하기 위�
 Typically Connections are managed by the Account Manager, created using the properties of the respective accounts. The Account Manager will also synchronize the user's presence for each account to its respective connection and can be asked to provide the connection path for a given account.
 
 Connection들은 주로 Account Manager에 의해 관리되며, 해당하는 계정의 속성을 사용하여 만들어집니다. Account Manager는 각 계정에 대한 사용자의 부재 여부를 각 연결에 동기화시키고, 주어진 계정에 대한 연결 경로를 제공하기도 합니다.
+
+### 20.3.2. Channels
+
+### 20.3.2. 채널
+
+Channels are the mechanism through which communications are carried out. A channel is typically an IM conversation, voice or video call or file transfer, but channels are also used to provide some stateful communication with the server itself, (e.g., to search for chat rooms or contacts). Each channel is represented by a D-Bus object.
+
+채널은 통신이 이루어지는 메커니즘입니다. 채널은 주로 인스턴트 메신저 대화, 음성, 영상 통화나 파일 전송이지만, 서버 자체와의 상태 유지 통신(e.g., 대화방이나 연락처 검색)을 제공할 수도 있습니다. 각 채널은 D-Bus 객체로 나타내어집니다.
+
+Channels are typically between two or more users, one of whom is yourself. They typically have a target identifier, which is either another contact, in the case of one-to-one communication; or a room identifier, in the case of multi-user communication (e.g., a chat room). Multi-user channels expose the `Group` interface, which lets you track the contacts who are currently in the channel.
+
+체널은 주로 둘 이상의 사용자들간에 이루어지며, 그 중 하나는 자신입니다. 채널은 주로 타겟 식별자를 가지고 있으며, 이는 주로 1:1 통신일 경우엔 다른 연락처이거나, 다중 사용자 통신일 경우(e.g., 대화방)엔 방 식별자입니다. 다중 사용자 채널은 `Group` 인터페이스를 노출하며, 이를 통해 현재 채널에 있는 연락처들을 추적할 수 있습니다.
+
+Channels belong to a Connection, and are requested from the Connection Manager, usually via the Channel Dispatcher; or they are created by the Connection in response to a network event (e.g., incoming chat), and handed to the Channel Dispatcher for dispatching.
+
+채널은 Connection에 속하며, 주로 Channel Dispatcher를 통해 Connection Manager로부터 요청이 들어오거나, 네트워크 이벤트(e.g., 걸려오는 대화)의 응답으로써 Connection에 의해 만들어지며, 이후 연결을 위해 Channel Dispatcher로 넘어갑니다.
+
+The type of channel is defined by the channel's ChannelType property. The core features, methods, properties, and signals that are needed for this channel type (e.g., sending and receiving text messages) are defined in the appropriate `Channel.Type` D-Bus interface, for instance `Channel.Type.Text`. Some channel types may implement optional additional features (e.g., encryption) which appear as additional interfaces listed by the channel's `Interfaces` property. An example text channel that connects the user to a multi-user chatroom might have the interfaces shown in Table 20.1.
+
+채널의 타입은 채널의 `ChannelType` 속성에 정의되어 있습니다. 해당 채널 타입(e.g., 문자 메시지를 송수신함)에 필요한 핵심 기능, 메서드, 속성, 신호들은 `Channel.Type.Text` 처럼 적절한 `Channel.Type` D-Bus 인터페이스에 정의되어 있습니다. 어떤 채널 타입들은 선택적인 추가 기능(e.g., 암호화)을 구현할 수 있으며, 채널의 `Interfaces` 속성에 추가적 인터페이스로 나열되어 있습니다. 표 20.1에는 다중 사용자 대화방에 연결하는 텍스트 채널의 한 예가 가질 수 있는 인터페이스를 보여줍니다.
