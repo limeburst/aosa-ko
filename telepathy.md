@@ -310,3 +310,13 @@ Channels belong to a Connection, and are requested from the Connection Manager, 
 The type of channel is defined by the channel's ChannelType property. The core features, methods, properties, and signals that are needed for this channel type (e.g., sending and receiving text messages) are defined in the appropriate `Channel.Type` D-Bus interface, for instance `Channel.Type.Text`. Some channel types may implement optional additional features (e.g., encryption) which appear as additional interfaces listed by the channel's `Interfaces` property. An example text channel that connects the user to a multi-user chatroom might have the interfaces shown in Table 20.1.
 
 채널의 타입은 채널의 `ChannelType` 속성에 정의되어 있습니다. 해당 채널 타입(e.g., 문자 메시지를 송수신함)에 필요한 핵심 기능, 메서드, 속성, 신호들은 `Channel.Type.Text` 처럼 적절한 `Channel.Type` D-Bus 인터페이스에 정의되어 있습니다. 어떤 채널 타입들은 선택적인 추가 기능(e.g., 암호화)을 구현할 수 있으며, 채널의 `Interfaces` 속성에 추가적 인터페이스로 나열되어 있습니다. 표 20.1에는 다중 사용자 대화방에 연결하는 텍스트 채널의 한 예가 가질 수 있는 인터페이스를 보여줍니다.
+
+속성 | 목적
+-
+`odfT.Channel` | 모든 채널에 공통적인 기능
+`odfT.Channel.Type.Text` | 채널 타입(텍스트 채널에 공통적인 기능들을 포함)
+`odfT.Channel.Interface.Messages` | 서식 있는 텍스트 메시징
+`odfT.Channel.Interface.Group` | 이 채널의 구성원을 나열, 추적, 초대, 승인
+`odfT.Channel.Interface.Room` | 제목 등 대화방의 속성을 읽고 쓰기
+
+표 20.1: 예시 텍스트 채널
