@@ -33,3 +33,15 @@ VisTrails는 오픈 소스로 유지하고, 모두에게 무료로 제공하기 
 ![Figure 23.1: Components of the VisTrails User Interface](http://aosabook.org/images/vistrails/overview.png)
 
 ![그림 23.1: VisTrails 사용자 인터페이스의 구성 요소](http://aosabook.org/images/vistrails/overview.png)
+
+## 23.1. System Overview
+
+## 23.1. 시스템 개요
+
+Data exploration is an inherently creative process that requires users to locate relevant data, to integrate and visualize this data, to collaborate with peers while exploring different solutions, and to disseminate results. Given the size of data and complexity of analyses that are common in scientific exploration, tools are needed that better support creativity.
+
+데이터 탐구는 본질적으로, 사용자가 연관된 데이터를 찾고, 찾은 데이터를 접목, 시각화 하고, 또 다른 답을 탐구함과 동시에 동료와 협업하며, 결과를 배포하는 것을 요구하는 창의적인 과정입니다.
+
+There are two basic requirements for these tools that go hand in hand. First, it is important to be able to specify the exploration processes using formal descriptions, which ideally, are executable. Second, to reproduce the results of these processes as well as reason about the different steps followed to solve a problem, these tools must have the ability to systematically capture provenance. VisTrails was designed with these requirements in mind.
+
+이러한 도구들에는 빠질 수 없는 두 가지의 기본적인 요구 사항이 있습니다. 첫 번째로, 탐구 과정을 형식적으로 기록할 수 있어야 하며, 이는 이상적으로, 실행 가능해야 합니다. 두 번째로, 이러한 과정들을 재현하거나, 문제를 푸는 과정에서 따른 단계를 증명할 수 있기 위해, 이러한 도구들은 체계적으로 출처를 추적할 수 있는 기능을 반드시 갖추어야 합니다. VisTrails는 이러한 요구 사항들을 고려하여 설계되었습니다.
