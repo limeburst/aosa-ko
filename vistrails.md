@@ -45,3 +45,23 @@ Data exploration is an inherently creative process that requires users to locate
 There are two basic requirements for these tools that go hand in hand. First, it is important to be able to specify the exploration processes using formal descriptions, which ideally, are executable. Second, to reproduce the results of these processes as well as reason about the different steps followed to solve a problem, these tools must have the ability to systematically capture provenance. VisTrails was designed with these requirements in mind.
 
 이러한 도구들에는 빠질 수 없는 두 가지의 기본적인 요구 사항이 있습니다. 첫 번째로, 탐구 과정을 형식적으로 기록할 수 있어야 하며, 이는 이상적으로, 실행 가능해야 합니다. 두 번째로, 이러한 과정들을 재현하거나, 문제를 푸는 과정에서 따른 단계를 증명할 수 있기 위해, 이러한 도구들은 체계적으로 출처를 추적할 수 있는 기능을 반드시 갖추어야 합니다. VisTrails는 이러한 요구 사항들을 고려하여 설계되었습니다.
+
+### 23.1.1. Workflows and Workflow-Based Systems
+
+### 23.1.1. 작업 흐름과 작업 흐름 기반 시스템
+
+Workflow systems support the creation of pipelines (workflows) that combine multiple tools. As such, they enable the automation of repetitive tasks and result reproducibility. Workflows are rapidly replacing primitive shell scripts in a wide range of tasks, as evidenced by a number of workflow-based applications, both commercial (e.g., Apple's Mac OS X Automator and Yahoo! Pipes) and academic (e.g., NiPype, Kepler, and Taverna).
+
+작업 흐름 시스템은 여러 도구를 통합시킬 수 있는 파이프라인(작업 흐름)의 제작을 지원합니다. 이를 통해 반복적인 작업과, 결과 재현의 자동화를 가능하게 합니다. 작업 흐름은 다양한 작업에서 원시적인 셸 스크립트를 빠르게 대체하고 있으며, 상업적인 영역은 물론(e.g., Apple의 Mac OS X Automator와 Yahoo! Pipes) 학문적인 영역(e.g., NiPype, Kepler, Taverna)에서도 이를 확인할 수 있습니다.
+
+Workflows have a number of advantages compared to scripts and programs written in high-level languages. They provide a simple programming model whereby a sequence of tasks is composed by connecting the outputs of one task to the inputs of another. Figure 23.1 shows a workflow which reads a CSV file that contains weather observations and creates a scatter plot of the values.
+
+작업 흐름은 스크립트나 고수준 언어로 작성된 프로그램들과 비교하여 몇 가지 이점을 가지고 있습니다. 작업 흐름은, 하나의 작업의 결과물을 다른 작업의 입력으로 연결함으로서 일련의 작업을 작성 할 수 있는 간단한 프로그래밍 모델을 제공합니다. 그림 23.1은 기상 관측 데이터가 들어 있는 CSV 파일을 읽어 데이터의 산점도를 만드는 작업 흐름을 보여줍니다.
+
+This simpler programming model allows workflow systems to provide intuitive visual programming interfaces, which make them more suitable for users who do not have substantial programming expertise. Workflows also have an explicit structure: they can be viewed as graphs, where nodes represent processes (or modules) along with their parameters and edges capture the flow of data between the processes. In the example of Figure 23.1, the module CSVReader takes as a parameter a filename (/weather/temp_precip.dat), reads the file, and feeds its contents into the modules GetTemperature and GetPrecipitation, which in turn send the temperature and precipitation values to a matplotlib function that generates a scatter plot.
+
+이러한 간단한 프로그래밍 모델은, 작업 흐름 시스템들이 프로그래밍 경험이 없는 사용자들에게 적합한 직관적인 시각적 프로그래밍 인터페이스를 제공할 수 있도록 합니다. 작업 흐름은 명시적인 구조를 가져, 노드는 프로세스(또는 모듈)를 나타내며, 매개 변수와 변이 프로세스 간의 데이터 흐름을 추적하는 구조의 그래프로 볼 수 있습니다. 그림 23.1의 예시에서, CSVReader 모듈은 매개 변수로 파일 이름(/weather/temp_precip.dat)을 받아, 파일을 읽고, 파일의 내용을 GetTemperature와 GetPrecipitation 모듈에 공급하며, 이 모듈들은 다시 온도와 습도 값을 산점도를 생성하는 matplotlib 함수에 보냅니다.
+
+Most workflow systems are designed for a specific application area. For example, Taverna targets bioinformatics workflows, and NiPype allows the creation of neuroimaging workflows. While VisTrails supports much of the functionality provided by other workflow systems, it was designed to support general exploratory tasks in a broad range of areas, integrating multiple tools, libraries, and services.
+
+대부분의 작업 흐름 시스템들은 특정 응용 영역을 위해 설계됩니다. 예를 들어, Taverna는 생물 정보 공학의 작업 흐름을, NiPype는 뇌영상 작업 흐름을 대상으로 합니다. VisTrails는 다른 작업 흐름 시스템들이 제공하는 대부분의 기능들을 지원하지만, 여러 도구, 라이브러리, 서비스들을 통합하여, 넓은 영역의 일반적인 탐구 작업을 주 대상으로 설계되었습니다.
