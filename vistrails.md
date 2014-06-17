@@ -100,7 +100,7 @@ To build the workflow graphs, users can drag modules from the Module Registry an
 
 As a workflow specification is refined, the system captures the changes and presents them to the user in the Version Tree View described below. Users may interact with the workflows and their results in the VisTrails Spreadsheet. Each cell in the spreadsheet represents a view that corresponds to a workflow instance. In Figure 23.1, the results of the workflow shown in the Workflow Editor are displayed on the top-left cell of the spreadsheet. Users can directly modify the parameters of a workflow as well as synchronize parameters across different cells in the spreadsheet.
 
-작업 흐름의 규칙이 다듬어짐과 동시에, VisTrails는 변경 사항을 추적하여, 아래에 설명된 버전 트리 뷰를 통해 사용자에게 변경 사항을 보여줍니다. 사용자들은 작업 흐름과 결과물을 VisTrails 스프레드시트를 통해 상호 작용할 수 있습니다. 스프레드시트의 각 셀은 작업 흐름의 인스턴스에 대응됩니다. 그림 23.1에서, 
+작업 흐름의 규칙이 다듬어짐과 동시에, VisTrails는 변경 사항을 추적하여, 아래에 설명된 버전 트리 뷰를 통해 사용자에게 변경 사항을 보여줍니다. 사용자들은 작업 흐름과 결과물을 VisTrails 스프레드시트를 통해 상호 작용할 수 있습니다. 스프레드시트의 각 셀은 작업 흐름의 인스턴스에 대응됩니다. 그림 23.1에서, 워크플로우 에디터에 나타나 있는 작업 흐름의 결과물들은 스프레드시트의 왼쪽 상단에 표시되어 있습니다. 사용자들은 작업 흐름의 매개 변수를 직접적으로 편집할 수 있으며, 스프레드시트 위의 여러 셀에 있는 매개 변수들을 동기화시킬 수도 있습니다.
 
 The Version Tree View helps users to navigate through the different workflow versions. As shown in Figure 23.2, by clicking on a node in the version tree, users can view a workflow, its associated result (Visualization Preview), and metadata. Some of the metadata is automatically captured, e.g., the id of the user who created a particular workflow and the creation date, but users may also provide additional metadata, including a tag to identify the workflow and a written description.
 
