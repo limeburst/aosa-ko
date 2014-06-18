@@ -125,3 +125,19 @@ Having observed a trend in the increase of the number of Python-based libraries 
 A beta version of the VisTrails system was first released in January 2007. Since then, the system has been downloaded over twenty-five thousand times.
 
 VisTrail의 베타 버전은 2007년 1월에 처음 공개되었습니다. 그 이래, VisTrails는 2만 5천 번 이상 다운로드 되었습니다.
+
+## 23.3. Inside VisTrails
+
+## 23.3. VisTrails의 내부
+
+The internal components that support the user-interface functionality described above are depicted in the high-level architecture of VisTrails, shown in Figure 23.3. Workflow execution is controlled by the Execution Engine, which keeps track of invoked operations and their respective parameters and captures the provenance of workflow execution (Execution Provenance). As part of the execution, VisTrails also allows the caching of intermediate results both in memory and on disk. As we discuss in Section 23.3, only new combinations of modules and parameters are re-run, and these are executed by invoking the appropriate functions from the underlying libraries (e.g., matplotlib). Workflow results, connected to their provenance, can then be included in electronic documents (Section 23.4).
+
+위에서 설명된 사용자 인터페이스 기능을 구현하는 내부 구성 요소는 그림 23.3에 있는 VisTrails의 고수준 설계에 표현되어 있습니다. 작업 흐름의 실행은, 실행된 명령들과 명령의 매개 변수들, 그리고 작업 흐름의 실행의 출처를 추적하는 실행 엔진에 의해 제어됩니다. VisTrails는 작업 흐름 실행의 일부로서 중간 결과물을 메모리와 디스크에 캐싱도 가능하게 합니다. 23.3장에서 설명되겠지만, 새로운 모듈과 매개 변수의 조합만이 다시 실행되며, 이러한 것들은 내재된 라이브러리(e.g., matplotlib)로부터의 함수를 호출함으로서 실행됩니다. 작업 흐름의 결과물들은, 출처와 연결 된 이후에 전자 문서(23.4 장)에 포함될 수 있습니다.
+
+Information about changes to workflows is captured in a Version Tree, which can be persisted using different storage back ends, including an XML file store in a local directory and a relational database. VisTrails also provides a query engine that allows users to explore the provenance information.
+
+작업 흐름에 대한 변경 사항의 정보는 버전 트리에서 추적되며, 로컬 디렉토리의 XML 파일, 관계형 데이터베이스 등 여러 스토리지 백엔드를 사용하여 영구 저장할 수 있습니다. VisTrails는 사용자들이 출처 정보를 탐색할 수 있도록 쿼리 엔진도 제공합니다.
+
+We note that, although VisTrails was designed as an interactive tool, it can also be used in server mode. Once workflows are created, they can be executed by a VisTrails server. This feature is useful in a number of scenarios, including the creation of Web-based interfaces that allows users to interact with workflows and the ability to run workflows in high-performance computing environments.
+
+VisTrails는 대화식 도구로서 설계되었지만, 서버 모드로도 사용될 수 있습니다. 작업 흐름은 생성된 이후, VisTrails 서버에 의해 실행될 수 있습니다. 이 기능은, 웹 기반 인터페이스를 만들고 이를 통해 사용자들이 작업 흐름과 상호 작용하거나, 고성능 컴퓨팅 환경에서 작업 흐름을 실행하는 등 몇몇 상황에서 유용하게 사용될 수 있습니다.
