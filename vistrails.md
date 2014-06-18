@@ -109,3 +109,19 @@ The Version Tree View helps users to navigate through the different workflow ver
 ![Figure 23.3: VisTrails Architecture](http://aosabook.org/images/vistrails/system-interaction.png)
 
 ![Figure 23.3: VisTrails 설계도](http://aosabook.org/images/vistrails/system-interaction.png)
+
+## 23.2. Project History
+
+## 23.2. 프로젝트의 역사
+
+Initial versions of versions of VisTrails were written in Java and C++ [BCC+05]. The C++ version was distributed to a few early adopters, whose feedback was instrumental in shaping our requirements for the system.
+
+VisTrails의 초기 버전들은 Java와 C++로 작성되었습니다. C++ 버전은 소수의 얼리 어답터들에게 배포되었으며, 이를 통해 얻은 피드백은 VisTrails의 요구 사항을 정하는 데 주된 역할을 하였습니다.
+
+Having observed a trend in the increase of the number of Python-based libraries and tools in multiple scientific communities, we opted to use Python as the basis for VisTrails. Python is quickly becoming a universal modern glue language for scientific software. Many libraries written in different languages such as Fortran, C, and C++ use Python bindings as a way to provide scripting capabilities. Since VisTrails aims to facilitate the orchestration of many different software libraries in workflows, a pure Python implementation makes this much easier. In particular, Python has dynamic code loading features similar to the ones seen in LISP environments, while having a much bigger developer community, and an extremely rich standard library. Late in 2005, we started the development of the current system using Python/PyQt/Qt. This choice has greatly simplified extensions to the system, in particular, the addition of new modules and packages.
+
+여러 과학 커뮤니티 내에서 늘어나는 파이썬 기반 라이브러리와 도구의 추세를 관찰하여, VisTrails의 기반을 파이썬으로 작성하기로 선택하였습니다. 파이썬은 빠른 속도로 과학 소프트웨어를 위한, 보편적이고 현대적인 보조 언어로 거듭나고 있습니다. Fortran, C, C++ 등 다른 여러 언어로 작성된 라이브러리들이 스크립팅 기능을 제공하기 위해 파이썬 바인딩을 사용합니다. VisTrails가 작업 흐름에 다양한 소프트웨어 라이브러리를 묶어 사용할 수 있도록 하는 것을 목표로 하기 때문에, 순수 파이썬으로 구현체를 작성하는 것은 이러한 작업을 매우 쉽게 할 수 있게 합니다. 특히, 파이썬에는 LISP 환경과 비슷하게 동적으로 코드를 불러오는 기능, 훨씬 큰 개발자 커뮤니티, 그리고 풍부한 표준 라이브러리가 있습니다. 2005년 말, 우리는 Python/PyQt/Qt를 이용해 현재의 시스템을 개발하기 시작했습니다. 이러한 선택은 VisTrails의 확장, 특히 새로운 모듈과 패키지를 추가하는 것을 매우 간단히 할 수 있게 하였습니다.
+
+A beta version of the VisTrails system was first released in January 2007. Since then, the system has been downloaded over twenty-five thousand times.
+
+VisTrail의 베타 버전은 2007년 1월에 처음 공개되었습니다. 그 이래, VisTrails는 2만 5천 번 이상 다운로드 되었습니다.
