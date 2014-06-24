@@ -281,3 +281,27 @@ Each module specifies the computation to be performed by overriding the compute 
 As a general guideline, VisTrails modules should refrain from using functions with side-effects during the evaluation of the compute method. As discussed in Section 23.3, this requirement makes caching of partial workflow runs possible: if a module respects this property, then its behavior is a function of the outputs of upstream modules. Every acyclic subgraph then only needs to be computed once, and the results can be reused.
 
 일반적인 지침으로, VisTrails 모듈은 compute 메서드의 실행 중에 부작용을 가지는 함수의 사용을 삼가야 합니다. 23.3장에서 언급했던 것처럼, 이 요구사항은 부분적인 작업 흐름의 실행의 캐싱을 가능하게 합니다. 모듈이 이 속성을 존중한다면, 해당 모듈의 동작은 업스트림 모듈의 결과물에 함수적입니다. 따라서 모든 비순환식 부분 그래프는 한 번만 계산되면 되고, 결과물을 재사용할 수 있게 됩니다.
+
+### 23.3.6. Passing Data as Modules
+
+### 23.3.6. 데이터를 모듈로서 전달하기
+
+One peculiar feature of VisTrails modules and their communication is that the data that is passed between VisTrails modules are themselves VisTrails modules. In VisTrails, there is a single hierarchy for module and data classes. For example, a module can provide itself as an output of a computation (and, in fact, every module provides a default "self" output port). The main disadvantage is the loss of conceptual separation between computation and data that is sometimes seen in dataflow-based architectures. There are, however, two big advantages. The first is that this closely mimics the object type systems of Java and C++, and the choice was not accidental: it was very important for us to support automatic wrapping of large class libraries such as VTK. These libraries allow objects to produce other objects as computational results, making a wrapping that distinguishes between computation and data more complicated.
+
+VisTrails 모듈과 모듈간 통신의 특이한 점은, 모듈 간 전달되는 데이터 자체도 VisTrails 모듈이라는 점입니다. VisTrails에는 모듈과 데이터 클래스 위한 하나의 계층이 있습니다. 예를 들어, 모듈은 계산의 결과로 자기 자신을 제공할 수 있습니다(사실, 모든 모듈은 기본값으로 "self" 출력 포트를 제공합니다). 이것이 주된 단점은, 데이터 흐름 기반 설계에서 가끔 보이는, 계산과 데이터의 개념적인 분리의 상실을 야기한다는 점입니다. 하지만 두 가지 큰 장점을 얻을 수 있습니다. 첫번째는 이러한 
+
+The second advantage this decision brings is that defining constant values and user-settable parameters in workflows becomes easier and more uniformly integrated with the rest of the system. Consider, for example, a workflow that loads a file from a location on the Web specified by a constant. This is currently specified by a GUI in which the URL can be specified as a parameter (see the Parameter Edits area in Figure 23.1). A natural modification of this workflow is to use it to fetch a URL that is computed somewhere upstream. We would like the rest of the workflow to change as little as possible. By assuming modules can output themselves, we can simply connect a string with the right value to the port corresponding to the parameter. Since the output of a constant evaluates to itself, the behavior is exactly the same as if the value had actually been specified as a constant.
+
+이 결정의 두번째 장점은, 상수와, 사용자가 설정 가능한 매개 변수를 작업 흐름 내에서 정의하기 더 쉽고 시스템의 다른 부분과도 균일하게 통합된다는 것입니다. 상수로 정의된 웹 위치로부터 파일을 불러오는 작업 흐름을 예로 들면, URL은 매개 변수로서 GUI를 통해 지정됩니다(그림 23.1의 매개 변수 편집 영역). 이 작업 흐름을 조금 더 자연스럽게 편집을 가하자면, URL을 업스트림의 다른 곳에서 계산하여 가져 오는 것입니다. 모듈들이 자기 자신을 결과로 제공할 수 있다고 가정하여, 단지 파라미터에 해당되는 포트에 문자열을 연결하면 됩니다. 상수의 출력은 상수 자기 자신이기 때문에, 이것은 값이 상수로 지정되었을 때와 똑같이 작동합니다.
+
+![Figure 23.5: Prototyping New Functionality with the PythonSource Module](http://aosabook.org/images/vistrails/python-source.png)
+
+![그림 23.5: PythonSource 모듈으로 새로운 기능 프로토타이핑 하기](http://aosabook.org/images/vistrails/python-source.png)
+
+There are other considerations involved in designing constants. Each constant type has a different ideal GUI interface for specifying values. For example, in VisTrails, a file constant module provides a file chooser dialog; a Boolean value is specified by a checkbox; a color value has a color picker native to each operating system. To achieve this generality, a developer must subclass a custom constant from the Constant base class and provide overrides which define an appropriate GUI widget and a string representation (so that arbitrary constants can be serialized to disk).
+
+상수들을 설계하는 데 고려해야 할 다른 점들도 있습니다. 상수형마다 다른 값을 설정하기 위한 이상적인 GUI 인터페이스를 가집니다. 예를 들어, VisTrails에서는, 파일 상수 모듈은 파일 선택 대화 창을 제공하고, 불린 값은 체크박스로 표현되며, 색 값은 운영체제에 따른 색 선택 창을 가집니다. 이러한 일반성을 가지기 위해, 개발자는 Constant 기반 클래스를 상속하고, 적절한 GUI 위젯을 정의하는 오버라이드를 제공하고, 문자열 표현형을 정의해야 합니다(임의의 상수들이 디스크에 직렬화될 수 있도록). 
+
+We note that, for simple prototyping tasks, VisTrails provides a built-in PythonSource module. A PythonSource module can be used to directly insert scripts into a workflow. The configuration window for PythonSource (see Figure 23.5) allows multiple input and output ports to be specified along with the Python code that is to be executed.
+
+단순한 프로토타이핑 작업에 대해서는, VisTrails는 내장된 PythonSource 모듈을 제공합니다. PythonSource 모듈은 작업 흐름에 스크립트를 직접 삽입하는데 쓰일 수 있습니다. PythonSource(그림 23.5)의 설정 창은 다수의 입력과 출력 포트와 함께 실행될 파이썬 코드의 입력을 지원합니다.
