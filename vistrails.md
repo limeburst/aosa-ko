@@ -305,3 +305,11 @@ There are other considerations involved in designing constants. Each constant ty
 We note that, for simple prototyping tasks, VisTrails provides a built-in PythonSource module. A PythonSource module can be used to directly insert scripts into a workflow. The configuration window for PythonSource (see Figure 23.5) allows multiple input and output ports to be specified along with the Python code that is to be executed.
 
 단순한 프로토타이핑 작업에 대해서는, VisTrails는 내장된 PythonSource 모듈을 제공합니다. PythonSource 모듈은 작업 흐름에 스크립트를 직접 삽입하는데 쓰일 수 있습니다. PythonSource(그림 23.5)의 설정 창은 다수의 입력과 출력 포트와 함께 실행될 파이썬 코드의 입력을 지원합니다.
+
+## 23.4. Components and Features
+
+## 23.4. 구성 요소와 기능
+
+As discussed above, VisTrails provides a set of functionalities and user interfaces that simplify the creation and execution of exploratory computational tasks. Below, we describe some of these. We also briefly discuss how VisTrails is being used as the basis for an infrastructure that supports the creation of provenance-rich publications. For a more comprehensive description of VisTrails and its features, see VisTrails' online documentation6.
+
+위에서 설명된 것처럼, VisTrails는 탐구적 계산 작업의 제작과 실행을 간편하게 해주는 기능들의 집합과 사용자 인터페이스를 제공합니다. 아래에서 이에 대한 설명을 합니다. VisTrails가 어떻게 출처 정보가 풍부한 발행물을 만드는 기반으로서 사용되는지 설명합니다. VisTrails에 대한 더욱 자세한 기능과 설명은 온라인 문서에 있습니다.
