@@ -499,9 +499,9 @@ One of the challenges of using a system like VisTrails is that it is very genera
 
 VisTrails 같은 류의 시스템을 사용하는 데에 있는 큰 장벽은 매우 일반화되어있다는 점입니다. VisTrails의 사용성을 개선하기 위한 노력에도 불구하고, VisTrails는 일부 유저들에겐 급격한 학습 커브를 가진 복잡한 도구입니다. 우리는 시간이 지나고 문서가 개선되며, 시스템을 다듬고, 좀 더 많은 응용 분야와 분야별 예제가 생긴다면 어떤 분야에서든 도입하기 위한 기준이 완화될 것이라고 믿습니다. 또, 출처에 대한 개념이 널리 퍼지면, 사용자들이 VisTrails 개발에 들어간 철학을 좀 더 쉽게 이해할 수 있게 될 것입니다.
 
-23.5.1. Acknowledgments
+### 23.5.1. Acknowledgments
 
-23.5.1. 감사의 말
+### 23.5.1. 감사의 말
 
 We would like to thank all the talented developers that contributed to VisTrails: Erik Anderson, Louis Bavoil, Clifton Brooks, Jason Callahan, Steve Callahan, Lorena Carlo, Lauro Lins, Tommy Ellkvist, Phillip Mates, Daniel Rees, and Nathan Smith. Special thanks to Antonio Baptista who was instrumental in helping us develop the vision for the project; and Matthias Troyer, whose collaboration has helped us to improve the system, and in particular has provided much of the impetus for the development and release of the provenance-rich publication functionality. The research and development of the VisTrails system has been funded by the National Science Foundation under grants IIS 1050422, IIS-0905385, IIS 0844572, ATM-0835821, IIS-0844546, IIS-0746500, CNS-0751152, IIS-0713637, OCE-0424602, IIS-0534628, CNS-0514485, IIS-0513692, CNS-0524096, CCF-0401498, OISE-0405402, CCF-0528201, CNS-0551724, the Department of Energy SciDAC (VACET and SDM centers), and IBM Faculty Awards.
 
