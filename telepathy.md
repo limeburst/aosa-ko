@@ -320,3 +320,23 @@ The type of channel is defined by the channel's ChannelType property. The core f
 `odfT.Channel.Interface.Room` | 제목 등 대화방의 속성을 읽고 쓰기
 
 표 20.1: 예시 텍스트 채널
+
+> Contact List Channels: A Mistake
+
+> 연락처 목록 채널: 실수
+
+> In the first versions of the Telepathy specification, contact lists were considered a type of channel. There were several server-defined contact lists (subscribed users, publish-to users, blocked users), that could be requested from each Connection. The members of the list were then discovered using the Group interface, like for a multi-user chat.
+
+> 초기 Telepathy 명세에선 연락처 목록을 채널의 일종으로 정의합니다. 각 Connection에서 요청할 수 있는, 서버에서 지정하는 여러 연락처 목록(구독한 사용자, 발행 대상 사용자, 차단된 사용자)이 있었으며, 목록의 구성원들은 다중 사용자 채팅과 같이 Group 인터페이스를 통해 발견되었습니다.
+
+> Originally this would allow for channel creation to occur only once the contact list had been retrieved, which takes time on some protocols. A client could request the channel whenever it liked, and it would be delivered once ready, but for users with lots of contacts this meant the request would occasionally time out. Determining the subscription/publish/blocked status of a client required checking three channels.
+
+> 기존에 방식에서의 채널 생성은, 일부 프로토콜에서는 어느 정도의 시간이 걸리는, 연락처 목록을 가져 온 다음에 한 번만 채널이 생성되었습니다. 클라이언트는 채널을 원할 때 요청하고 준비가 되면 받을 수 있지만, 연락처가 많은 사용자들에겐 이 요청은 종종 타임아웃이 나게 됩니다. 클라이언트의 구독/발행/차단 상태를 결정짓기 위해서는 세 가지 채널을 확인해야 했습니다.
+
+> Contact Groups (e.g., Friends) were also exposed as channels, one channel per group. This proved extremely difficult for client developers to work with. Operations like getting the list of groups a contact was in required a significant amount of code in the client. Further, with the information only available via channels, properties such as a contact's groups or subscription state could not be published via the Contacts interface.
+
+> 연락처 그룹(e.g., 친구들) 역시 그룹 당 하나의 채널의 형태로 노출되어 있었습니다. 이러한 구조는 클라이언트 개발자들이 다루기 매우 힘든 것으로 증명되었습니다. 연락처가 속해 있는 그룹의 목록을 가져오는 등의 작업은 클라이언트 측에서 매우 많은 양의 코드를 필요로 했습니다. 또, 채널을 통해서만 정보를 받아올 수 있기 때문에, 연락처의 그룹이나 구독 상태를 Contacts 인터페이스를 통해 발행할 수 없었습니다. 
+
+> Both channel types have since been replaced by interfaces on the Connection itself which expose contact roster information in ways more useful to client authors, including subscription state of a contact (an enum), groups a contact is in, and contacts in a group. A signal indicates when the contact list has been prepared.
+
+> 두 채널 타입 모두 클라이언트 개발자에게 유용한 연락처 목록 정보를 노출하는, 연락처의 구독 상태(enum 형의), 연락처가 속해 있는 그룹, 그리고 그룹에 있는 연락처들을 포함하는 Connection 자체의 인터페이스로 교체되었습니다. 시그널은 연락처 목록이 준비되었는지 여부를 알려줍니다.
