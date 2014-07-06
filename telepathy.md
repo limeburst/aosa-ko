@@ -312,7 +312,7 @@ The type of channel is defined by the channel's ChannelType property. The core f
 채널의 타입은 채널의 `ChannelType` 속성에 정의되어 있습니다. 해당 채널 타입(e.g., 문자 메시지를 송수신함)에 필요한 핵심 기능, 메서드, 속성, 신호들은 `Channel.Type.Text` 처럼 적절한 `Channel.Type` D-Bus 인터페이스에 정의되어 있습니다. 어떤 채널 타입들은 선택적인 추가 기능(e.g., 암호화)을 구현할 수 있으며, 채널의 `Interfaces` 속성에 추가적 인터페이스로 나열되어 있습니다. 표 20.1에는 다중 사용자 대화방에 연결하는 텍스트 채널의 한 예가 가질 수 있는 인터페이스를 보여줍니다.
 
 속성 | 목적
--
+- | -
 `odfT.Channel` | 모든 채널에 공통적인 기능
 `odfT.Channel.Type.Text` | 채널 타입(텍스트 채널에 공통적인 기능들을 포함)
 `odfT.Channel.Interface.Messages` | 서식 있는 텍스트 메시징
