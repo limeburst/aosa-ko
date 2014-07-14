@@ -587,3 +587,23 @@ For example, connection object proxies have:
 The programmer requests that the object is readied, providing a list of features in which they are interested and a callback to call when all of those features are ready. If all the features are already ready, the callback can be called immediately, else the callback is called once all the information for those features is retrieved.
 
 프로그래머는 관심 있는 기능들의 목록과 기능들이 준비되었을 때 호출할 콜백과 함께 객체 준비 요청을 보냅니다. 모든 기능들이 준비되면 콜백은 호출되며, 이미 모든 기능들이 준비되어 있을 경우 콜백은 즉시 호출됩니다. 
+
+## 20.5. Robustness
+
+## 20.5. 견고성
+
+One of the key advantages of Telepathy is its robustness. The components are modular, so a crash in one component should not bring down the whole system. Here are some of the features that make Telepathy robust:
+
+Telepathy의 주요 이점은 Telepathy의 견고함입니다. Telepathy의 구성 요소들은 모듈화되어 있으므로 하나의 구성 요소가 고장나도 전체 시스템이 중단되지 않습니다. 다음은 Telepathy를 견고하게 만드는 몇 가지 특징들입니다:
+
+* The Account Manager and Channel Dispatcher can recover their state. When Mission Control (the single process that includes the Account Manager and Channel Dispatcher) starts, it looks at the names of services currently registered on the user's session bus. Any Connections it finds that are associated with a known account are reassociated with that account (rather than a new connection being established), and running clients are queried for the list of channels they're handling.
+* If a client disappears while a channel it's handling is open, the Channel Dispatcher will respawn it and reissue the channel. 
+If a client repeatedly crashes the Channel Dispatcher can attempt to launch a different client, if available, or else it will close the channel (to prevent the client repeatedly crashing on data it can't handle). 
+Text messages require acknowledgment before they will disappear from the list of pending messages. A client is only meant to acknowledge a message once it is sure the user has seen it (that is, displayed the message in a focused window). This way if the client crashes trying to render the message, the channel will still have the previously undisplayed message in the pending message queue.
+* If a Connection crashes, the Account Manager will respawn it. Obviously the content of any stateful channels will be lost, but it will only affect the Connections running in that process and no others. Clients can monitor the state of the connections and simply re-request information like the contact roster and any stateless channels.
+
+* Account Manager와 Channel Dispatcher는 상태를 회복할 수 있습니다. Mission Control(Account Manager와 Channel Dispatcher를 포함하는 하나의 프로세스)이 시작할 때, 사용자의 세션 버스에 등록되어 있는 서비스들의 이름을 확인합니다. 알려진 계정과 연관된 Connection을 발견하면 (새로운 연결을 만드는 대신) 다시 해당 계정과 연관시키며, 실행 중인 클라이언트들이 처리 하고 있는 채널의 목록을 가져옵니다.
+* 클라이언트가 채널을 처리하는 도중에 사라질 경우에 Channel Dispatcher는 클라이언트를 재실행시고 채널을 다시 등록합니다.
+클라이언트가 반복적으로 중단될 경우엔 Channel Dispatcher는 다른 클라이언트를 실행할 수 있으며, 다른 클라이언트가 없을 경우엔 (클라이언트가 처리할 수 없는 데이터에 의해 반복적으로 중단되는 것을 막기 위해) 채널을 닫습니다.
+텍스트 메시지는 대기 큐에서 없어지기 전에 승인되어야 합니다. 클라이언트는 사용자가 메시지를 본 후에야(메시지 창에 포커스를 주는 등) 메시지를 승인할 수 있습니다. 이를 통해 클라이언트가 메시지를 렌더링하려는 도중에 중단된 경우에도 채널은 표시하지 못한 메시지에 대한 정보를 대기 메시지 큐에 가지고 있을 수 있습니다.
+* Connection이 중단될 경우엔, Account Manager는 Connection을 다시 만듭니다. 이 과정에서 채널의 상태는 당연히 사라지지만, 해당 프로세스의 Connection에만 영향을 미칩니다. 클라이언트들은 연결들의 상태를 관찰할 수 있으며 연락처 목록과 다른 상태 없는 채널 등의 정보를 다시 요청할 수 있습니다.
