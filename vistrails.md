@@ -34,25 +34,15 @@ VisTrails를 오픈 소스로 유지하고 모두에게 무료로 제공하기 �
 
 대부분의 작업 흐름 시스템들은 특정 응용 영역을 위해 설계됩니다. 예를 들어 Taverna는 생물정보학 작업 흐름을, NiPype는 뇌영상 작업 흐름의 생성을 대상으로 합니다. VisTrails는 다른 작업 흐름 시스템들이 제공하는 대부분의 기능을 지원하지만, 여러 도구, 라이브러리, 서비스들을 접목시켜, 넓은 영역의 일반적인 탐구 작업을 대상으로 설계되었습니다.
 
-### 23.1.2. Data and Workflow Provenance
-
 ### 23.1.2. 데이터와 작업 흐름 출처
 
-The importance of keeping provenance information for results (and data products) is well recognized in the scientific community. The provenance (also referred to as the audit trail, lineage, and pedigree) of a data product contains information about the process and data used to derive the data product. Provenance provides important documentation that is key to preserving the data, to determining the data's quality and authorship, and to reproducing as well as validating the results [[FKSS08](http://aosabook.org/en/bib1.html#bib:freire:provenance)].
+결과물(그리고 데이터 생산물)의 출처 정보 보존의 중요성은 학계에서 잘 알려져 있습니다. (추적 기록, 계통, 계도로도 알려져 있는) 데이터 생산물의 출처는 그 생산물을 유도해 내는데 사용된 과정과 데이터를 담고 있습니다. 출처는 데이터의 보존, 데이터의 품질과 출처의 결정, 그리고 결과물의 재현과 검증을 위한 중요한 단서를 제공합니다 \[[FKSS08](http://aosabook.org/en/bib1.html#bib:freire:provenance)].
 
-결과물(그리고 데이터 생산물)의 출처 정보를 보존하는 것의 중요성은 학계에서 잘 알려져 있습니다. 데이터 생산물의 출처(추적 기록, 계통, 계도로도 알려져 있는)는 그 생산물을 유도해 내는데 사용된 과정과 데이터를 담고 있습니다. 출처는 데이터를 보존, 품질과 원작자를 결정, 그리고 결과의 재현과 검증을 하는 데 필수적인 정보를 제공합니다.
+출처의 중요한 요소는, 인과 관계에 대한 정보, 즉, 입력 데이터와 매개 변수와 함께 데이터 결과물의 생성에 기인하게 되는 과정(일련의 단계)에 대한 설명입니다. 따라서 출처의 구조는 주어진 결과물을 얻기 위해 사용된 작업 흐름의 구조를 반영합니다.
 
-An important component of provenance is information about causality, i.e., a description of a process (sequence of steps) which, together with input data and parameters, caused the creation of a data product. Thus, the structure of provenance mirrors the structure of the workflow (or set of workflows) used to derive a given result set.
+실제로, 학계에서의 작업 흐름 시스템 사용을 확산시킨 촉매가 된 것은 작업 흐름 시스템이 출처를 자동으로 추적하기 위해 쉽게 사용될 수 있다는 사실이었습니다. 초기 작업 흐름 시스템들은 출처를 추적할 수 있도록 확장이 필요했지만, VisTrails는 출처 추적을 염두에 두고 설계되었습니다.
 
-출처의 중요한 구성 요소는, 인과 관계에 대한 정보 즉, 입력 데이터와 매개 변수와 같이 쓰여 데이터 결과물의 생성에 기인하게 되는, 과정에 대한 설명(일련의 단계)입니다. 따라서, 출처의 구조는 주어진 결과물의 집합을 얻기 위해 사용되는 작업 흐름(또는 작업 흐름들)의 구조를 반영합니다.
-
-In fact, a catalyst for the widespread use of workflow systems in science has been that they can be easily used to automatically capture provenance. While early workflow systems have been extended to capture provenance, VisTrails was designed to support provenance.
-
-사실상, 학계에서의 작업 흐름 시스템의 사용을 확산시킨 촉매가 된 것은 작업 흐름 시스템이 출처를 자동으로 추적하기 쉽게 해 준다는 점이었습니다. 초기 작업 흐름 시스템들은 출처를 추적하기 위해 확장되었지만, VisTrails는 출처 추적을 염두에 두고 설계되었습니다.
-
-![Figure 23.2: Provenance of Exploration Enhanced by Annotations](http://aosabook.org/images/vistrails/overview.png)
-
-![그림 23.2: 주석으로 향상시킨 탐구 내용의 출처](http://aosabook.org/images/vistrails/overview.png)
+![그림 23.2: 주석으로 향상된, 탐구의 출처](http://aosabook.org/images/vistrails/overview.png)
 
 ### 23.1.3. User Interface and Basic Functionality
 
