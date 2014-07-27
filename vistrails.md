@@ -44,29 +44,17 @@ VisTrails를 오픈 소스로 유지하고 모두에게 무료로 제공하기 �
 
 ![그림 23.2: 주석으로 향상된, 탐구의 출처](http://aosabook.org/images/vistrails/overview.png)
 
-### 23.1.3. User Interface and Basic Functionality
-
 ### 23.1.3. 사용자 인터페이스와 기본 기능
 
-The different user interface components of the system are illustrated in Figure 23.1 and Figure 23.2. Users create and edit workflows using the Workflow Editor.
+그림 23.1과 그림 23.2에 VisTrail 사용자 인터페이스의 구성 요소들이 나타나 있습니다. 사용자들은 워크플로우 편집기를 통해 작업 흐름을 만들고 편집합니다.
 
-사용자 인터페이스의 구성 요소들이 그림 23.1과 그림 23.2에 표현되어 있습니다. 사용자들은 워크플로우 에디터를 통해 작업 흐름을 편집합니다.
+작업 흐름 그래프를 만들기 위해 사용자들은 모듈 레지스트리에서 모듈을 끌어 워크플로우 편집 캔버스에 넣을 수 있습니다. VisTrails는 몇 가지 내장 모듈을 제공하며, 사용자들이 자신의 모듈을 추가할 수도 있습니다 (23.3에서 자세히 설명됩니다). 모듈이 선택되면, VisTrails는 사용자가 모듈의 매개 변수들을 설정하고 편집할 수 있도록 모듈의 매개 변수들을 매개 변수 편집 영역에 표시해 줍니다.
 
-To build the workflow graphs, users can drag modules from the Module Registry and drop them into the Workflow Editor canvas. VisTrails provides a series of built-in modules, and users can also add their own (see Section 23.3 for details). When a module is selected, VisTrails displays its parameters (in the Parameter Edits area) where the user can set and modify their values.
+작업 흐름의 규칙이 다듬어짐과 동시에 VisTrails는 변경 사항을 추적하여 버전 트리 뷰를 통해 변경 사항들을 사용자에게 보여줍니다. 사용자들은 VisTrails 스프레드시트에서 작업 흐름과 작업 흐름의 결과물들과 상호 작용할 수 있습니다. 스프레드시트의 각 셀은 작업 흐름의 인스턴스에 대응합니다. 그림 23.1에서, 워크플로우 편집기에 나타나 있는 작업 흐름의 결과물들은 스프레드시트 왼쪽 위에 표시되어 있습니다. 사용자들은 작업 흐름의 매개 변수들을 직접 편집할 수 있으며, 스프레드시트 위의 여러 셀에 있는 매개 변수들을 동기화시킬 수도 있습니다.
 
-작업 흐름 그래프를 만들기 위해서, 사용자들은 모듈 레지스트리에서 모듈을 끌어 워크플로우 에디터 캔버스에 넣을 수 있습니다. VisTrails는 몇 가지 내장 모듈을 제공하며, 사용자들이 자신의 모듈을 추가할 수도 있습니다(23.3 에서 자세히 설명됩니다). 모듈이 선택되었을 때, VisTrails는 매개 변수 편집 영역에 사용자가 설정하고 편집할 수 있는, 모듈의 매개 변수들을 표시해 줍니다.
+버전 트리 뷰는 사용자들이 작업 흐름의 버전들을 탐색할 수 있게 도와줍니다. 그림 23.2처럼, 사용자들은 버전 트리의 노드를 클릭하여, 작업 흐름과, 연관된 결과물 (시각화 미리 보기), 그리고 메타데이터를 볼 수 있습니다. 특정 작업 흐름을 생성한 사용자의 id와 생성 날짜 등 몇몇 메타데이터는 자동으로 추적되며, 작업 흐름을 식별하기 위한 태그나 설명 등 추가적인 메타데이터를 사용자가 직접 제공할 수도 있습니다.
 
-As a workflow specification is refined, the system captures the changes and presents them to the user in the Version Tree View described below. Users may interact with the workflows and their results in the VisTrails Spreadsheet. Each cell in the spreadsheet represents a view that corresponds to a workflow instance. In Figure 23.1, the results of the workflow shown in the Workflow Editor are displayed on the top-left cell of the spreadsheet. Users can directly modify the parameters of a workflow as well as synchronize parameters across different cells in the spreadsheet.
-
-작업 흐름의 규칙이 다듬어짐과 동시에, VisTrails는 변경 사항을 추적하여, 아래에 설명된 버전 트리 뷰를 통해 사용자에게 변경 사항을 보여줍니다. 사용자들은 작업 흐름과 결과물을 VisTrails 스프레드시트를 통해 상호 작용할 수 있습니다. 스프레드시트의 각 셀은 작업 흐름의 인스턴스에 대응됩니다. 그림 23.1에서, 워크플로우 에디터에 나타나 있는 작업 흐름의 결과물들은 스프레드시트의 왼쪽 상단에 표시되어 있습니다. 사용자들은 작업 흐름의 매개 변수를 직접적으로 편집할 수 있으며, 스프레드시트 위의 여러 셀에 있는 매개 변수들을 동기화시킬 수도 있습니다.
-
-The Version Tree View helps users to navigate through the different workflow versions. As shown in Figure 23.2, by clicking on a node in the version tree, users can view a workflow, its associated result (Visualization Preview), and metadata. Some of the metadata is automatically captured, e.g., the id of the user who created a particular workflow and the creation date, but users may also provide additional metadata, including a tag to identify the workflow and a written description.
-
-버전 트리 뷰는 사용자들이 서로 다른 작업 흐름의 버전을 탐색할 수 있게 도와줍니다. 그림 23.2 처럼, 사용자들은 버전 트리의 노드를 클릭하여 작업 흐름과, 연관된 결과물(시각화 미리 보기), 그리고 메타데이터를 볼 수 있습니다. 특정 작업 흐름을 생성한 사용자의 id, 생성 날짜 등 몇몇 메타데이터는 자동적으로 추적되며, 작업 흐름을 식별하기 위한 태그나 설명 등, 사용자가 직접 추가적인 메타데이터를 제공할 수도 있습니다.
-
-![Figure 23.3: VisTrails Architecture](http://aosabook.org/images/vistrails/system-interaction.png)
-
-![Figure 23.3: VisTrails 설계도](http://aosabook.org/images/vistrails/system-interaction.png)
+![Figure 23.3: VisTrails의 설계](http://aosabook.org/images/vistrails/system-interaction.png)
 
 ## 23.2. Project History
 
