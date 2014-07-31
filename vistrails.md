@@ -86,29 +86,17 @@ VisTrails는 대화식 도구로서 설계되었지만, 서버 모드로도 사�
 
 출처 정보는 작업 흐름이 실행되는 중에 쉽게 추적될 수 있습니다. 실행이 완료된 후에, 데이터 결과물과 그 출처, 즉, 데이터 결과물을 기인한 작업 흐름, 매개 변수, 그리고 입력 파일들과의 강한 관계를 유지하는 것 역시 중요합니다. 데이터 파일이나 출처가 옮겨졌거나 편집되었을 경우, 그 출처와 연관된 데이터나, 데이터와 연관된 출처를 찾기가 어려워질 수도 있습니다. VisTrails는 입력, 중간 데이터, 그리고 출력 데이터 파일을 영속적으로 저장하는 체계를 제공하여 출처와 데이터의 관계를 강하게 유지할 수 있게 합니다. 이 체계는 출처 정보에 언급된 데이터를 쉽고 정확하게 찾을 수 있게 하므로 재현성을 강화합니다. 이러한 관리 방식은, 중간 데이터를 캐싱하여 다른 사용자들과 공유할 수 있게 해준다는 점에서도 중요한 이점을 가집니다. 
 
-### 23.3.2. Workflow Execution and Caching
+### 23.3.2. 작업 흐름의 실행과 캐싱
 
-### 23.3.2. 작업 흐름 실행과 캐싱
+VisTrails의 실행 엔진은 기존 및 새로운 도구와 라이브러리들과 접목될 수 있게 설계되었습니다. 우리는 써드 파티 과학적 시각화 및 계산 소프트웨어를 감싸는 다른 보편적인 방식들을 수용하려고 노력하였습니다. VisTrails는 특히, 입력과 출력을 파일로 받는 컴파일된 바이너리는 물론 내부 객체로 받는 C++/자바/파이썬 클래스 형태의 어플리케이션 라이브러리와도 접목될 수 있습니다.
 
-The execution engine in VisTrails was designed to allow the integration of new and existing tools and libraries. We tried to accommodate different styles commonly used for wrapping third-party scientific visualization and computation software. In particular, VisTrails can be integrated with application libraries that exist either as pre-compiled binaries that are executed on a shell and use files as input/outputs, or as C++/Java/Python class libraries that pass internal objects as input/output.
+VisTrails는 각 모듈이 계산을 하여 생성된 데이터가 모듈 간 존재하는 연결을 통해 흐르는 모듈 데이터 흐름 실행 모델을 도입하였습니다. 모듈들은 상향식으로 실행됩니다. 각 입력은 필요할 때 마다 업스트림 모듈을 재귀적으로 실행하여(모듈 A에서 B로 가는 일련의 연결이 있을 때 모듈 A가 모듈 B의 업스트림이라고 부릅니다) 생성됩니다. 중간 데이터는 (파이썬 객체의 형태로) 메모리 또는 (데이터에 접근하기 위한 정보를 포함한 파이썬 객체로 감싼 형태로) 디스크에 임시로 저장됩니다.
 
-VisTrails의 실행 엔진은 기존 및 새로운 도구와 라이브러리와 접목될 수 있게 설계되었습니다. 우리는 써드 파티 과학적 시각화 및 계산 소프트웨어를 래핑하는 여러 다른 보편적인 방식들을 수용하려고 하였습니다. VisTrails는 특히, 입력 및 출력을 파일로 받는 컴파일된 바이너리나, 내부 객체로 받는 C++/Java/Python 클래스 형태의 어플리케이션 라이브러리와 접목될 수 있습니다.
+사용자들이 VisTrails에 직접 기능을 추가할 수 있도록 우리는 확장 가능한 패키지 시스템(23.3장에서 자세히 설명됩니다)을 만들었습니다. 패키지는 사용자들이 사용자의 모듈이나 써드 파티 모듈을 VisTrails 작업 흐름에 추가할 수 있게 합니다. 패키지 개발자는, 계산 모듈과, 계산, 그리고 각 모듈에 대한 입력과 출력 포트를 명시해야 합니다. 이미 존재하는 라이브러리에 대한 계산 메서드는, 입력 포트로부터, 이미 존재하는 함수의 매개 변수로의 번역과, 결과 값으로부터 출력 포트로의 매핑을 명시해야 합니다.
 
-VisTrails adopts a dataflow execution model, where each module performs a computation and the data produced by a module flows through the connections that exist between modules. Modules are executed in a bottom-up fashion; each input is generated on-demand by recursively executing upstream modules (we say module A is upstream of B when there is a sequence of connections that goes from A to B). The intermediate data is temporarily stored either in memory (as a Python object) or on disk (wrapped by a Python object that contains information on accessing the data).
+탐구 작업에 있어 공통의 하부 구조를 가지는 비슷한 작업 흐름들은 주로 잇달아 실행됩니다. 작업 흐름 실행의 효율성을 높이기 위해 VisTrails는 중간 결과를 캐싱하여 재계산을 최소화합니다. 우리는 이전 실행 결과를 재활용하기 때문에, 캐시 가능한 모듈은 함수적, 즉, 같은 입력이 주어지면, 같은 출력을 생성한다고 암시적으로 가정합니다. 이 요구 사항은 클래스에 확정적인 동작이라는 제한을 걸지만, 우리는 이것이 합리적이라고 생각합니다.
 
-VisTrails는, 각 모듈이 계산을 하여 생성된 데이터가 모듈 간 존재하는 연결을 통해 흐르는 모듈 데이터 흐름 실행 모델을 도입하였습니다. 모듈들은 상향 방식으로 실행됩니다. 각 입력은 필요할 때 마다 업스트림 모듈을 재귀적으로 실행하여(모듈 A에서 B로 가는 일련의 연결이 있을 때 모듈 A가 모듈 B의 업스트림이라고 부릅니다) 생성됩니다. 중간 데이터는 메모리(파이썬 객체의 형식으로) 또는 디스크(데이터에 접근 할 수 있게 하는 정보를 포함한 파이썬 객체로 래핑된 형식으로)에 임시로 저장됩니다.
-
-To allow users to add their own functionality to VisTrails, we built an extensible package system (see Section 23.3). Packages allow users to include their own or third-party modules in VisTrails workflows. A package developer must identify a set of computational modules and for each, identify the input and output ports as well as define the computation. For existing libraries, a compute method needs to specify the translation from input ports to parameters for the existing function and the mapping from result values to output ports.
-
-사용자들이 VisTrails에 직접 기능을 추가할 수 있도록, 우리는 확장 가능한 패키지 시스템(23.3장에서 자세히 설명됩니다)을 만들었습니다. 패키지는 사용자들이 사용자의 모듈이나 써드 파티 모듈을 VisTrails 작업 흐름에 추가할 수 있게 합니다. 패키지 개발자는 계산 모듈을 명시하고, 각 모듈에 대한 입력과 출력 포트를 명시하고 계산을 정의해야 합니다. 존재하는 라이브러리에 대해서 계산 메서드는, 입력 포트로부터 존재하는 함수의 매개 변수로의 번역과, 결과 값으로부터 출력 포트로의 매핑을 명시해야 합니다.
-
-In exploratory tasks, similar workflows, which share common sub-structures, are often executed in close succession. To improve the efficiency of workflow execution, VisTrails caches intermediate results to minimize recomputation. Because we reuse previous execution results, we implicitly assume that cacheable modules are functional: given the same inputs, modules will produce the same outputs. This requirement imposes definite behavior restrictions on classes, but we believe they are reasonable.
-
-탐구 작업에서, 공통의 하부 구조를 가지는 비슷한 작업 흐름들은, 주로 잇달아 실행됩니다. 작업 흐름 실행의 효율성을 높이기위해, VisTrails는 중간 결과를 캐싱하여 재계산을 최소화합니다. 이전 실행 결과를 재활용하기 때문에, 캐시 가능한 모듈은 함수적, 즉, 같은 입력이 주어지면, 같은 출력을 생성한다고 암시적으로 가정합니다. 이 요구 사항은 클래스에 확정적인 동작이라는 제한을 걸지만, 우리는 이것이 합리적이라고 생각합니다.
-
-There are, however, obvious situations where this behavior is unattainable. For example, a module that uploads a file to a remote server or saves a file to disk has a significant side effect while its output is relatively unimportant. Other modules might use randomization, and their non-determinism might be desirable; such modules can be flagged as non-cacheable. However, some modules that are not naturally functional can be converted; a function that writes data to two files might be wrapped to output the contents of the files.
-
-하지만, 이런 동작을 요구할 수 없는 상황들도 있습니다. 예를 들어, 파일을 원격 서버로 업로드하거나, 파일을 디스크에 저장하는 모듈의 출력은 비교적 중요하지 않지만, 큰 부작용을 가져올 수 있습니다. 어떤 모듈들은 무작위수를 사용하고 비결정성이 바람직한 동작일 수 있습니다. 이러한 모듈들은 캐시 불가능한 것으로 표시할 수 있습니다. 하지만, 어떤 함수적이지 않은 모듈들은 함수적이도록 변환할 수 있습니다. 두 파일에 데이터를 쓰는 함수는 파일들의 내용을 반환하도록 래핑될 수 있습니다.
+하지만, 이런 동작을 요구할 수 없는 상황들도 있습니다. 예를 들어, 파일을 원격 서버로 업로드하거나 디스크에 저장하는 모듈의 경우, 모듈의 출력은 비교적 중요하지 않지만, 이러한 모듈은 큰 부작용을 가져올 수 있습니다. 어떤 모듈들은 무작위수를 사용하며 불확정성이 바람직한 동작일 수 있습니다. 이러한 모듈들은 캐시 불가능한 것으로 표시될 수 있습니다. 하지만, 어떤 함수적이지 않은 모듈들은 함수적이도록 변환될 수 있습니다. 예를 들어, 두 파일에 데이터를 쓰는 함수는 파일들의 내용을 반환하도록 래핑될 수 있습니다.
 
 ### 23.3.3. Data Serialization and Storage
 
