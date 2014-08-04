@@ -300,17 +300,11 @@ Recall that before executing a module, we recursively update all of its inputs. 
 
 모듈이 실행되기 전에 모듈의 입력을 재귀적으로 갱신시킨다는 점을 상기하면, 영속 데이터 모듈은 업스트림 계산이 이미 실행되었을 경우 입력을 갱신하지 않을 것입니다. 이를 판단하기 위해, 우리는 업스트림의 부분 작업 흐름의 시그니쳐를 영속 저장소에서 조회하여, 해당 시그니쳐가 존재할 경우 미리 계산된 데이터를 가져옵니다. 추가적으로, 데이터의 식별자와 버전을 출처 정보로서 저장하여 특정 실행이 재현될 수 있게 합니다.
 
-### 23.4.5. Upgrades
-
 ### 23.4.5. 업그레이드
 
-With provenance at the core of VisTrails, the ability to upgrade old workflows so they will run with new versions of packages is a key concern. Because packages can be created by third-parties, we need both the infrastructure for upgrading workflows as well as the hooks for package developers to specify the upgrade paths. The core action involved in workflow upgrades is the replacement of one module with a new version. Note that this action is complicated because we must replace all of the connections and parameters from the old module. In addition, upgrades may need to reconfigure, reassign, or rename these parameters or connections for a module, e.g., when the module interface changes.
+출처는 VisTrails의 핵심이므로, 옛 작업 흐름을 새로운 버전의 패키지와 호환되도록 업그레이드할 수 있는 기능은 VisTrails의 주요 고려 사항입니다. 패키지는 제 3자에 의해서 만들어질 수 있으므로, 작업 흐름을 업그레이드하고 패키지 개발자들이 업그레이드 경로를 정의하기 위한 훅을 제공하는 기반이 필요합니다. 작업 흐름 업그레이드의 핵심은 모듈을 새로운 버전으로 바꾸는 것입니다. 이것은 옛 모듈의 연결과 매개 변수를 모두 교체하는 복잡한 작업입니다. 게다가 업그레이드 작업은 모듈에 대한 매개 변수와 연결들을 재설정, 재할당, 혹은 이름을 바꾸는 작업을 포함할 수도 있습니다(모듈 인터페이스가 바뀌는 등).
 
-출처를 VisTrails의 핵심으로서, 옛 작업 흐름을 새로운 버전의 패키지와 호환되도록 업그레이드할 수 있는 기능은 주요 고려 사항입니다. 패키지는 제 3자에 의해서 만들어질 수 있으므로, 작업 흐름을 업그레이드하고 패키지 개발자들이 업그레이드 경로를 정의하기 위해 사용할 훅을 제공하는 기반이 필요합니다. 작업 흐름 업그레이드의 핵심 작업은 모듈을 새로운 버전으로 바꾸는 것입니다. 이것은 옛 모듈의 연결과 매개 변수를 모두 교체하기 때문에 복잡한 작업입니다. 게다가, 업그레이드 작업은, 예를 들어, 모듈 인터페이스가 바뀐다면, 모듈에 대한 매개 변수와 연결들을 재설정, 재할당, 혹은 이름을 바꿔야 할 수도 있습니다.
-
-Each package (together with its associated modules) is tagged by a version, and if that version changes, we assume that the modules in that package may have changed. Note that some, or even most, may not have changed, but without doing our own code analysis, we cannot check this. We, however, attempt to automatically upgrade any module whose interface has not changed. To do this, we try replacing the module with the new version and throw an exception if it does not work. When developers have changed the interface of a module or renamed a module, we allow them to specify these changes explicitly. To make this more manageable, we have created a `remap_module` method that allows developers to define only the places where the default upgrade behavior needs to be modified. For example, a developer that renamed an input port `file` to `value` can specify that specific remapping so when the new module is created, any connections to `file` in the old module will now connect to `value`. Here is an example of an upgrade path for a built-in VisTrails module:
-
-각 패키지(관련된 모듈들과 함께)는 버전으로 태그되어 있고, 버전이 바뀐다면 패키지가 포함하는 모듈들도 바뀌었을 것이라고 가정합니다. 물론 일부, 혹은 대부분의 모듈이 바뀌지 않았을 수도 있지만, 직접 코드 분석을 하지 않는 이상 이는 알 수 없습니다. 하지만 인터페이스가 변경되지 않은 모듈에 대해서는 자동으로 업그레이드 되도록 시도합니다. 이를 위해 모듈을 새로운 버전으로 교체해 보고 작동하지 않을 경우에는 예외를 던집니다. 개발자들이 모듈의 인터페이스나 이름을 바꿀 경우, 개발자들에게 이러한 변경 사항들을 명시적으로 정의할 수 있도록 합니다. 이 작업을 조금 더 수월하게 할 수 있도록 개발자들이 기본 업그레이드 동작이 적용될 수 없는 부분에 대해서만 명시하면 되도록 `remap_module` 메서드를 만들었습니다. 예를 들어, 개발자가 입력 포트 `file`의 이름을 `value`로 바꾸었다면, 새 모듈이 생성되었을 때 옛 모듈의 `file`로의 연결들이 `value`로 연결될 수 있도록 매핑을 정의할 수 있습니다. 다음은 VisTrails 내장 모듈 업그레이드 경로의 예시입니다:
+각 패키지는 (관련된 모듈들과 함께) 버전으로 태그 되어 있으며, 버전이 바뀐다면 패키지가 포함하는 모듈들도 바뀌었을 것이라고 가정합니다. 물론 일부, 혹은 대부분 모듈이 바뀌지 않았을 수도 있지만, 직접 코드 분석을 하지 않는 이상 이것은 알 수 없습니다. 하지만 인터페이스가 변경되지 않은 모듈들에 대해서는 자동 업그레이드를 시도합니다. 이를 위해 모듈을 새로운 버전으로 교체해 보고, 작동하지 않으면 예외를 던집니다. 개발자들이 모듈의 인터페이스나 이름을 바꿀 경우, 개발자들이 이러한 변경 사항들을 명시적으로 정의할 수 있도록 합니다. 이 작업을 조금 더 수월하게 할 수 있도록 개발자들이 기본 업그레이드 동작이 적용될 수 없는 부분에 대해서만 명시하면 되도록 `remap_module` 메서드를 만들었습니다. 예를 들어, 개발자가 입력 포트 `file`의 이름을 `value`로 바꾸었다면, 새 모듈이 생성되었을 때 옛 모듈의 `file`로의 연결들이 `value`로 연결될 수 있도록 매핑을 정의할 수 있습니다. 다음은 VisTrails 내장 모듈 업그레이드 경로의 예시입니다:
 
 ```
 def handle_module_upgrade_request(controller, module_id, pipeline):
@@ -326,13 +320,9 @@ def handle_module_upgrade_request(controller, module_id, pipeline):
                                              module_remap)
 ```
 
-This piece of code upgrades workflows that use the old `GetItemsFromDirectory` (any version up to 1.6) module to use the `Directory` module instead. It maps the `dir` port from the old module to `value` and the `itemlist` port to `itemList`.
+이 코드는 옛(1.6까지의 버전들) `GetItemsFromDirect` 모듈을 사용하는 작업 흐름을 `Directory` 모듈을 대신 사용하도록 업그레이드하며, 옛 모듈의 `dir` 포트를 `value`로, `itemlist` 포트를 `itemList`로 매핑합니다.
 
-이 코드는 옛 `GetItemsFromDirect`(1.6까지의 버전들)를 사용하는 작업 흐름을 `Directory` 모듈을 사용하도록 업그레이드합니다. 옛 모듈의 `dir` 포트를 `value`로, `itemlist` 포트를 `itemList`로 매핑합니다.
-
-Any upgrade creates a new version in the version tree so that executions before and after upgrades can be differentiated and compared. It is possible that the upgrades change the execution of the workflow (e.g., if a bug is fixed by a package developer), and we need to track this as provenance information. Note that in older vistrails, it may be necessary to upgrade every version in the tree. In order to reduce clutter, we only upgrade versions that a user has navigated to. In addition, we provide a preference that allows a user to delay the persistence of any upgrade until the workflow is modified or executed; if a user just views that version, there is no need to persist the upgrade.
-
-모든 업그레이드는 업그레이드 전후의 실행들을 구별하고 비교할 수 있도록 버전 트리에 새로운 버전을 등록합니다. 업그레이드가 작업 흐름의 동작을 바꿀 수도 있기 때문에(패키지 개발자가 버그를 고치는 등), 출처 정보로서 추적되어야 합니다. 이전 버전의 VisTrails에서는 트리 안의 모든 버전을 업그레이드 해야 할수도 있습니다. 잡동사니들을 줄이기 위해 사용자가 탐색한 적이 있는 버전들만 업그레이드 하며, 사용자가 작업 흐름이 편집되거나 실행될 때 까지 업그레이드의 영속을 미룰 수 있게 합니다. 사용자가 해당 버전을 열람만 한다면, 업그레이드를 영속시킬 필요가 없습니다.
+모든 업그레이드는 업그레이드 전후의 실행들을 구별하고 비교할 수 있도록 버전 트리에 새로운 버전을 등록합니다. 업그레이드가 작업 흐름의 동작을 바꿀 수도 있기 때문에(패키지 개발자가 버그를 고치는 등), 출처 정보로서 추적되어야 합니다. 이전 버전의 VisTrails에서는 트리 안의 모든 버전을 업그레이드해야 할 수도 있습니다. 잡동사니들을 줄이기 위해 사용자가 탐색한 적이 있는 버전들만 업그레이드하며, 사용자가 작업 흐름이 편집되거나 실행될 때까지 업그레이드의 영속을 미룰 수 있게 합니다. 사용자가 해당 버전을 열람만 한다면, 업그레이드를 영속시킬 필요가 없습니다.
 
 ### 23.4.6. 출처 정보를 포함한 결과물의 공유와 발행
 
