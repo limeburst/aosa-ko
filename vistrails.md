@@ -232,11 +232,11 @@ Even though the spreadsheet only accepts PyQt widgets as cell types, it is possi
 
 Like cells, sheets may also be customized. By default, each sheet lives in a tabbed view and has a tabular layout. However, any sheet can be undocked from the spreadsheet window, allowing multiple sheets to be visible at once. It is also possible to create a different sheet layout by subclassing the `StandardWidgetSheet`, also a PyQt widget. The `StandardWidgetSheet` manages cell layouts as well as interactions with the spreadsheet in editing mode. In editing mode, users can manipulate the cell layout and perform advanced actions on the cells, rather than interacting with cell contents. Such actions include applying analogies (see Section 23.4) and creating new workflow versions from parameter explorations.
 
-셀 처럼, 시트 역시 커스터마이즈할 수 있습니다. 각 시트는 기본적으로 탭 뷰를 통해 접근할 수 있으며 표 형태의 레이아웃을 가집니다. 하지만, 모든 시트는 스프레드시트 창으로부터 꺼낼 수 있으며, 여러 시트를 동시에 볼 수 있게 합니다. 역시 PyQt 위젯인, `StandardWidgetSheet`를 상속함으로써 다른 시트 레이아웃을 만들 수 있습니다. `StandardWidgetSheet`는 셀 레이아웃 뿐만이 아니라 편집 모드의 스프레드시트와의 상호작용도 관리합니다. 편집 모드에서, 사용자들은 셀의 내용은 편집하지 않고, 셀 레이아웃과 셀에 대한 고급 작업을 할 수 있습니다. 이러한 작업은 비유를 적용하고(23.4장에서 자세히 설명됩니다), 매개 변수 탐색으로부터 새로운 작업 흐름을 생성하는 작업을 포함합니다. 
+셀 처럼, 시트 역시 커스터마이즈할 수 있습니다. 각 시트는 기본적으로 탭 뷰를 통해 접근할 수 있으며 표 형태의 레이아웃을 가집니다. 하지만, 모든 시트는 스프레드시트 창으로부터 꺼낼 수 있으며, 여러 시트를 동시에 볼 수 있게 합니다. 역시 PyQt 위젯인, `StandardWidgetSheet`를 상속함으로써 다른 시트 레이아웃을 만들 수 있습니다. `StandardWidgetSheet`는 셀 레이아웃 뿐만이 아니라 편집 모드의 스프레드시트와의 상호작용도 관리합니다. 편집 모드에서, 사용자들은 셀의 내용은 편집하지 않고, 셀 레이아웃과 셀에 대한 고급 작업을 할 수 있습니다. 이러한 작업은 유사를 적용하고(23.4장에서 자세히 설명됩니다), 매개 변수 탐색으로부터 새로운 작업 흐름을 생성하는 작업을 포함합니다. 
 
 ### 23.4.2. Visual Differences and Analogies
 
-### 23.4.2. 시각적 차이와 비유
+### 23.4.2. 시각적 차이와 유사
 
 As we designed VisTrails, we wanted to enable the use of provenance information in addition to its capture. First, we wanted users to see the exact differences between versions, but we then realized that a more helpful feature was being able to apply these differences to other workflows. Both of these tasks are possible because VisTrails tracks the evolution of workflows.
 
