@@ -246,17 +246,11 @@ Like cells, sheets may also be customized. By default, each sheet lives in a tab
 
 유사에 사용되는 느슨한 매칭을 계산하기 위해 지역적인 유사도(같거나 매우 비슷한 모듈)를 작업 흐름의 전체적인 구조와 균형을 맞춥니다. 이를 위한 동일성 매칭을 위한 계산마저도, 부분 그래프 동형 문제가 어려우므로, 부족하다는 점을 보면, 휴리스틱을 도입해야 함을 알 수 있습니다. 간단히 말하면, 두 개의 작업 흐름에 포함된 두 개의 약간 비슷한 모듈이 비슷한 이웃을 공유한다면, 이 두 모듈은 비슷한 동작을 하며, 매칭할 수 있다고 결론지을 수도 있는 것입니다. 좀 더 형식적으로 표현하자면, 우리는 원본 작업 흐름에 있는 페어링 가능한 모듈의 짝이 꼭짓점에 대응되고, 노드 간 공유하는 연결이 변에 대응되는 곱집합 그래프를 만듭니다. 그리고 각 꼭짓점의 점수를 변을 건너 이웃 노드에 발산하는 단계를 거칩니다. 이 작업은 Google의 PageRank와 비슷한 마르코프 연쇄이며, 언젠가는 전역적인 정보를 포함하는 점수들의 집합으로 수렴하게 됩니다. 우리는 이 점수들을 통해 최선의 매칭을 결정하고, 기준점을 사용해 닮지 않은 모듈들을 페어링 하지 않을 수 있습니다.
 
-### 23.4.3. Querying Provenance
-
 ### 23.4.3. 출처 조회
 
-The provenance captured by VisTrails includes a set of workflows, each with its own structure, metadata, and execution logs. It is important that users can access and explore these data. VisTrails provides both text-based and visual (WYSIWYG) query interfaces. For information like tags, annotations, and dates, a user can use keyword search with optional markup. For example, look for all workflows with the keyword `plot` that were created by `user:~dakoop`. However, queries for specific subgraphs of a workflow are more easily represented through a visual, query-by-example interface, where users can either build the query from scratch or copy and modify an existing piece of a pipeline.
+VisTrails에 의해 추적된 출처는 작업 흐름 각각의 구조, 메타데이터, 그리고 실행 로그를 포함합니다. 이러한 출처 정보에 접근하고 탐색할 수 있는 것은 중요하므로, VisTrails는 텍스트 기반과 시각적(WYSIWYG) 출처 조회 인터페이스를 제공합니다. 태그, 주석, 날짜 같은 정보에 대해서 사용자는 키워드 검색을, 선택적인 마크업을 포함해 사용할 수 있습니다. 예를 들어, 키워드 `plot`을 포함하는 사용자 `user:~dakoop`의 모든 작업 흐름을 검색할 수 있습니다. 하지만 작업 흐름의 특정한 부분 그래프에 대한 조회는, 사용자들이 쿼리를 처음부터 작성하거나 존재하는 파이프라인을 복사하거나 편집하여 조회할 수 있는, 시각적인, 예시를 통한 조회 인터페이스로 더 쉽게 표현할 수 있습니다
 
-VisTrails에 의해 추적된 출처는 작업 흐름의 구조, 메타데이터, 그리고 실행 로그와 함께 작업 흐름들을 포함합니다. 이러한 출처 정보에 접근하고 탐색하는 것은 중요하기 때문에, VisTrails는 텍스트 기반 및 시각적(WYSIWYG) 출처 조회 인터페이스를 제공합니다. 태그, 주석, 날짜와 같은 정보에 대해서 사용자는 키워드 검색을, 선택적인 마크업을 사용해 사용할 수 있습니다. 예를 들어, 키워드 `plot`을 포함하는, 사용자, `user:~dakoop`의 모든 작업 흐름을 검색할 수 있습니다. 하지만, 작업 흐름의 특정 부분 그래프에 대한 조회 결과는 예시를 통한 시각 인터페이스로 더 잘 표현되며, 조회할 때엔 사용자들이 쿼리를 처음부터 작성하거나 존재하는 파이프라인을 복사하거나 편집하여 조회할 수 있습니다.
-
-In designing this query-by-example interface, we kept most of the code from the existing Workflow Editor, with a few changes to parameter construction. For parameters, it is often useful to search for ranges or keywords rather than exact values. Thus, we added modifiers to the parameter value fields; when a user adds or edits a parameter value, they may choose to select one of these modifiers which default to exact matches. In addition to visual query construction, query results are shown visually. Matching versions are highlighted in the version tree, and any selected workflow is displayed with the matching portion highlighted. The user can exit query results mode by initiating another query or clicking a reset button.
-
-VisTrails에서 위와 같은 예시를 통한 인터페이스를 설계하며 매개 변수 조합에 대한 몇 가지의 변경 사항을 제외하고는, 워크플로우 에디터의 코드를 사용하였습니다. 매개 변수에 대해서는, 정확한 값 보다는 구간이나 키워드로 검색하는 것이 유용합니다. 따라서, 우리는 매개 변수 값 필드에 수식문을 추가하였습니다. 사용자가 매개 변의 값을 추가하거나 편집하면, 기본적으로 정확한 값을 검색하지만, 제공되는 수식구들을 사용할 수 있습니다. 시각적 쿼리 작성과 함께, 쿼리의 결과도 시각적으로 제공됩니다. 매칭된 버전들은 버전 트리에서 강조되며, 선택된 작업 흐름들도 매칭된 부분과 함께 강조되어 보여집니다. 사용자는 새로운 쿼리를 시작하거나 초기화 버튼을 눌러 쿼리 결과 모드에서 나갈 수 있습니다.
+우리는 예시를 통한 조회 인터페이스를 설계하며 매개 변수 조합에 대한 몇 가지 변경 사항을 제외하고는 워크플로우 에디터의 코드 대부분을 재사용하였습니다. 매개 변수는 정확한 값 보다는 구간이나 키워드로 검색하는 것이 유용합니다. 따라서, 우리는 사용자가 매개 변수의 값을 추가하거나 편집하면, 기본적으로 정확한 값을 검색하지만, 제공되는 수식문을 사용할 수도 있게 했습니다. 쿼리 작성은 물론 쿼리의 결과도 시각적으로 보여집니다. 매칭된 버전들은 버전 트리에서 강조되며, 선택된 작업 흐름들도 매칭된 부분과 함께 강조되어 보여집니다. 사용자는 새로운 쿼리를 시작하거나 초기화 버튼을 눌러 쿼리 결과 모드에서 나갈 수 있습니다.
 
 ### 23.4.4. Persistent Data
 
