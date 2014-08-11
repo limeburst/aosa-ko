@@ -110,35 +110,20 @@ VisTrails는 각 모듈이 계산을 하여 생성된 데이터가 모듈 간 �
 
 각 객체는 서로 다른 버전의 객체를 받아 현재 버전을 반환하는 `update_version` 메서드를 가지고 있습니다. 기본값으로, 각 객체가 이전 객체의 필드를 새로운 버전의 객체로 매핑하는 방식으로 업그레이드되는 재귀적 번역을 합니다. 이 매핑은 기본값으로, 같은 이름을 가진 필드는 복사하지만, 이러한 동작을 오버라이드 할 수 있는 메서드를 정의할 수도 있습니다. 오버라이드는 이전 객체를 받아 새로운 객체를 반환하는 메서드입니다. 스키마에 대한 대부분의 변경점은 소수의 필드에만 영향을 미치기 때문에 기본 매핑이 대부분의 상황을 처리할 수 있지만, 오버라이드는 국소적인 변경 사항을 정의할 수 있는 유연한 방식을 제공합니다.
 
-### 23.3.4. Extensibility Through Packages and Python
+### 23.3.4. 파이썬과 패키지를 통한 확장
 
-### 23.3.4. 파이썬과 패키지를 통한 확장성
+VisTrails의 첫 프로토타입은 고정된 집합의 모듈들을 가지고 있었습니다. 이 환경은 VisTrails 버전 트리와 다수 실행의 캐싱에 대한 기본적인 아이디어를 구현하기에는 이상적이었지만, 장기적 효용성을 심각하게 제한하였습니다.
 
-The first prototype of VisTrails had a fixed set of modules. It was an ideal environment to develop basic ideas about the VisTrails version tree and the caching of multiple execution runs, but it severely limited long-term utility.
+우리는 VisTrails를 계산과학을 위한 기반으로 보며, 이것은 말 그대로 VisTrails가 다른 도구나 절차의 개발을 위한 발판을 제공해야 한다는 의미를 가집니다. 이 전개의 필수 조건은 확장성입니다. 확장성을 달성하기 위한 전형적인 방식은, 대상 언어를 정하고 적절한 인터프리터를 작성하는 일을 수반합니다. 이것은 코드 실행에 비해 세밀한 통제를 할 수 있게 해 주므로 매력적이지만, 충분한 기능을 가진 프로그래밍 언어를 구현하는 것은 매우 큰 작업이며, 우리의 주 목적은 아니었습니다. 무엇보다도 사용자들이 VisTrails를 쓰기 위해서 새로운 언어를 배워야 한다는 것은 생각도 할 수 없는 일이었습니다.
 
-VisTrails의 첫 프로토타입은 고정된 집합의 모듈들을 가지고 있었습니다. 이 환경은 VisTrails 버전 트리와 다수의 실행 실시의 캐싱에 대한 기본적인 아이디어를 구현하기에는 이상적이었지만, 장기적 효용성을 심각하게 제한하였습니다.
+우리는 VisTrails가 사용자들이 쉽게 기능을 추가할 수 있게 하는 동시에, 충분히 복잡한 소프트웨어를 다룰 수 있을 만큼 강력하기를 원했습니다. 예를 들어, VisTrails는 VTK 시각화 라이브러리를 지원합니다. VTK는 컴파일, 환경 설정, 운영체제에 따라 달라지는 1000여 개의 클래스를 포함합니다. 이 모든 경우에 대한 코드 경로를 작성하는 일이 비생산적이고 실현 가능성이 없다고 판단하였기 때문에, 주어진 패키지가 제공하는 VisTrails 모듈 집합을 동적으로 판단할 필요가 있다고 생각했으며, 따라서 자연스럽게 VTK가 복잡한 패키지의 모델이 되었습니다.
 
-We see VisTrails as infrastructure for computational science, and that means, literally, that the system should provide scaffolding for other tools and processes to be developed. An essential requirement of this scenario is extensibility. A typical way to achieve this involves defining a target language and writing an appropriate interpreter. This is appealing because of the intimate control it offers over execution. This appeal is amplified in light of our caching requirements. However, implementing a full-fledged programming language is a large endeavor that has never been our primary goal. More importantly, forcing users who are just trying to use VisTrails to learn an entirely new language was out of the question.
+계산과학은 우리의 초기에 대상이었으며, VisTrails를 설계하는 시점에서 파이썬은 계산 과학자들 사이에서 보조 언어로써 인기를 끌고 있었습니다. VisTrails 모듈의 동작을 명시하는 데 파이썬을 사용하는 것은 VisTrails의 큰 도입 장벽중 하나를 걷을 수 있다는 의미를 가졌습니다. 게다가, 파이썬은 동적으로 정의된 클래스와 반영을 위한 꽤 괜찮은 구조를 가졌다는 것을 알게 되었습니다. 파이썬의 거의 모든 정의는 1급 함수의 형태로 나타낼 수 있습니다. 우리의 패키지 시스템을 위한 중요한 파이썬의 반영 기능 두 가지는 다음과 같습니다:
 
-우리는 VisTrails를 계산과학을 위한 기반으로 보며, 이것은 말 그대로 VisTrails가 다른 도구와 절차가 개발되기 위한 발판을 제공해야 한다는 의미를 가집니다. 이 전개의 필수 조건은 확장성입니다. 확장성을 달성하기 위한 전형적인 방식은, 대상 언어를 정하고 적절한 인터프리터를 작성하는 일을 수반합니다. 하지만 충분한 기능을 가진 프로그래밍 언어를 구현하는 것은 매우 큰 작업이며, 우리의 주 목적은 아니었습니다. 또, 사용자들이 VisTrails를 쓰기 위해서 새로운 언어를 배워야 한다는 것은 생각할 수도 없는 일이었습니다.
+* 파이썬 클래스는 `type` 함수 호출을 통해 동적으로 정의할 수 있습니다. 반환값은 클래스의 표현형이며, 전형적으로 정의된 파이썬 클래스와 같은 방식으로 사용할 수 있습니다.
+* 파이썬 모듈은 `__import__` 함수 호출로 들여올 수 있으며, 그 반환값은 표준 `import` 선언문의 식별자와 같은 방식으로 작동합니다. 모듈을 찾을 위치 또한 런타임에서 정의할 수 있습니다.
 
-We wanted a system which made it easy for a user to add custom functionality. At the same time, we needed the system to be powerful enough to express fairly complicated pieces of software. As an example, VisTrails supports the VTK visualization library5. VTK contains about 1000 classes, which change depending on compilation, configuration, and operating system. Since it seems counterproductive and ultimately hopeless to write different code paths for all these cases, we decided it was necessary to dynamically determine the set of VisTrails modules provided by any given package, and VTK naturally became our model target for a complex package.
-
-우리는 사용자들이 VisTrails에 쉽게 기능을 추가할 수 있는 동시에, VisTrails가 복잡한 소프트웨어를 다룰 수 있을 만큼 강력하기를 원했습니다. 예를 들어, VisTrails는 VTK 시각화 라이브러리를 지원합니다. VTK는 컴파일, 설정, 운영체제에 따라 달라지는 1000여개의 클래스를 포함합니다. 이 모든 경우에 대한 코드 경로를 작성하는 일이 비생산적이고 실현 가능성이 없다고 판단하였기 때문에, 주어진 패키지가 제공하는 VisTrails 모듈의 집합을 동적으로 판단하는 게 필요하다고 생각했으며, 자연스럽게 VTK가 이러한 복잡한 패키지의 모델이 되었습니다.
-
-Computational science was one of the areas we originally targeted, and at the time we designed the system, Python was becoming popular as "glue code" among these scientists. By specifying the behavior of user-defined VisTrails modules using Python itself, we would all but eliminate a large barrier for adoption. As it turns out, Python offers a nice infrastructure for dynamically-defined classes and reflection. Almost every definition in Python has an equivalent form as a first-class expression. The two important reflection features of Python for our package system are:
-
-계산과학은 우리가 초기에 대상으로 한 타겟이었으며, VisTrails를 설계하는 시점에서 파이썬은 과학자들 사이에서 보조적인 언어로 인기를 끌고 있었습니다. VisTrails 모듈의 동작을 명시하는 데 파이썬을 사용하는 것은 VisTrails의 도입 장벽을 걷을 수 있다는 의미를 가졌습니다. 게다가, 파이썬은 동적으로 정의된 클래스와 그 반영을 위해 꽤 괜찮은 구조를 가졌다는 것을 알게 되었습니다. 파이썬의 거의 모든 정의가 1급 함수의 형태로 나타낼 수 있습니다. 우리의 패키지 시스템을 위한 중요한 파이썬의 반영 기능 두 가지는 다음과 같습니다:
-
-* Python classes can be defined dynamically via function calls to the `type` callable. The return value is a representation of a class that can be used in exactly the same way that a typically-defined Python class can.
-*Python modules can be imported via function calls to `__import__`, and the resulting value behaves in the same way as the identifier in a standard `import` statement. The path from which these modules come from can also be specified at runtime.
-
-* 파이썬 클래스는 호출 가능한 `type`으로의 함수 호출을 통해 동적으로 정의할 수 있습니다. 반환값은 클래스의 표현형이며, 전형적으로 정의된 파이썬 클래스와 같은 방식으로 사용할 수 있습니다.
-* 파이썬 모듈은 `__import__`으로의 함수 호출로 들여올 수 있으며, 반환값은 표준 `import` 선언문의 식별자와 같은 방식으로 작동합니다. 모듈들을 찾을 위치 또한 런타임에서 정의할 수 있습니다.
-
-Using Python as our target has a few disadvantages, of course. First of all, this dynamic nature of Python means that while we would like to ensure some things like type safety of VisTrails packages, this is in general not possible. More importantly, some of the requirements for VisTrails modules, notably the ones regarding referential transparency (more on that later) cannot be enforced in Python. Still, we believe that it is worthwhile to restrict the allowed constructs in Python via cultural mechanisms, and with this caveat, Python is an extremely attractive language for software extensibility.
-
-파이썬을 타겟으로 사용하는 것에는 몇 가지 단점도 있습니다. 먼저, 파이썬의 동적인 성질은, VisTrails 패키지의 타입 안정성을 보장하고 싶지만 그럴 수 없다는 것을 의미합니다. 더욱 중요한 것은, VisTrails 모듈에 대한 요구 사항, 특히 관계의 투명성(이후에 자세히 설명됩니다)에 대한 요구 사항은 파이썬을 사용하였을 때 강제할 수 없다는 것입니다. 그래도, 우리는 문화적 체계를 통해 파이썬에서 허용하는 구조를 제한하는 것이 할 만 하다고 생각하며, 이 체계에 대해서 유의한다면 파이썬은 소프트웨어 확장에 대해서는 아주 매력적인 언어라고 생각합니다.
+파이썬을 대상으로 사용하는 것에는 몇 가지 단점도 있습니다. 먼저, 파이썬의 동적인 성질은, VisTrails 패키지의 타입 안정성을 보장할 수 없다는 것을 의미합니다. 더욱 중요한 것은, 파이썬을 사용하였을 때 VisTrails 모듈에 대한 요구 사항, 특히 참조 투명성(이후에 자세히 설명됩니다)에 대한 요구 사항을 강제할 수 없다는 것입니다. 그래도, 우리는 문화적 체계를 통해 파이썬에서 허용하는 구조를 제한하는 것은 할 만하다고 생각하며, 이 체계에 유의한다면 파이썬은 소프트웨어 확장에서 아주 매력적인 언어라고 생각합니다.
 
 ### 23.3.5. VisTrails Packages and Bundles
 
