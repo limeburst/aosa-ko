@@ -193,13 +193,13 @@ We note that, for simple prototyping tasks, VisTrails provides a built-in `Pytho
 
 ### 23.4.1. 시각화 스프레드시트
 
-VisTrails는 시각화 스프레드시트을 통해 사용자들이 여러 작업 흐름으로부터의 결과물을 탐색하고 비교할 수 있게 합니다 (그림 23.6). 이 스프레드시트는 시트와 셀로 이루어진 인터페이스를 가진 VisTrails 패키지입니다. 각 시트는 셀의 집합을 가지고, 커스터마이즈 가능한 레이아웃을 가집니다. 하나의 셀은 작업 흐름이 만들어낸 결과물의 시각적 표현을 포함하고, 다양한 종류의 데이터를 표현할 수 있게 사용자화될 수 있습니다.
+VisTrails는 시각화 스프레드시트을 통해 사용자들이 여러 작업 흐름으로부터의 결과물을 탐색하고 비교할 수 있게 합니다 (그림 23.6). 이 스프레드시트는 시트와 셀로 이루어진 인터페이스를 가진 VisTrails 패키지입니다. 각 시트는 셀의 집합을 가지고, 사용자화 가능한 레이아웃을 가집니다. 하나의 셀은 작업 흐름이 만들어낸 결과물의 시각적 표현을 포함하고, 다양한 종류의 데이터를 표현할 수 있게 사용자화될 수 있습니다.
 
 스프레드시트에 셀을 표시하기 위해서, 작업 흐름은 `SpreadsheetCell`을 상속하는 모듈을 가지고 있어야 합니다. 각 `SpreadsheetCell` 모듈은 스프레드시트 셀에 대응되어 하나의 작업 흐름이 여러 셀을 생성할 수 있습니다. `SpreadsheetCell`의 `compute` 모듈은 실행 엔진(그림 23.3)과 스프레드시트 사이의 통신을 제어합니다. 스프레드시트는 실행 중 파이썬의 동적 클래스 초기화 기능을 활용하여 셀을 생성합니다. 따라서 사용자화된 시각화를 위해서는 `SpreadsheetCell`를 상속받는 클래스를 생성하여, 해당 클래스의 `compute` 메서드가 스프레드시트에 사용자화된 셀 타입을 보낼 수 있습니다. 예를 들어, 그림 23.1에 나와 있는 작업 흐름에서, `MplFigureCell`은 matplotlib에서 생성된 이미지를 표시하도록 만들어진 `SpreadsheetCell` 모듈입니다.
 
-스프레드시트의 GUI의 백엔드로 PyQt를 사용하기 때문에, 커스텀 셀 위젯들은 PyQt의 `QWidget`을 상속해야 하며, 새로운 데이터가 들어올 때 위젯을 갱신하기 위해 스프레드시트가 호출하는 `updateContents` 메서드를 구현해야 합니다. 각 셀 위젯은 선택적으로 `toolbar` 메서드를 구현함으로써 커스텀 툴바를 정의할 수 있으며, 이 경우 셀이 선택되었을 때 스프레드시트 툴바 영역에 정의된 툴바가 표시됩니다.
+스프레드시트의 GUI의 백엔드로 PyQt를 사용하기 때문에, 사용자화된 셀 위젯들은 PyQt의 `QWidget`을 상속해야 하며, 새로운 데이터가 들어올 때 위젯을 갱신하기 위해 스프레드시트가 호출하는 `updateContents` 메서드를 구현해야 합니다. 각 셀 위젯은 선택적으로 `toolbar` 메서드를 구현함으로써 사용자화된 툴바를 정의할 수 있으며, 이 경우 셀이 선택되었을 때 스프레드시트 툴바 영역에 정의된 툴바가 표시됩니다.
 
-그림 23.6은 VTK 셀이 선택되었을 때의 스프레드시트를 보여주며, 이 경우에 툴바는 PDF 이미지를 내보내거나, 카메라의 위치를 작업 흐름에 저장, 그리고 애니메이션을 생성하는 위젯들을 제공합니다. 스프레드시트 패키지는 히스토리 리플레이(애니메이션)와 멀티 터치 이벤트의 포워딩 등의 공통 기능을 제공하는 커스터마이즈 가능한 `QCellWidget`을 정의하며, 새로운 셀 타입의 빠른 개발을 위해 `QWidget` 대신 사용될 수 있습니다.
+그림 23.6은 VTK 셀이 선택되었을 때의 스프레드시트를 보여주며, 이 경우에 툴바는 PDF 이미지를 내보내거나, 카메라의 위치를 작업 흐름에 저장, 그리고 애니메이션을 생성하는 위젯들을 제공합니다. 스프레드시트 패키지는 히스토리 리플레이(애니메이션)와 멀티 터치 이벤트의 포워딩 등의 공통 기능을 제공하는 사용자화 가능한 `QCellWidget`을 정의하며, 새로운 셀 타입의 빠른 개발을 위해 `QWidget` 대신 사용될 수 있습니다.
 
 Even though the spreadsheet only accepts PyQt widgets as cell types, it is possible to integrate widgets written with other GUI toolkits. To do so, the widget must export its elements to the native platform, and PyQt can then be used to grab it. We use this approach for the `VTKCell` widget because the actual widget is written in C++. At run-time, the `VTKCell` grabs the window id, a Win32, X11, or Cocoa/Carbon handle depending on the system, and maps it to the spreadsheet canvas.
 
@@ -207,7 +207,7 @@ Even though the spreadsheet only accepts PyQt widgets as cell types, it is possi
 
 However, any sheet can be undocked from the spreadsheet window, allowing multiple sheets to be visible at once. It is also possible to create a different sheet layout by subclassing the `StandardWidgetSheet`, also a PyQt widget. The `StandardWidgetSheet` manages cell layouts as well as interactions with the spreadsheet in editing mode. In editing mode, users can manipulate the cell layout and perform advanced actions on the cells, rather than interacting with cell contents. Such actions include applying analogies (see Section 23.4) and creating new workflow versions from parameter explorations.
 
-셀 처럼 시트 역시 커스터마이징 될 수 있습니다. 각 시트는 기본적으로 탭 뷰를 통해 접근할 수 있으며 표 형태의 레이아웃을 가집니다. 하지만, 모든 시트는 스프레드시트 창으로부터 꺼내어져 여러 개를 동시에 볼 수 있게 합니다. 역시 PyQt 위젯인 `StandardWidgetSheet`를 상속함으로써 다른 시트 레이아웃을 만들 수 있습니다. `StandardWidgetSheet`는 셀 레이아웃 뿐만이 아니라 편집 모드의 스프레드시트와의 상호작용도 관리합니다. 편집 모드에서, 사용자들은 셀의 내용은 편집하지 않고, 셀 레이아웃과 셀에 대한 고급 작업을 할 수 있습니다. 이러한 고급 작업에는 유사의 적용과(23.4장에서 자세히 설명됩니다) 매개 변수 탐색으로부터 새로운 작업 흐름을 생성하는 작업이 있습니다. 
+셀 처럼 시트 역시 사용자화 될 수 있습니다. 각 시트는 기본적으로 탭 뷰를 통해 접근할 수 있으며 표 형태의 레이아웃을 가집니다. 하지만, 모든 시트는 스프레드시트 창으로부터 꺼내어져 여러 개를 동시에 볼 수 있게 합니다. 역시 PyQt 위젯인 `StandardWidgetSheet`를 상속함으로써 다른 시트 레이아웃을 만들 수 있습니다. `StandardWidgetSheet`는 셀 레이아웃 뿐만이 아니라 편집 모드의 스프레드시트와의 상호작용도 관리합니다. 편집 모드에서, 사용자들은 셀의 내용은 편집하지 않고, 셀 레이아웃과 셀에 대한 고급 작업을 할 수 있습니다. 이러한 고급 작업에는 유사의 적용과(23.4장에서 자세히 설명됩니다) 매개 변수 탐색으로부터 새로운 작업 흐름을 생성하는 작업이 있습니다. 
 
 ### 23.4.2. 시각적 차이와 유사
 
