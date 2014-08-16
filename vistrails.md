@@ -169,13 +169,9 @@ VisTrails는 시각화 스프레드시트을 통해 사용자들이 여러 작�
 
 그림 23.6은 VTK 셀이 선택되었을 때의 스프레드시트를 보여주며, 이 경우에 툴바는 PDF 이미지를 내보내거나, 카메라의 위치를 작업 흐름에 저장, 그리고 애니메이션을 생성하는 위젯들을 제공합니다. 스프레드시트 패키지는 히스토리 리플레이(애니메이션)와 멀티 터치 이벤트의 포워딩 등의 공통 기능을 제공하는 사용자화 가능한 `QCellWidget`을 정의하며, 새로운 셀 타입의 빠른 개발을 위해 `QWidget` 대신 사용될 수 있습니다.
 
-Even though the spreadsheet only accepts PyQt widgets as cell types, it is possible to integrate widgets written with other GUI toolkits. To do so, the widget must export its elements to the native platform, and PyQt can then be used to grab it. We use this approach for the `VTKCell` widget because the actual widget is written in C++. At run-time, the `VTKCell` grabs the window id, a Win32, X11, or Cocoa/Carbon handle depending on the system, and maps it to the spreadsheet canvas.
+스프레드시트가 PyQt 위젯만을 셀 타입으로 허용하긴 하지만, 다른 GUI 툴킷으로 작성된 위젯을 사용할 수도 있습니다. 이를 위해 해당 위젯은 위젯의 구성 요소들을 PyQt를 사용하여 다시 가져올 수 있도록 네이티브 플랫폼으로 내보내야 합니다. 우리는 `VTKCell` 위젯이 실제로는 C++로 작성되어 있기 때문에 이러한 접근 방식을 사용합니다. `VTKCell`은 런타임에 시스템에 따라 윈도우 식별자, Win32, X11, 또는 Cocoa/Carbon 핸들을 가져와 스프레드시트 캔버스에 대응시킵니다.
 
-스프레드시트가 PyQt 위젯만을 셀 타입으로 허용하긴 하지만, 다른 GUI 툴킷으로 작성된 위젯을 사용할 수도 있습니다. 이를 위해 해당 위젯은 위젯의 구성 요소들을 PyQt를 사용하여 다시 가져올 수 있도록 네이티브 플랫폼으로 내보내야 합니다. 우리는 `VTKCell` 위젯이 실제로는 C++로 작성되어 있기 때문에 이러한 접근 방식을 사용합니다. `VTKCell`은 런타임에 시스템에 따라 윈도우 식별자, Win32, X11, 또는 Cocoa/Carbon 핸들을 가져와 스프레드시트 캔버스에 매핑시킵니다.
-
-However, any sheet can be undocked from the spreadsheet window, allowing multiple sheets to be visible at once. It is also possible to create a different sheet layout by subclassing the `StandardWidgetSheet`, also a PyQt widget. The `StandardWidgetSheet` manages cell layouts as well as interactions with the spreadsheet in editing mode. In editing mode, users can manipulate the cell layout and perform advanced actions on the cells, rather than interacting with cell contents. Such actions include applying analogies (see Section 23.4) and creating new workflow versions from parameter explorations.
-
-셀 처럼 시트 역시 사용자화 될 수 있습니다. 각 시트는 기본적으로 탭 뷰를 통해 접근할 수 있으며 표 형태의 레이아웃을 가집니다. 하지만, 모든 시트는 스프레드시트 창으로부터 꺼내어져 여러 개를 동시에 볼 수 있게 합니다. 역시 PyQt 위젯인 `StandardWidgetSheet`를 상속함으로써 다른 시트 레이아웃을 만들 수 있습니다. `StandardWidgetSheet`는 셀 레이아웃 뿐만이 아니라 편집 모드의 스프레드시트와의 상호작용도 관리합니다. 편집 모드에서, 사용자들은 셀의 내용은 편집하지 않고, 셀 레이아웃과 셀에 대한 고급 작업을 할 수 있습니다. 이러한 고급 작업에는 유사의 적용과(23.4장에서 자세히 설명됩니다) 매개 변수 탐색으로부터 새로운 작업 흐름을 생성하는 작업이 있습니다. 
+셀처럼 시트 역시 사용자화 될 수 있습니다. 각 시트는 기본적으로 탭 뷰를 통해 접근할 수 있으며 표 형태의 레이아웃을 가집니다. 하지만 모든 시트는 스프레드시트 창으로부터 꺼내어져 여러 개를 동시에 볼 수 있게도 합니다. 역시 PyQt 위젯인 `StandardWidgetSheet`를 상속함으로써 다른 시트 레이아웃을 만들 수 있습니다. `StandardWidgetSheet`는 셀 레이아웃 뿐만이 아니라 편집 상태의 스프레드시트와의 상호 작용도 관리합니다. 편집 상태에서, 사용자들은 셀의 내용은 편집하지 않고, 셀 레이아웃과 셀에 대한 고급 작업을 할 수 있습니다. 이러한 고급 작업에는 유사의 적용과(23.4장에서 자세히 설명됩니다) 매개 변수 탐색으로부터 새로운 작업 흐름을 생성하는 작업이 있습니다. 
 
 ### 23.4.2. 시각적 차이와 유사
 
