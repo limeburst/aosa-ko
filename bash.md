@@ -289,3 +289,19 @@ The parser returns a single C structure representing a command (which, in the ca
 After parsing, but before execution, many of the words produced by the parsing stage are subjected to one or more word expansions, so that (for example) $OSTYPE is replaced with the string "linux-gnu".
 
 구문 분석 이후와 실행 이전에, 구문 분석 단계에서 생성된 여러 단어들은 (예를 들어) $OSTYPE이 "linux-gnu"로 치활될 수 있도록 하나 또는 그 이상의 단어 확장의 대상이 됩니다.
+
+### 3.5.1. Parameter and Variable Expansions
+
+### 3.5.1. 매개변수와 변수 확장
+
+Variable expansions are the ones users find most familiar. Shell variables are barely typed, and, with few exceptions, are treated as strings. The expansions expand and transform these strings into new words and word lists.
+
+변수 확장은 사용자들에게 가장 익숙한 확장입니다. 셸 변수들은 극소량의 타입을 사용하며, 몇 가지 예외를 제외하고는 대부분 문자열로 처리됩니다. 확장은 이러한 문자열들을 새로운 단어와 단어 목록으로 변환시킵니다.
+
+There are expansions that act on the variable's value itself. Programmers can use these to produce substrings of a variable's value, the value's length, remove portions that match a specified pattern from the beginning or end, replace portions of the value matching a specified pattern with a new string, or modify the case of alphabetic characters in a variable's value.
+
+변수의 값 자체에 대해 동작하는 확장들이 있습니다. 프로그래머들은 이러한 확장을 이용해 변수의 값, 길이의 부분 문자열을 만들거나, 특정한 형태에 맞는 부분을 제거, 교체하거나, 변수의 값 내의 알파벳들의 대소문자간 변환을 할 수 있습니다.
+
+In addition, there are expansions that depend on the state of a variable: different expansions or assignments happen based on whether or not the variable is set. For instance, `${parameter:-word}` will expand to `parameter` if it's set, and `word` if it's not set or set to the empty string.
+
+또, 변수의 상태에 따라 다르게 동작하는 확장들이 있습니다. 변수가 지정된 여부에 따라 서로 다른 확장이나 대입이 일어나게 할 수 있습니다. 예를 들어, `${parameter:-word}`는 지정되었을 경우 `parameter`로 확장되며, 그렇지 않거나 빈 문자열로 지정되었을땐 `word`로 확장됩니다.
