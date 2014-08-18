@@ -359,3 +359,19 @@ The results of the word expansions are split using the characters in the value o
 After the results are split, the shell interprets each word resulting from the previous expansions as a potential pattern and tries to match it against an existing filename, including any leading directory path.
 
 결과물들이 분리되면, 셸은 이전 확장의 결과물의 각 단어를 잠재적 패턴으로 인식하여, 존재하는 파일의 이름들과 먼저 오는 디렉토리 경로에 대해 매칭합니다.
+
+### 3.5.5. Implementation
+
+### 3.5.5. 구현
+
+If the basic architecture of the shell parallels a pipeline, the word expansions are a small pipeline unto themselves. Each stage of word expansion takes a word and, after possibly transforming it, passes it to the next expansion stage. After all the word expansions have been performed, the command is executed.
+
+셸의 기본적인 설계가 파이프라인에 대응된다면, 단어 확장은 작은 파이프라인으로 볼 수 있습니다. 단어 확장의 각 단계는 단어를 받아, 가능한 변경을 가한 후, 다음 확장 단계에 넘겨 줍니다. 모든 단어 확장들이 수행된 후, 명령이 실행됩니다.
+
+The bash implementation of word expansions builds on the basic data structures already described. The words output by the parser are expanded individually, resulting in one or more words for each input word. The `WORD_DESC` data structure has proved versatile enough to hold all the information required to encapsulate the expansion of a single word. The flags are used to encode information for use within the word expansion stage and to pass information from one stage to the next. For instance, the parser uses a flag to tell the expansion and command execution stages that a particular word is a shell assignment statement, and the word expansion code uses flags internally to inhibit word splitting or note the presence of a quoted null string (`"$x"`, where `$x` is unset or has a null value). Using a single character string for each word being expanded, with some kind of character encoding to represent additional information, would have proved much more difficult.
+
+Bash의 단어 확장 구현은 위에서 설명된 기초 자료 구조를 기반으로 만들어 졌습니다. 구문 분석기에 의해 출력된 단어들은 개별적으로 확장되어, 각 입력 단어당 하나 이상의 단어를 만듭니다. `WORD_DESC` 자료 구조는 단어 하나에 대한 확장의 정보를 포함하는 데 충분히 유연한 것으로 증명되었습니다. 플래그들은 단어 확장 단계와, 단계 간 정보 전달을 위해 사용되는 정보를 인코딩하는 데에 사용됩니다. 예를 들어, 구문 분석기는 플래그를 사용하여 확장과 명령 실행 단계에게 특정 단어가 셸 대입문이라는 것을 알려주며, 단어 확장 코드는 단어 분리를 방지하거나 인용된 널 문자열(`$x`가 지정되지 않았거나 널 값을 가질 때의 `"$x"`)의 존재를 참고하기 위해 내부적으로 플래그를 사용합니다. 추가적인 정보를 나타내기 위한 인코딩을 사용하는, 확장되는 하나의 단어 당 단일 문자로 이루어진 문자열을 사용하는 것은 훨씬 더 힘들었을 것입니다.
+
+As with the parser, the word expansion code handles characters whose representation requires more than a single byte. For example, the variable length expansion (`${#variable}`) counts the length in characters, rather than bytes, and the code can correctly identify the end of expansions or characters special to expansions in the presence of multibyte characters.
+
+구문 분석기와 마찬가지로, 단어 확장 코드 역시 1 바이트 이상을 필요로 하는 문자열들도 다룹니다. 예를 들어, 변수 길이 확장(`${#variable}`)은 길이를 바이트가 아니라 문자 단위로 세며, 해당 작업을 하는 코드는, 멀티바이트 문자열이 존재하는, 확장이나, 확장에 있어 특별한 의미를 가지는 문자열들의 끝을 정확히 판단할 수 있습니다.
