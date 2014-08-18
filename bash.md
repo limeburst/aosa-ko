@@ -351,3 +351,11 @@ Variable expansion is where the difference between single and double quotes beco
 The results of the word expansions are split using the characters in the value of the shell variable `$IFS` as delimiters. This is how the shell transforms a single word into more than one. Each time one of the characters in `$IFS` appears in the result, bash splits the word into two. Single and double quotes both inhibit word splitting.
 
 단어 확장의 결과물은 셸 변수 `$IFS` 값에 있는 문자들을 구분자로서 사용하여 분리됩니다. 이것은 셸이 하나의 단어를 그 이상의 단어들로 변환시키는 방식입니다. `$IFS`에 있는 문자들 중 하나가 결과문에 나타날 때 마다, bash는 해당 단어를 두 개의 단어로 분리시킵니다. 따옴표나 쌍따옴표는 단어 분리를 방지합니다.
+
+### 3.5.4. Globbing
+
+### 3.5.4. 글로빙
+
+After the results are split, the shell interprets each word resulting from the previous expansions as a potential pattern and tries to match it against an existing filename, including any leading directory path.
+
+결과물들이 분리되면, 셸은 이전 확장의 결과물의 각 단어를 잠재적 패턴으로 인식하여, 존재하는 파일의 이름들과 먼저 오는 디렉토리 경로에 대해 매칭합니다.
