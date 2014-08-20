@@ -415,3 +415,19 @@ Since multiple redirections are implemented as simple lists of objects, the redi
 The other complication is one bash brought on itself. Historical versions of the Bourne shell allowed the user to manipulate only file descriptors 0-9, reserving descriptors 10 and above for the shell's internal use. Bash relaxed this restriction, allowing a user to manipulate any descriptor up to the process's open file limit. This means that bash has to keep track of its own internal file descriptors, including those opened by external libraries and not directly by the shell, and be prepared to move them around on demand. This requires a lot of bookkeeping, some heuristics involving the close-on-exec flag, and yet another list of redirections to be maintained for the duration of a command and then either processed or discarded.
 
 또 다른 복잡함은 bash가 스스로 짊어진 부담입니다. 고전 Bourne 셸은 사용자가 0번부터 9번까지의 파일 서술만을 조작할 수 있게 했으며, 10번 이상의 파일 서술자들은 셸 내부에서의 사용을 위해 예약하였습니다. Bash는 이 제한을 풀었으며, 사용자가 프로세스가 열 수 있는 파일의 한계치만큼의 서술자를 조작할 수 있게 하였습니다. 이것의 의미는, bash가 직접 열지 않은, 외부 라이브러리들이 연 파일 서술자들을 관리하고, 요청에 따라 서술자들을 이동시킬 수 있어야 합니다. 이것은 많은 관리를 요하며, close-on-exec 플래그가 관련되는 휴리스틱, 그리고 명령이 실행되는 동안 관리되어야 하고, 명령이 끝나면 폐기하거나 처리할 또다른 리다이렉션의 목록이 생깁니다.
+
+### 3.6.2. Builtin Commands
+
+### 3.6.2. 빌트인 명령
+
+Bash makes a number of commands part of the shell itself. These commands are executed by the shell, without creating a new process.
+
+Bash는 셸의 일부인 몇 가지 명령들을 만듭니다. 이 명령들은 새로운 프로세스를 만들지 않으면서 셸에 의해 실행됩니다.
+
+The most common reason to make a command a builtin is to maintain or modify the shell's internal state. `cd` is a good example; one of the classic exercises for introduction to Unix classes is to explain why `cd` can't be implemented as an external command.
+
+명령을 빌트인으로 만드는 가장 흔한 이유는 셸의 내부 상태를 유지하거나 조작하기 위해서입니다. `cd`는 유닉스 입문 수업에서 `cd`가 외부 명령으로 구현될 수 없는 이유를 설명하기 위한 빌트인의 좋은 예시입니다.
+
+Bash builtins use the same internal primitives as the rest of the shell. Each builtin is implemented using a C language function that takes a list of words as arguments. The words are those output by the word expansion stage; the builtins treat them as command names and arguments. For the most part, the builtins use the same standard expansion rules as any other command, with a couple of exceptions: the bash builtins that accept assignment statements as arguments (e.g., `declare` and `export`) use the same expansion rules for the assignment arguments as those the shell uses for variable assignments. This is one place where the `flags` member of the `WORD_DESC` structure is used to pass information between one stage of the shell's internal pipeline and another.
+
+Bash 빌트인들은 셸의 다른 부분과 같은 내부 기본형을 사용합니다. 각 빌트인은 C 언어의 함수들을 사용하여 구현되어 있습니다. 단어들은 단어 확장 단계에서 출력된 단어들이며, 빌트인들은 이 단어들을 명령 이름과 매개 변수로 취급합니다. 대부분의 경우, 빌트인들은 두 개의 예외를 제외하고는 다른 명령들에 적용되는 것과 같은 표준 확장 규칙이 적용됩니다. 대입문을 매개 변수로 받는 bash 빌트인들(`declare`, `export` 등)은 셸이 변수 할당에 사용되는 같은 확장 규칙이 적용됩니다. 이곳은 `WORD_DESC` 구조체의 `flags` 멤버가 셸의 내부 파이프라인의 단계 간 정보를 전달하기 위해 사용되는 곳입니다.
