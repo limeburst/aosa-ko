@@ -483,3 +483,39 @@ Compound commands consist of lists of one or more simple commands and are introd
 The implementation is fairly unsurprising. The parser constructs objects corresponding to the various compound commands, and interprets them by traversing the object. Each compound command is implemented by a corresponding C function that is responsible for performing the appropriate expansions, executing commands as specified, and altering the execution flow based on the command's return status. The function that implements the `for` command is illustrative. It must first expand the list of words following the `in` reserved word. The function must then iterate through the expanded words, assigning each word to the appropriate variable, then executing the list of commands in the `for` command's body. The for command doesn't have to alter execution based on the return status of the command, but it does have to pay attention to the effects of the `break` and `continue` builtins. Once all the words in the list have been used, the `for` command returns. As this shows, for the most part, the implementation follows the description very closely.
 
 컴파운드 명령의 구현은 딱히 놀랄 것이 못 됩니다. 구문 분석기는 컴파운드 명령에 대응하는 객체들을 만들고, 객체를 탐색하여 해석합니다. 각 컴파운드 명령은, 적절한 확장을 수행, 지정된 명령의 실행, 그리고 명령의 반환값에 따라 실행 흐름을 조작하는 것을 담당하는 C 함수에 의해 구현됩니다. `for` 명령을 구현하는 함수를 예로 들어 보겠습니다. 이 함수는 먼저 예약어인 `in` 다음에 오는 단어의 목록을 확장합니다. 이 함수는 또, 확장된 단어들을 돌아가며 각 단어를 적절한 변수에 할당하고, `for` 명령 내의 명령 목록을 실행합니다. for 명령은, 명령의 반환값에 따라 실행을 조작하지 않아도 되지만, `break`와 `continue` 빌트인의 효과에 대해서는 주의를 해야 합니다. 목록에 있는 모든 단어들이 사용되면, `for` 명령이 반환됩니다. 이것이 보여주는 것 처럼, 대부분의 경우, 구현은 설명과 매우 유사하게 동작합니다.
+
+## 3.7. Lessons Learned
+
+## 3.7. 얻은 교훈
+
+### 3.7.1. What I Have Found Is Important
+
+### 3.7.1. 내가 알아낸 것은 중요하다
+
+I have spent over twenty years working on bash, and I'd like to think I have discovered a few things. The most important—one that I can't stress enough—is that it's vital to have detailed change logs. It's good when you can go back to your change logs and remind yourself about why a particular change was made. It's even better when you can tie that change to a particular bug report, complete with a reproducible test case, or a suggestion.
+
+저는 bash에 대한 작업을 20년 이상 해 왔으며, 몇 가지 사실을 발견했다고 생각하고 싶습니다. 아무리 강조해도 충분하지 않은, 제일 중요한 것은, 자세한 체인지로그는 필수적이라는 것입니다. 체인지로그로 돌아가 특정 변경 사항에 대한 결정이 왜 일어났는지에 대해 상기할 수 있다는 것은 좋은 일입니다. 해당 변경 사항을 재현 가능한 테스트 케이스나 제안과 함께 있는 특정 버그 리포트에 연결할 수 있을 경우 더 좋습니다.
+
+If it's appropriate, extensive regression testing is something I would recommend building into a project from the beginning. Bash has thousands of test cases covering virtually all of its non-interactive features. I have considered building tests for interactive features—Posix has them in its conformance test suite—but did not want to have to distribute the framework I judged it would need.
+
+적절하다면, 포괄적인 회귀 테스트는 프로젝트의 시작부터 넣는 것을 추천하고 싶습니다. Bash엔 Bash의 사실상 모든 비대화적인 기능을 다루는 대한 수천개의 테스트 케이스가 있습니다. 대화적인 기능에 대한 테스트를 만드는 것을 고려해 보았지만(Posix에 부합 테스트 모음이 있긴 합니다), 테스트 모음이 필요로 할 것으로 판단한 프레임워크를 배포하기 싫었습니다.
+
+Standards are important. Bash has benefited from being an implementation of a standard. It's important to participate in the standardization of the software you're implementing. In addition to discussions about features and their behavior, having a standard to refer to as the arbiter can work well. Of course, it can also work poorly—it depends on the standard.
+
+표준은 중요합니다. Bash는 표준 구현체로서의 혜택을 받았습니다. 당신이 구현하고 있는 소프트웨어의 표준화에 참여하는 것은 중요합니다. 소프트웨어의 기능과 동작에 대한 토론은 물론, 중재인으로서의 표표준을 가지고 있는 것도 잘 동작할 수 있습니다. 물론, 표준에 따라, 형편없이 동작할 수도 있습니다.
+
+External standards are important, but it's good to have internal standards as well. I was lucky enough to fall into the GNU Project's set of standards, which provide plenty of good, practical advice about design and implementation.
+
+외부 표준도 중요하지만, 내부 표준도 가지는 것도 좋습니다. 나는 설계와 구현에 대한 충분한 양의 훌륭하고, 실용적인 조언을 제공받을 수 있는, GNU 프로젝트의 표준에 들어가기에 운이 좋았습니다.
+
+Good documentation is another essential. If you expect a program to be used by others, it's worth having comprehensive, clear documentation. If software is successful, there will end up being lots of documentation for it, and it's important that the developer writes the authoritative version.
+
+좋은 문서는 또 다른 필수 요소입니다. 어떤 프로그램이 다른 사용자에 의해 사용될 것이라고 생각한다면, 포괄적이고 명확한 문서는 그 가치를 합니다. 해당 소프트웨어가 성공적이면, 그 소프트웨어에 대한 많은 문서들이 생겨날 것이며, 개발자가 권위 있는 버전의 문서를 쓰는 것이 중요합니다.
+
+There's a lot of good software out there. Use what you can: for instance, gnulib has a lot of convenient library functions (once you can unravel them from the gnulib framework). So do the BSDs and Mac OS X. Picasso said "Great artists steal" for a reason.
+
+세상에는 많은 좋은 소프트웨어들이 있습니다. 쓸 수 있는 것을 쓰십시오. 예를 들어, gnulib은 수많은 편리한 라이브러리 함수를 가지고 있습니다. BSD와 Mac OS X도 마찬가지입니다. 피카소가 "위대한 예술가들은 훔친다"라는 말을 괜히 한 것이 아닙니다.
+
+Engage the user community, but be prepared for occasional criticism, some that will be head-scratching. An active user community can be a tremendous benefit, but one consequence is that people will become very passionate. Don't take it personally.
+
+사용자 커뮤니티와 소통하는 동시에, 종종 있는 비판에 준비되어 있으십시오. 일부는 의문을 가지게 할 것입니다. 활성화된 사용자 커뮤니티는 매우 큰 도움이 될 수 있지만, 그것은 사용자들을 매우 격렬하게 만들기도 합니다. 개인적으로 받아들이지 마세요.
