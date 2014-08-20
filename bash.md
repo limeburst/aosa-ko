@@ -519,3 +519,19 @@ There's a lot of good software out there. Use what you can: for instance, gnulib
 Engage the user community, but be prepared for occasional criticism, some that will be head-scratching. An active user community can be a tremendous benefit, but one consequence is that people will become very passionate. Don't take it personally.
 
 사용자 커뮤니티와 소통하는 동시에, 종종 있는 비판에 준비되어 있으십시오. 일부는 의문을 가지게 할 것입니다. 활성화된 사용자 커뮤니티는 매우 큰 도움이 될 수 있지만, 그것은 사용자들을 매우 격렬하게 만들기도 합니다. 개인적으로 받아들이지 마세요.
+
+### 3.7.2. What I Would Have Done Differently
+
+### 3.7.2. 다르게 하고 싶었던 것들
+
+Bash has millions of users. I've been educated about the importance of backwards compatibility. In some sense, backwards compatibility means never having to say you're sorry. The world, however, isn't quite that simple. I've had to make incompatible changes from time to time, nearly all of which generated some number of user complaints, though I always had what I considered to be a valid reason, whether that was to correct a bad decision, to fix a design misfeature, or to correct incompatibilities between parts of the shell. I would have introduced something like formal bash compatibility levels earlier.
+
+Bash는 수백만명의 사용자 층을 가지고 있습니다. 하위 호환성의 중요성에 대해서는 알고 있습니다. 어떤 관점에서는, 하위 호환성은 미안해야 할 일이 없다는 것을 의미하기도 합니다. 하지만, 세상은 그렇게 단순하지 않습니다. 종종 호환되지 않는 변경점들을 만들어야 할 때도 있으며, 이 변경점 대부분들은 일부 사용자의 불만을 야기했지만, 제가 생각하기엔, 그 결정이 옮은 결정이든 잘못된 결정이든, 설계 실수를 고치기 위해서든, 셸의 영역 간 비호환성을 고치기 위해서였든, 언제나 타당한 이유를 가지고 있었습니다. 좀 더 일찍 정식 bash 호환성 단계를 만들어 놨었으면 합니다.
+
+Bash's development has never been particularly open. I have become comfortable with the idea of milestone releases (e.g., bash-4.2) and individually-released patches. There are reasons for doing this: I accommodate vendors with longer release timelines than the free software and open source worlds, and I've had trouble in the past with beta software becoming more widespread than I'd like. If I had to start over again, though, I would have considered more frequent releases, using some kind of public repository.
+
+Bash의 개발은 딱히 투명하진 않았습니다. 저는 마일스톤 릴리즈(bash-4.2 등)와, 개인이 릴리즈하는 패치의 개념에 익숙해져 있었습니다. 이렇게 한 이유가 있습니다. 자유 소프트웨어와 오픈 소스 세상보다 긴 릴리즈 타임라인을 가진 벤더들의 사정에도 맞춰 줘야 했으며, 과거에 원하던 것 이상 베타 버전의 소프트웨어가 광범위하게 확산되어 문제를 겪었던 적이 많았기 때문입니다. 하지만, 새로 시작할 수 있다면, 공개 저장소를 사용하여, 릴리즈를 좀 더 자주 하였을 것입니다.
+
+No such list would be complete without an implementation consideration. One thing I've considered multiple times, but never done, is rewriting the bash parser using straight recursive-descent rather than using `bison`. I once thought I'd have to do this in order to make command substitution conform to Posix, but I was able to resolve that issue without changes that extensive. Were I starting bash from scratch, I probably would have written a parser by hand. It certainly would have made some things easier.
+
+구현에 대한 고려 사항 없이는 이 목록은 허전할 것입니다. 여러 번 생각만 하고 실제로 하지 못했던 것들 중 하나는, bash 구문 분석기를 `bison` 대신, 알기 쉬운, 되부름 하향 구문 분석 방식으로 다시 작성하는 것입니다. 한때는 명령 치환 기능을 Posix 표준에 맞추기 위해 이런 작업을 해야 할 줄 알았지만, 이렇게 큰 변경 사항을 만들지 않고서도 해낼 수 있었습니다. Bash를 처음부터 구현한다면, 직접 손으로 구문 분석기를 짰을 것입니다. 그랬다면 여러 가지가 쉬워졌을 것입니다.
