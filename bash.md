@@ -535,3 +535,19 @@ Bash의 개발은 딱히 투명하진 않았습니다. 저는 마일스톤 릴�
 No such list would be complete without an implementation consideration. One thing I've considered multiple times, but never done, is rewriting the bash parser using straight recursive-descent rather than using `bison`. I once thought I'd have to do this in order to make command substitution conform to Posix, but I was able to resolve that issue without changes that extensive. Were I starting bash from scratch, I probably would have written a parser by hand. It certainly would have made some things easier.
 
 구현에 대한 고려 사항 없이는 이 목록은 허전할 것입니다. 여러 번 생각만 하고 실제로 하지 못했던 것들 중 하나는, bash 구문 분석기를 `bison` 대신, 알기 쉬운, 되부름 하향 구문 분석 방식으로 다시 작성하는 것입니다. 한때는 명령 치환 기능을 Posix 표준에 맞추기 위해 이런 작업을 해야 할 줄 알았지만, 이렇게 큰 변경 사항을 만들지 않고서도 해낼 수 있었습니다. Bash를 처음부터 구현한다면, 직접 손으로 구문 분석기를 짰을 것입니다. 그랬다면 여러 가지가 쉬워졌을 것입니다.
+
+## 3.8. Conclusions
+
+## 3.8. 결론
+
+Bash is a good example of a large, complex piece of free software. It has had the benefit of more than twenty years of development, and is mature and powerful. It runs nearly everywhere, and is used by millions of people every day, many of whom don't realize it.
+
+Bash는 크고 복잡한 자유 소프트웨어의 좋은 예입니다. 20년 이상의 개발 시간이라는 혜택을 가지고 있으며, 성숙하고 강력합니다. 거의 모든 곳에서 작동하며, Bash를 사용한다는 것을 인식하지 못하는 다수를 포함해, 매일 수백만명의 사람들이 사용합니다. 
+
+Bash has been influenced by many sources, dating back to the original 7th Edition Unix shell, written by Stephen Bourne. The most significant influence is the Posix standard, which dictates a significant portion of its behavior. This combination of backwards compatibility and standards compliance has brought its own challenges.
+
+Bash는 Stephen Bourne가 작성한 7th Edition 유닉스 셸부터, 많은 기존 프로젝트들의 영향을 받았습니다. Bash에 가장 큰 영향은 미친 건, Bash의 동작의 상당한 부분을 정의한 Posix 표준이었습니다. 이러한 하위 호환성과 표준 준수의 조합은 그 나름대로의 도전이 있었습니다.
+
+Bash has profited by being part of the GNU Project, which has provided a movement and a framework in which bash exists. Without GNU, there would be no bash. Bash has also benefited from its active, vibrant user community. Their feedback has helped to make bash what it is today—a testament to the benefits of free software.
+
+Bash는 GNU 프로젝트로서의 일부로서, Bash가 존재하는 기반이 되는 동기와 체제를 제공받는 이점을 얻었습니다. GNU가 없었으면 bash도 없었을 것입니다. Bash는 적극적인 사용자 커뮤니티의 혜택도 받았습니다. 사용자들의 의견은 지금까지의 bash를 만들어 왔습니다. 이것은 자유 소프트웨어로서의 이점의 증거입니다.
