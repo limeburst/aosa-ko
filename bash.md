@@ -471,3 +471,15 @@ The shell uses a few simple data structures in its job control implementation. T
 Like several other things in the shell, the complex part about implementing job control is bookkeeping. The shell must take care to assign processes to the correct process groups, make sure that child process creation and process group assignment are synchronized, and that the terminal's process group is set appropriately, since the terminal's process group determines the foreground job (and, if it's not set back to the shell's process group, the shell itself won't be able to read terminal input). Since it's so process-oriented, it's not straightforward to implement compound commands such as while and for loops so an entire loop can be stopped and started as a unit, and few shells have done so.
 
 셸의 다른 것들과 비슷하게, 작업 제어를 구현하는 것의 복잡한 부분은 이것이 많은 관리를 요구한다는 것입니다. 셸은 프로세스들을 올바른 프로세스 그룹에 할당하고, 자식 프로세스 생성과 프로세스 그룹 할당이 동기적으로 일어나며, 터미널의 프로세스 그룹이 전경 작업을 결정하기 때문에 (또, 셸의 프로세스 그룹으로 다시 재설정되지 않으면, 셸은 터미널 입력을 읽을 수 없기 때문에), 터미널의 프로세스 그룹이 올바르게 설정되어 있는 지 확인해야 합니다. 작업 제어는 매우 프로세스 지향적이기 때문에, 반복문 통째로 하나의 단위로서 멈추고 재개시킬 수 있도록, while이나 for 반복문 같은 컴파운드 명령을 구현하는 것이 간단하지 않기 때문에, 구현하는 셸이 별로 없습니다.
+
+### 3.6.5. Compound Commands
+
+### 3.6.5. 컴파운드 명령
+
+Compound commands consist of lists of one or more simple commands and are introduced by a keyword such as `if` or `while`. This is where the programming power of the shell is most visible and effective.
+
+컴파운드 명령은 하나 이상의 단순한 명령의 목록으로 이루져 있으며, `if`나 `while` 등의 키워드로 도입됩니다. 컴파운드 명령은 셸 프로그래밍의 강력함이 가장 잘 나타나고 효과적인 곳입니다.
+
+The implementation is fairly unsurprising. The parser constructs objects corresponding to the various compound commands, and interprets them by traversing the object. Each compound command is implemented by a corresponding C function that is responsible for performing the appropriate expansions, executing commands as specified, and altering the execution flow based on the command's return status. The function that implements the `for` command is illustrative. It must first expand the list of words following the `in` reserved word. The function must then iterate through the expanded words, assigning each word to the appropriate variable, then executing the list of commands in the `for` command's body. The for command doesn't have to alter execution based on the return status of the command, but it does have to pay attention to the effects of the `break` and `continue` builtins. Once all the words in the list have been used, the `for` command returns. As this shows, for the most part, the implementation follows the description very closely.
+
+컴파운드 명령의 구현은 딱히 놀랄 것이 못 됩니다. 구문 분석기는 컴파운드 명령에 대응하는 객체들을 만들고, 객체를 탐색하여 해석합니다. 각 컴파운드 명령은, 적절한 확장을 수행, 지정된 명령의 실행, 그리고 명령의 반환값에 따라 실행 흐름을 조작하는 것을 담당하는 C 함수에 의해 구현됩니다. `for` 명령을 구현하는 함수를 예로 들어 보겠습니다. 이 함수는 먼저 예약어인 `in` 다음에 오는 단어의 목록을 확장합니다. 이 함수는 또, 확장된 단어들을 돌아가며 각 단어를 적절한 변수에 할당하고, `for` 명령 내의 명령 목록을 실행합니다. for 명령은, 명령의 반환값에 따라 실행을 조작하지 않아도 되지만, `break`와 `continue` 빌트인의 효과에 대해서는 주의를 해야 합니다. 목록에 있는 모든 단어들이 사용되면, `for` 명령이 반환됩니다. 이것이 보여주는 것 처럼, 대부분의 경우, 구현은 설명과 매우 유사하게 동작합니다.
