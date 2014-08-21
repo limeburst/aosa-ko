@@ -454,41 +454,23 @@ In recent years, people have developed a way to use scripting languages such as 
 
 최근 몇 년 간, 사람들은 GObject-Introspection이라는 GLib/GObject 기반의 API를 통해 자바스크립트나 파이썬, C#과 유사한 언어인 Vala 같은 스크립팅 언어를 사용하기 시작했습니다. 안타깝게도, 이러한 타입의 콜백을 다른 언어로 바인딩 하는 것은 매우 힘들기 때문에, 새로운 바인딩들은 해당 언어와 GLib에서 제공하는 비동기 콜백 기능을 사용하도록 설계되었습니다.
 
-### 20.4.2. Object Readiness
-
 ### 20.4.2. 객체의 준비성
 
-In a simple D-Bus API, such as the low-level Telepathy bindings, you can start making method calls or receive signals on a D-Bus object simply by creating a proxy object for it. It's as simple as giving an object path and interface name and getting started.
+저수준 Telepathy 바인딩 같은 간단한 D-Bus API에서는 프락시 객체를 만드는 것만으로도 D-Bus 객체의 메서드를 호출하거나 신호를 받을 수 있습니다. 이것은 객체 경로와 인터페이스 이름을 주는 것만을 필요로 합니다.
 
-저수준 Telepathy 바인딩같은 간단한 D-Bus API에서는 단순히 프록시 객체를 만들어 D-Bus 객체의 메서드를 호출하거나 시그널을 받을 수 있습니다. 객체 경로와 인터페이스 이름을 주는 것만으로도 할 수 있습니다.
+하지만 Telepathy의 고수준 API에서, 우리는 객체 프락시가 이용할 수 있는 인터페이스에 대해 알고 싶으므로, 객체 타입에 대한 공통 속성들(채널 타입, 대상, 창시자 등)을 가져올 필요가 있으며, 객체의 상태(연결 상태 등)를 판단하고 추적할 수 있어야 합니다.
 
-However, in Telepathy's high-level API, we want our object proxies to know what interface are available, we want common properties for the object type to be retrieved (e.g., the channel type, target, initiator), and we want to determine and track the object's state or status (e.g., the connection status).
+따라서 모든 프락시 객체에는 준비성이라는 개념이 존재합니다. 프락시 객체에 대한 메서드 호출을 함으로써 해당 객체의 상태를 비동기적으로 받아오고, 객체를 사용할 수 있을 때 통보를 받을 수 있습니다.
 
-하지만, Telepathy의 고수준 API에서는 객체 프록시가 이용할 수 있는 인터페이스에 대해 알기를 원하기 때문에 객체 타입에 대한 공통 속성들(e.g., 채널 타입, 타겟, 창시자 등)을 가져와야 하며, 객체의 상태(e.g., 연결 상태)를 판단하고 추적할 수 있어야 합니다.
+모든 클라이언트가 객체의 모든 기능에 관심이 있는 것이 아니므로, 특정 객체 타입에 대한 준비성은 몇 가지 기능들로 나누어져 있습니다. 각 객체는 객체에 대한 중요한 정보(객체의 Interfaces 속성과 기본 상태)를 준비하는 핵심 기능과 별도의 속성이나 상태 추적 같은 추가적인 상태에 대한 몇 가지 선택적 기능들을 구현합니다. 여러 프락시에 대해 준비할 수 있는 추가적 기능의 예로는, 연락처 정보, 기능, 위치 정보, 대화 상태("아무개가 글을 쓰고 있습니다…" 등), 그리고 사용자 아바타가 있습니다.
 
-Thus, the concept of readiness exists for all proxy objects. By making a method call on a proxy object, you are able to asynchronously retrieve the state for that object and be notified when state is retrieved and the object is ready for use.
-
-따라서, 모든 프록시 객체에 대해서는 준비성이라는 개념이 존재합니다. 프록시 객체에 메서드 호출을 함으로서 해당 객체의 상태를 비동기적으로 받아오고, 객체를 사용할 수 있을 때 통보를 받을 수 있습니다.
-
-Since not all clients implement, or are interested in, all the features of a given object, readiness for an object type is separated into a number of possible features. Each object implements a core feature, which will prepare crucial information about the object (i.e., its Interfaces property and basic state), plus a number of optional features for additional state, which might include extra properties or state-tracking. Specific examples of additional features you can ready on various proxies are contact info, capabilities, geolocation information, chat states (such as "Escher is typing…") and user avatars.
-
-모든 클라이언트가 해당 객체의 모든 기능에 관심이 있는 것이 아니기 때문에, 객체의 준비성은 몇 가지 기능으로 나뉘어져 있습니다. 각 객체는 객체에 대한 중요한 정보를(객체의 Interfaces 속성과 기본 상태) 준비하는 핵심 기능과, 별도의 속성이나 상태 추적 등 추가적인 상태들에 대한 몇 가지 선택적 기능을 구현합니다. 여러 프록시에 대해 준비할 수 있는 추가적 기능의 예로는 연락처 정보, 기능, 위치 정보, 대화 상태(상대방의 타이핑 상태 등), 그리고 사용자 아바타 등이 있습니다.
-
-For example, connection object proxies have:
-
-예를 들어, 연결 객체 프록시들은 다음을 가지고 있습니다:
-
-* a core feature which retrieves the interface and connection status;
-* features to retrieve the requestable channel classes and support contact info; and
-* a feature to establish a connection and return ready when connected.
+예를 들어, 연결 객체 프락시들은 다음을 가지고 있습니다:
 
 * 인터페이스와 연결 상태를 가져오는 핵심 기능
-* 요청 가능한 채널 클래스와 지원 연락처 정보
-* 연결을 확립하고 준비 상태를 반환하는 기능
+* 요청 가능한 채널 클래스들을 가져오고 연락처 정보를 지원하는 기능
+* 연결을 성사시키고, 연결되었을 때 준비 상태를 반환하는 기능
 
-The programmer requests that the object is readied, providing a list of features in which they are interested and a callback to call when all of those features are ready. If all the features are already ready, the callback can be called immediately, else the callback is called once all the information for those features is retrieved.
-
-프로그래머는 관심 있는 기능들의 목록과 기능들이 준비되었을 때 호출할 콜백과 함께 객체 준비 요청을 보냅니다. 모든 기능들이 준비되면 콜백은 호출되며, 이미 모든 기능들이 준비되어 있을 경우 콜백은 즉시 호출됩니다. 
+프로그래머는 관심 있는 기능들의 목록과 기능들이 준비되었을 때 호출할 콜백과 함께 객체 준비 요청을 보냅니다. 요청한 모든 기능이 준비되었을 때 콜백이 호출되며, 이미 모든 기능들이 준비되어 있으면 콜백은 즉시 호출됩니다. 
 
 ## 20.5. 견고성
 
