@@ -534,26 +534,14 @@ Sidecars are typically implemented by plugins in a Connection Manager. Clients c
 
 > 존재 여부 믹스인은 옛날 클라이언트들이 계속 동작할 수 있도록, Connection 위에 두 인터페이스 모두 구현하지만, 단순한 인터페이스 쪽의 기능만큼만 구현합니다.
 
-## 20.8. Lessons Learned
-
 ## 20.8. 얻은 교훈
 
-Telepathy is an excellent example of how to build a modular, flexible API on top of D-Bus. It shows how you can develop an extensible, decoupled framework on top of D-Bus. One which requires no central management daemon and allows components to be restartable, without loss of data in any other component. Telepathy also shows how you can use D-Bus efficiently and effectively, minimizing the amount of traffic you transmit on the bus.
+Telepathy는 D-Bus를 기반으로 한 유연하고 모듈화된 API를 만든 훌륭한 예시입니다. D-Bus를 기반으로, 중앙 관리 데몬 없이, 구성 요소들이 개별적으로, 다른 구성 요소들의 데이터 손실 없이 재시작될 수 있는, 분산된 유연한 프레임워크를 개발할 수 있다는 것을 보여줍니다. 또, Telepathy는 버스에 전송하는 트래픽을 최소화하여 D-Bus를 효율적이고 효과적으로 사용할 수 있는 방법도 보여줍니다.
 
-Telepathy는 D-Bus 위에서 모듈화된, 유연한 API를 만든 훌륭한 예시입니다. D-Bus 위에서, 중앙 관리 데몬을 필요로 하지 않고, 구성 요소들이 개별적으로, 다른 구성 요소의 데이터 손실 없이, 재시작될 수 있는 유연하고 분산된 프레임워크를 개발할 수 있다는 것을 보여줍니다. 또, Telepathy는 버스에 전송하는 트래픽을 최소화시켜 D-Bus를 효율적이고 효과적으로 사용할 수 있는 방식도 보여줍니다.
+Telepathy는 D-Bus 사용 방식 개선을 반복하며 개발되었습니다. 그 과정에서 실수도 있었지만, 교훈도 얻었습니다. 다음은 우리가 Telepathy를 설계하며 얻은 몇 가지 중요한 교훈들입니다:
 
-Telepathy's development has been iterative, improving its use of D-Bus as time goes on. Mistakes were made, and lessons have been learned. Here are some of the important things we learned in designing the architecture of Telepathy:
-
-Telepathy는 D-Bus를 사용하는 방식 개선의 반복을 통해 개발되었습니다. 실수도 있었지만, 그에 따른 교훈도 얻었습니다. 다음은 Telepathy를 설계하며 얻은 몇 가지 중요한 교훈들입니다:
-
-* Use D-Bus properties; don't require dozens of small D-Bus method calls to look up information. Every method call has a round-trip time. Rather than making lots of individual calls (e.g., `GetHandle`, `GetChannelType`, `GetInterfaces`) use D-Bus properties and return all the information via a single call to `GetAll`.
-* Provide as much information as you can when announcing new objects. The first thing clients used to do when they learned about a new object was to request all of its properties to learn whether they were even interested in the object. By including the immutable properties of an object in the signal announcing the object, most clients can determine their interest in the object without making any method calls. Furthermore, if they are interested in the object, they do not have to bother requesting any of its immutable properties.
-* The Contacts interface allows requesting information from multiple interfaces at once. Rather than making numerous `GetAll` calls to retrieve all the information for a contact, the Contacts interface lets us request all the information at once, saving a number of D-Bus round trips.
-* Don't use abstractions that don't quite fit. Exposing the contact roster and contact groups as channels implementing the Group interface seemed like a good idea because it used existing abstractions rather than requiring additional interfaces. However, it made implementing clients difficult and was ultimately not suitable.
-* Ensure your API will meet your future needs. The original channel requesting API was very rigid, only permitting very basic channel requests. This did not meet our needs when needing to request channels that required more information. This API had to be replaced with one that had significantly more flexibility.
-
-* D-Bus 속성을 사용한다; 정보를 가져오기 위해 수십개의 작은 D-Bus 메서드 호출을 필요로 하지 않게 한다. 모든 메서드 호출에는 왕복 시간이 있습니다. 많은 개별 호출(`GetHandle`, `GetChannelType`, `GetInterfaces` 등)을 하는 대신 D-Bus 속성을 이용하고 하나의 `GetAll` 호출을 통해 정보를 가져 온다.
-* 새로운 객체를 선언할 때엔 최대한 많은 정보를 제공한다. 클라이언트가 제일 먼저 하는 일은, 해당 객체가 필요하긴 한지 알아내기 위해 해당 객체에 대한 모든 속성을 요청하는 것입니다. 객체의 불변 속성을 객체 선언 시그널에 포함시킴으로서 대부분의 클라이언트는 메서드 호출을 하지 않고서도 객체가 필요한지 판단할 수 있습니다. 또, 객체가 필요하다고 판단 될 경우에도 불변 속성에 대한 요청을 보낼 필요가 없어집니다.
-* Contacts 인터페이스는 여러 인터페이스로부터의 정보를 한번에 가져올 수 있게 합니다. 연락처에 대한 정보를 가져오기 위해 `GetAll`을 여러 번 하는 것이 아니라, Contacts 인터페이스는 모든 정보에 대한 요청을 보낼 수 있게 하여, D-Bus에 왕복 요청을 보내는 횟수를 줄일 수 있습니다.
-* 잘 맞지 않는 추상화를 사용하지 않는다. 연락처 목록과 연락처 그룹을 Group 인터페이스를 구현하는 채널로서 노출시키는 것은, 기존의 추상화를 사용하기 때문에 처음에는 좋은 아이디어 같아 보였지만, 클라이언트 구현을 어렵게 만들었으며, 궁극적으로는 적절하지 않았습니다.
-* API가 미래의 요구 사항을 충족시킬 수 있도록 보장하라. 기존의 채널 요청 API는 단순한 채널 요청만 보낼 수 있게 하는 등, 매우 엄격했습니다. 이것은 더 많은 정보를 필요로 하는 채널을 요청할 때 우리의 요구 사항에 맞출 수 없었습니다. 이 API는 결국 더 유연한 새로운 API로 교체되어야 했습니다.
+* _D-Bus 속성을 사용한다; 정보를 가져오기 위해 수십개의 작은 D-Bus 메서드 호출을 필요로 하지 않게 한다._ 모든 메서드 호출에는 왕복 비용이 있습니다. 많은 개별 호출(`GetHandle`, `GetChannelType`, `GetInterfaces` 등)을 하는 것 보다는, D-Bus 속성을 사용하여 하나의 `GetAll` 호출을 통해 정보를 반환하는 것이 낫습니다.
+* _새로운 객체를 선언할 땐 최대한 많은 정보를 제공한다._ 클라이언트가 새로운 객체의 존재를 발견하였을 때 가장 먼저 하는 일은, 해당 객체가 필요하긴 한지 알아내기 위해, 해당 객체에 대한 모든 속성들을 요청하는 것입니다. 객체의 불변 속성을 객체 선언 시그널에 포함시킴으로서, 대부분의 클라이언트는 메서드 호출을 하지 않고서도 객체가 필요한지 판단할 수 있습니다. 또, 객체가 필요하다고 판단 될 경우에도 불변 속성에 대한 요청을 보낼 필요가 없어집니다.
+* _Contacts 인터페이스는 여러 인터페이스로부터의 정보를 한번에 가져올 수 있게 합니다._ 연락처에 대한 정보를 가져오기 위해 `GetAll`을 여러번 호출하는 것 보다, Contacts 인터페이스에 모든 정보에 대한 요청을 보내 D-Bus로의 왕복 요청 갯수를 줄일 수 있습니다.
+* _애매한 추상화는 사용하지 않는다._ 연락처 목록과 연락처 그룹을 Group 인터페이스를 구현하는 채널로서 노출시키는 것이 기존의 추상화를 사용했기 때문에 처음에는 좋은 아이디어 같아 보였습니다. 하지만 이 결정은 클라이언트 구현을 어렵게 만들었으며, 결국엔 적절하지 않았습니다.
+* _API가 미래의 요구 사항을 충족시킬 수 있도록 보장한다._ 기존의 채널 요청 API는 단순한 채널 요청만 보낼 수 있게 하는 등, 유연하지 못했습니다. 이것은 더 많은 정보를 필요로 하는 채널에 요청을 보낼 때 우리의 요구 사항에 맞출 수 없었습니다. 이 API는 결국 훨씬 더 유연한 새로운 API로 교체되어야 했습니다.
