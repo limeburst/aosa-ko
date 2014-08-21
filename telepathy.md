@@ -500,25 +500,15 @@ Telepathy의 주요 이점은 Telepathy의 견고성입니다. Telepathy의 구�
 텍스트 메시지는 대기 큐에서 빠지기 전에 승인되어야 합니다. 클라이언트는 사용자가 메시지를 본 후에야(메시지 창에 포커스를 주는 등) 메시지를 승인할 수 있습니다. 이를 통해 클라이언트가 메시지를 렌더링하려는 도중에 중단된 경우에도 채널은 대기 메시지 큐에 표시하지 못한 메시지에 대한 정보를 가지고 있을 수 있습니다.
 * Connection이 중단될 경우엔, Account Manager는 Connection을 다시 만듭니다. 이 과정에서 채널의 상태는 사라지지만, 해당 프로세스의 Connection에만 영향을 미칩니다. 클라이언트들은 연결들의 상태를 관찰할 수 있으며, 연락처 목록과, 다른 상태 없는 채널들에 대한 정보 등을 다시 요청하기만 하면 됩니다.
 
-## 20.6. Extending Telepathy: Sidecars
+## 20.6. Telepathy 확장하기: 사이드카
 
-## 20.6. Telepathy 확장하기: Sidecar
+Telepathy 명세는 통신 프로토콜이 노출하는 기능의 넓은 영역을 포함하는 것을 목표로 하지만, 어떤 프로토콜들은 프로토콜 자체가 확장될 수 있습니다. Telepathy의 개발자들은 Telepathy 명세를 확장하지 않고도 사용자의 Telepathy 연결을 확장할 수 있게 하고 싶었습니다. 이것은 사이드카를 통해 가능합니다.
 
-Although the Telepathy specification tries to cover a wide range of features exported by communication protocols, some protocols are themselves extensible4. Telepathy's developers wanted to make it possible extend your Telepathy connections to make use of such extensions without having to extend the Telepathy specification itself. This is done through the use of sidecars.
+사이드카는 일반적으로 Connection Manager의 플러그인에 의해 구현됩니다. 클라이언트들은 주어진 D-Bus 인터페이스를 구현하는 사이드카를 요청하는 메서드를 호출합니다. 예를 들어, 어떤 사람의 XEP-0016 사생활 목록 구현체는 `com.example.PrivacyLists`라는 인터페이스를 구현할 수 있습니다. 이 메서드는 (추가적으로 다른 인터페이스를 구현할 수도 있는) 해당 인터페이스를 구현하는 플러그인이 제공하는 D-Bus 객체를 반환합니다. 이 객체는 메인 Connection 객체와 공존하게 됩니다 (따라서 오토바이의 사이드카라는 이름을 가지게 되었습니다).
 
-Telepathy 명세는 통신 프로토콜들이 노출하는, 넓은 영역의 기능을 포함하려고 하지만, 어떤 프로토콜들은 프로토콜 자체가 확장될 수 있습니다. Telepathy의 개발자들은 Telepathy 명세를 확장하지 않고도 연결을 확장할 수 있게 하고 싶었으며, 이것은 사이드카를 통해 가능합니다.
+> 사이드카의 역사
 
-Sidecars are typically implemented by plugins in a Connection Manager. Clients call a method requesting a sidecar that implements a given D-Bus interface. For example, someone's implementation of XEP-0016 privacy lists might implement an interface named com.example.PrivacyLists. The method then returns a D-Bus object provided by the plugin, which should implement that interface (and possibly others). The object exists alongside the main Connection object (hence the name sidecar, like on a motorcycle).
-
-사이드카는 일반적으로 Connection Manager의 플러그인에 의해 구현됩니다. 클라이언트들은 특정 D-Bus 인터페이스를 구현하는 사이드카를 요청하는 메서드를 호출합니다. 예를 들어, 어떤 사람의 XEP-0016 개인 정보 목록의 구현체는 `com.example.PrivacyLists`라는 인터페이스를 구현할 수 있습니다. 해당 메서드는 해당 인터페이스를 구현하는(추가적으로 다른 인터페이스를 구현할 수도 있는) 플러그인이 제공하는 D-Bus 객체를 반환합니다. 해당 객체는 메인 Connection 객체와 공존하게 됩니다(이 때문에 오토바이의 사이드카라는 이름을 가지게 되었습니다).
-
-> The History of Sidecars
-
-> Sidecar의 역사
-
-> In the early days of Telepathy, the One Laptop Per Child project needed to support custom XMPP extensions (XEPs) to share information between devices. These were added directly to Telepathy-Gabble (the XMPP Connection Manager), and exposed via undocumented interfaces on the Connection object. Eventually, with more developers wanting support for specific XEPs which have no analogue in other communications protocols, it was agreed that a more generic interface for plugins was needed.
-
-> 옛날 Telepathy 버전에서는, One Laptop Per Child 프로젝트는 기기 간 정보를 공유하기 위해 맞춤형 XMPP 확장(XEP)을 지원할 필요가 있었습니다. 이 확장들은 Telepathy-Gabble(XMPP 연결 매니저)에 직접 추가되었으며, 문서화되지 않은 인터페이스로서 Connection 객체에 추가되었습니다. 결과적으로, 다른 통신 프로토콜과 대응되는 것이 없는, 특정 XEP에 대한 지원을 원하는 개발자들이 많아지며, 플러그인에 대한 일반화된 인터페이스의 필요성이 인정되었습니다.
+> 초창기 Telepathy 시절에, One Laptop Per Child 프로젝트는 기기 간 정보를 공유하기 위해 맞춤형 XMPP 확장(XEP)을 지원할 필요가 있었습니다. 이 확장들은 Telepathy-Gabble(XMPP 연결 매니저)에 직접, 문서화되지 않은 인터페이스로서 Connection 객체에 추가되었습니다. 결과적으로, 다른 통신 프로토콜과 대응되는 것이 없는 특정 XEP에 대한 지원을 필요로 하는 개발자들이 많아지며 플러그인을 위한 일반화된 인터페이스의 필요성이 인정되었습니다.
 
 ## 20.7. Connection Manager 내부 개요
 
