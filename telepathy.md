@@ -520,37 +520,19 @@ Sidecars are typically implemented by plugins in a Connection Manager. Clients c
 
 > 옛날 Telepathy 버전에서는, One Laptop Per Child 프로젝트는 기기 간 정보를 공유하기 위해 맞춤형 XMPP 확장(XEP)을 지원할 필요가 있었습니다. 이 확장들은 Telepathy-Gabble(XMPP 연결 매니저)에 직접 추가되었으며, 문서화되지 않은 인터페이스로서 Connection 객체에 추가되었습니다. 결과적으로, 다른 통신 프로토콜과 대응되는 것이 없는, 특정 XEP에 대한 지원을 원하는 개발자들이 많아지며, 플러그인에 대한 일반화된 인터페이스의 필요성이 인정되었습니다.
 
-## 20.7. A Brief Look Inside a Connection Manager
-
 ## 20.7. Connection Manager 내부 개요
 
-Most Connection Managers are written using the C/GLib language binding, and a number of high-level base classes have been developed to make writing a Connection Manager easier. As discussed previously, D-Bus objects are published from software objects that implement a number of software interfaces that map to D-Bus interfaces. Telepathy-GLib provides base objects to implement the Connection Manager, Connection and Channel objects. It also provides an interface to implement a Channel Manager. Channel Managers are factories that can be used by the BaseConnection to instantiate and manage channel objects for publishing on the bus.
+대부분의 Connection Manager들은 C/GLib 언어 바인딩을 사용해 작성되었으며, Connection Manager를 쉽게 작성할수 있도록 몇 가지 고수준 기반 클래스들이 개발되었습니다. 위에서 논의되었던 것처럼, D-Bus 객체들은, D-Bus 인터페이스에 매핑되는 몇 가지 소프트웨어 인터페이스를 구현하는 소프트웨어 객체로부터 발행됩니다. Telepathy-GLib은 Connection Manager, Connection, 그리고 Connection 객체를 구현하기 위한 기반 객체와, BaseConnection가 채널 객체를 초기화, 관리, 그리고 버스에 발행하기 위해 사용하는 팩토리인 Channel Manager를 구현하기 위한 인터페이스를 제공합니다.
 
-대부분의 Connection Manager들은 C/GLib 언어 바인딩을 통해 작성되었으며, Connection Manager 작성을 간편하게 하기 위해 몇 가지 고수준 기반 클래스가 개발되어 있습니다. 이전에 논의되었던 것 처럼, D-Bus 객체들은 D-Bus 인터페이스에 매핑되는 몇 가지 소프르웨어 인터페이스를 구현하는 소프트웨터 객체에서 발행됩니다. Telepathy-GLib은 Connection Manager, Connection, 그리고 Connection 객체를 구현하기 위한 기반 객체를 제공합니다. Channel Manager들은 BaseConnection에 의해 버스에 발행하기 위한 채널 객체를 초기화하고 관리하기 위해 사용될 수 있는 팩토리입니다.
-
-The bindings also provide what are known as mixins. These can be added to a class to provide additional functionality, abstract the specification API and provide backwards compatibility for new and deprecated versions of an API through one mechanism. The most commonly used mixin is one that adds the D-Bus properties interface to an object. There are also mixins to implement the `ofdT.Connection.Interface.Contacts` and `ofdT.Channel.Interface.Group` interfaces and mixins making it possible to implement the old and new presence interfaces, and old and new text message interfaces via one set of methods.
-
-바인딩들은 믹스인을 제공합니다. 믹스인들은 추가적인 기능을 제공하거나, 명세 API의 새로운 버전이나 더 이상 권장되지 않는 버전의 API에 대한 하위 호환성을 하나의 체계를 통해 제공하는 추상화를 클래스에 추가할 수 있습니다. 가장 일반적으로 사용되는 믹스인은 오브젝트에 D-Bus 속성 인터페이스를 추가하는 믹스인입니다. `ofdT.Connection.Interface.Contacts`와 `ofdT.Channel.Interface.Group` 인터페이스를 구현하는 믹스인들도 있으며, 이 믹스인을 통해 예전과 현재의 존재 여부 인터페이스와 텍스트 메시지 인터페이스를 하나의 메서드 집합을 통해 구현할 수 있게 되었습니다.
-
-![Example Connection Manager Architecture](http://aosabook.org/images/telepathy/cm.png)
+바인딩은 믹스인들을 제공합니다. 믹스인들은 추가적인 기능과, 명세 API의 새로운 버전이나 더 이상 권장되지 않는 API 버전의 대한 하위 호환성을 하나의 체계를 통해 제공하는 추상화를 클래스에 더할 수 있습니다. 가장 일반적으로 사용되는 믹스인은 오브젝트에 D-Bus 속성 인터페이스를 추가하는 믹스인입니다. `ofdT.Connection.Interface.Contacts`와 `ofdT.Channel.Interface.Group` 인터페이스를 구현하는 믹스인과, 예전과 현재의 존재 여부 인터페이스, 그리고 텍스트 메시지 인터페이스를 하나의 메서드 집합을 통해 구현할 수 있게 하는 믹스인도 있습니다.
 
 ![Connection Manager 설계 예시](http://aosabook.org/images/telepathy/cm.png)
 
-Figure 20.5: Example Connection Manager Architecture
+> 믹스인을 통해 API 설계 실수 해결하기
 
-그림 20.5: Connection Manager 설계 예시
+> 믹스인이 Telepathy 명세의 실수를 해결하기 위해 사용된 곳 중 하나는 `TpPresenceMixin`입니다. Telepathy에 의해 노출되던 기존 인터페이스(`odfT.Connection.Interface.Presence`)는 Connection과 Client들 모두에게 매우 복잡하고, 구현하기 힘들며, 대부분의 통신 프로토콜에는 존재하지 않거나 거의 사용되지 않는 기능들을 노출했었습니다. 이 인터페이스는 사용자들이 실제로 필요로 하는 기능만을 노출하고, 연결 관리자에서 실제로 구현된 훨씬 간단한 인터페이스(`odfT.Connection.Interface.SimplePresence`)로 교체되었습니다.
 
-> Using Mixins to Solve API Mistakes
-
-> 믹스인을 통한 API 설계 실수 해결하기
-
-> One place where mixins have been used to solve a mistake in the Telepathy specification is the `TpPresenceMixin`. The original interface exposed by Telepathy (`odfT.Connection.Interface.Presence`) was incredibly complicated, hard to implement for both Connections and Clients, and exposed functionality that was both nonexistent in most communications protocols, and very rarely used in others. The interface was replaced by a much simpler interface (`odfT.Connection.Interface.SimplePresence`), which exposed all the functionality that users cared about and had ever actually been implemented in the connection managers.
-
-믹스인이 Telepathy 명세의 실수를 해결하는 데 사용된 곳 중 하나는 `TpPresenceMixin`입니다. Telepathy에 의해 노출되던 기존 인터페이스(`odfT.Connection.Interface.Presence`)는 Connection에게나 Client에게나 매우 복잡하고 구현하기 힘들었으며, 대부분의 통신 프로토콜에는 존재하지 않거나 거의 사용되지 않는 기능을 노출했습니다. 이 인터페이스는 사용자들이 필요로 하는 모든 기능들을 노출하고, 실제로 연결 관리자에서 구현된 훨씬 간단한 인터페이스(`odfT.Connection.Interface.SimplePresence`)로 교체되었습니다.
-
-> The presence mixin implements both interfaces on the Connection so that legacy clients continue to work, but only at the functionality level of the simpler interface.
-
-존재 여부 믹스인은 옛날 클라이언트들이 계속 동작할 수 있도록 Connection에 두 인터페이스 모두 구현하지만, 단순한 인터페이스 쪽의 기능 수준만을 구현합니다.
+> 존재 여부 믹스인은 옛날 클라이언트들이 계속 동작할 수 있도록, Connection 위에 두 인터페이스 모두 구현하지만, 단순한 인터페이스 쪽의 기능만큼만 구현합니다.
 
 ## 20.8. Lessons Learned
 
