@@ -102,76 +102,58 @@ Telepathy에는 실행중인 Connection Manager와 Client의 등록을 관리하
 
 > Channel Dispatcher 역시 Telepathy 클라이언트들을 발견하기 위해 이 방법을 사용합니다. Telepathy 클라이언트들은 `ofdT.Client.Logger` 처럼 `ofdT.Client`로 시작합니다.
 
-### 20.2.3. Reducing D-Bus Traffic
-
 ### 20.2.3. D-Bus 트래픽 줄이기
 
-Original versions of the Telepathy specification created an excessive amount of D-Bus traffic in the form of method calls requesting information desired by lots of consumers on the bus. Later versions of the Telepathy have addressed this through a number of optimizations.
+초기 버전의 Telepathy 명세는, 버스 위의 많은 소비자들이 원하는 정보에 대한 요청을 보내는 메서드 콜의 형태로 과다한 D-Bus 트래픽을 발생시켰습니다. 이후 버전의 Telepathy에서는 몇 가지 최적화를 통해 이 문제를 해결하였습니다.
 
-초기 Telepathy 명세는 버스 위의 많은 소비자들이 원하는, 정보를 요청하기 위한 메서드 콜의 형태로 과다한 D-Bus 트래픽을 발생시켰습니다. 이후 버전의 Telepathy에서는 몇 가지 최적화를 통해 이 문제를 해결하였습니다.
+개별 메서드 호출은 D-Bus 속성으로 대체되었습니다. 기존 명세에선 `GetInterfaces`, `GetChannelType` 등 각각의 객체 속성에 대응하는 메서드 호출을 따로 두었으며, 각각의 호출 오버헤드를 가졌지만, 이후 D-Bus 속성을 사용함으로써 표준 `GetAll` 메서드로 모든 속성을 한번에 가져올 수 있게 되었습니다.
 
-Individual method calls were replaced by D-Bus properties. The original specification included separate method calls for object properties: `GetInterfaces`, `GetChannelType`, etc. Requesting all the properties of an object required several method calls, each with its own calling overhead. By using D-Bus properties, everything can be requested at once using the standard `GetAll` method.
+채널 타입, 인터페이스, 연결되어 있는 대상, 요청자 등 많은 채널 속성들은 채널이 살아 있는 동안 바뀌지 않습니다. 예를 들어, 파일 전송 채널의 불변 속성에는, 파일 크기와 컨텐츠 타입 등이 있습니다.
+`
+불변 속성에 대한 해쉬 테이블을 포함하는, 채널의 생성을 알리기 위한 새로운 신호가 추가되었습니다. 이 신호는 클라이언트가 각자 정보를 요청할 필요 없이, 채널 생성자 프록시에 직접 전달될 수 있습니다 (20.4장을 참고하세요).
 
-개별 메서드 호출이 D-Bus 속성으로 대체되었습니다. 기존 명세에선 `GetInterfaces`, `GetChannelType` 등 객체 속성에 대응하는 메서드 호출을 따로 두었으며, 각각의 호출 오버헤드를 가집니다. 이후 이를 D-Bus 속성으로 대체함으로써 표준 `GetAll` 메서드로 모든 속성을 한번에 가져올 수 있게 되었습니다.
+사용자 아바타는 버스에서 바이트 배열의 형태로 전송됩니다. 이미 Telepathy에서는 클라이언트들에게 새로운 아바타가 필요함을 알리고, 불필요한 아바타를 받는 비용을 줄일 수 있도록 아바타를 토큰으로 구분하고 있었지만, 클라이언트들은 아바타를 받아오기 위해 `RequestAvatar` 메서드를 통해 아바타를 각자 요청해야 했습니다. 따라서, Connetion Manager가 특정 연락처가 아바타를 갱신하였다는 신호를 보내면, 아바타를 요청하는 다수의 개별 요청이 일어났었고, 같은 아바타가 버스를 통해 여러 번 전송되야 했습니다.
 
-Furthermore, quite a number of properties on a channel are immutable for the lifetime of the channel. These include things like the channel's type, interfaces, who it's connected to and the requestor. For a file transfer channel, for example, it also includes things like the file size and its content type.
+이 문제는 아바타를 반환하지 않는(아무 것도 반환하지 않는) 새로운 메서드를 추가함으로써 해결되었습니다. 대신 이 메서드는 아바타를 요청 큐에 넣습니다. 네트워크로부터 아바타를 가져오면 `AvatarRetrieved` 신호가 발생하며, 관심 있는 모든 클라이언트들이 신호를 들을 수 있습니다. 이것은 아바타가 버스 위로 한 번만 전송되면 된다는 것을 의미합니다. 클라이언트의 요청이 큐에 들어간 이상, 이후 클라이언트 요청들은 `AvatarRetrieved` 신호의 송출 이전엔 모두 무시할 수 있습니다.
 
-게다가 채널 타입, 인터페이스, 연결되어 있는 대상, 요청자 등 많은 수의 채널 속성은 채널이 살아 있는 동안 바뀌지 않습니다. 이러한 불변의 속성의 예로 파일 전송 채널을 들면, 파일 크기와 컨텐츠 타입이 있습니다.
+많은 수의 연락처를 불러와야 할 때(연락처 목록을 불러올 때) 마다, 별명, 아바타, 기능, 그룹들과, 위치, 주소, 전화번호 등을 포함할 수도 있는 상당한 양의 정보가 요청되어야 합니다. 이전 Telepathy 버전에서는 정보 그룹 마다 메서드 호출을 해야 했고(`GetAliases` 등 대부분의 API들은 이미 연락처 목록을 요구했습니다), 이 작업은 여섯 개 이상의 메서드 호출을 필요로 하였습니다.
 
-A new signal was added to herald the creation of channels (both incoming and in response to outgoing requests) that includes a hash table of the immutable properties. This can be passed directly to the channel proxy constructor (see Section 20.4), which saves interested clients from having to request this information individually.
+이 문제를 해결해기 위해 Contacts 인터페이스가 도입되어, 여러 인터페이스로부터의 정보를 한 번의 메서드 호출로 가져올 수 있게 되었습니다. Telepathy 명세는, `GetContactAttribute` 메서드가 반환하는, 이름 공간을 가진 Contact 속성들을 포함하도록 확장되었으며, 이로 인해 연락처 정보를 가져오기 위해 사용되었던 메서드 콜은 더 이상 사용되지 않게 되었습니다. 클라이언트가 `GetContactAttributes` 메서드를, 연락처와, 관심 있는 인터페이스의 목록과 함께 호출하면, 연락처로부터 연락처의 속성과 그에 대한 값과 대응되는 매핑에 대한 매핑을 돌려받게 됩니다.
 
-불변 속성에 대한 해쉬 테이블을 포함하는, 채널의 생성을 알리기 위한 새로운 신호가 추가되었습니다. 이 신호는 클라이언트가 각자 정보를 요청할 필요 없이 채널 생성자 프록시에 직접 전달될 수 있습니다(20.4장 참고).
+코드를 보면 좀 더 명확해집니다. 다음과 같이 생긴 요청이 있으면:
 
-User avatars are transmitted across the bus as byte arrays. Although Telepathy already used tokens to refer to avatars, allowing clients to know when they needed a new avatar and to save downloading unrequired avatars, each client had to individually request the avatar via a `RequestAvatar` method that returned the avatar as its reply. Thus, when the Connection Manager signalled that a contact had updated its avatar, several individual requests for the avatar would be made, requiring the avatar to be transmitted over the message bus several times.
+~~~
+connection[CONNECTION_INTERFACE_CONTACTS].GetContactAttributes(
+  [ 1, 2, 3 ], # contact handles
+  [ "ofdT.Connection.Interface.Aliasing",
+    "ofdT.Connection.Interface.Avatars",
+    "ofdT.Connection.Interface.ContactGroups",
+    "ofdT.Connection.Interface.Location"
+  ],
+  False # 이 연락처들에 대한 레퍼런스를 가지고 있지 말라
+)
+~~~
 
-사용자의 아바타는 바이트 배열의 형태로 버스를 통해 전송되었습니다. 이미 Telepathy에서는 클라이언트들에게 새로운 아바타가 필요함을 알리고, 불필요한 아바타를 받는 비용을 줄일 수 있도록 아바타를 토큰으로 구분하고 있었지만, 클라이언트들은 `RequestAvatar` 메서드를 통해 아바타를 하나하나 가져와야 했습니다. 따라서, Connetion Manager가 어떤 연락처가 아바타를 갱신하였다는 신호를 보내면, 아바타를 요청하는 다수의 개별 요청이 일어났었고, 같은 아바타가 버스를 통해 여러 번 전송되야 했습니다.
+이렇게 생긴 응답이 있을 수 있습니다:
 
-This was resolved by adding a new method which did not return the avatar (it returns nothing). Instead, it placed the avatar in a request queue. Retrieving the avatar from the network would result in a signal, `AvatarRetrieved`, that all interested clients could listen to. This means the avatar data only needs to be transmitted over the bus once, and will be available to all the interested clients. Once the client's request was in the queue, all further client requests can be ignored until the emission of the AvatarRetrieved.
-
-이 문제는 아바타를 반환하지 않는(아무 것도 반환하지 않는) 새로운 메서드를 추가함으로써 해결되었습니다. 대신 이 메서드는, 아바타를 요청 큐에 넣습니다. 네트워크로부터 아바타를 가져오면 `AvatarRetrieved` 신호가 보내지게 되며, 이에 대해 관심이 있는 모든 클라이언트가 이용 가능합니다. 클라이언트의 요청이 큐에 들어간 이상, `AvatarRetrieved` 신호의 송출 이전의 클라이언트 요청은 무시 가능합니다.
-
-Whenever a large number of contacts need to be loaded (i.e., when loading the contact roster), a significant amount of information needs to be requested: their aliases, avatars, capabilities, and group memberships, and possibly their location, address, and telephone numbers. Previously in Telepathy this would require one method call per information group (most API calls, such as GetAliases already took a list of contacts), resulting in half a dozen or more method calls.
-
-많은 수의 연락처를 불러와야 할 때 마다(i.e., 연락처 목록을 불러올 때), 별명, 아바타, 기능, 구성하는 그룹을 포함하고, 위치, 주소, 전화번호 등을 포함할 수도 있는 상당한 양의 정보가 요청되어야 합니다. 이전 Telepathy 버전에서는 하나의 정보 그룹 마다 하나의 메서드 호출(`GetAliases` 등 대부분의 API 호출들은 이미 연락처 목록을 요구했습니다)을 해야 했고, 이 작업은 여섯 개 이상의 메서드 호출을 초래했습니다.
-
-To solve this, the Contacts interface was introduced. It allowed information from multiple interfaces to be returned via a single method call. The Telepathy specification was expanded to include Contact Attributes: namespaced properties returned by the GetContactAttributes method that shadowed method calls used to retrieve contact information. A client calls `GetContactAttributes` with a list of contacts and interfaces it is interested in, and gets back a map from contacts to a map of contact attributes to values.
-
-이 문제를 해결해기 위해 Contacts 인터페이스가 도입되어, 여러 인터페이스로부터의 정보를 한 번의 메서드 호출로 가져올 수 있게 되었습니다. Telepathy 명세는 `GetContactAttribute` 메서드가 반환하는 이름공간을 가진 속성이, Contact 속성을 포함하도록 확장되었으며, 이로 인해 연락처 정보를 가져오기 위해 사용되었던 메서드 콜은 더 이상 사용되지 않게 되었습니다. 클라이언트가 `GetContactAttributes` 메서드를 연락처의 목록과, 관심이 있는 인터페이스와 함께 호출하면 연락처의 매핑으로부터 연락처 속성과 그에 대한 값과 대응되는 매핑을 돌려받게 됩니다.
-
-A bit of code will make this clearer. The request looks like this:
-
-코드를 보면 좀 더 명확해집니다. 요청을 다음과 같이 생겼습니다:
-
-	connection[CONNECTION_INTERFACE_CONTACTS].GetContactAttributes(
-	  [ 1, 2, 3 ], # contact handles
-	  [ "ofdT.Connection.Interface.Aliasing",
-	    "ofdT.Connection.Interface.Avatars",
-	    "ofdT.Connection.Interface.ContactGroups",
-	    "ofdT.Connection.Interface.Location"
-	  ],
-	  False # 이 연락처들에 대한 레퍼런스를 가지고 있지 말라
-	)
-
-and the reply might look like this:
-
-응답은 이렇게 생길 수 있습니다:
-
-	{ 1: { 'ofdT.Connection.Interface.Aliasing/alias': 'Harvey Cat',
-	       'ofdT.Connection.Interface.Avatars/token': hex string,
-	       'ofdT.Connection.Interface.Location/location': location,
-	       'ofdT.Connection.Interface.ContactGroups/groups': [ 'Squid House' ],
-	       'ofdT.Connection/contact-id': 'harvey@nom.cat'
-	     },
-	  2: { 'ofdT.Connection.Interface.Aliasing/alias': 'Escher Cat',
-	       'ofdT.Connection.Interface.Avatars/token': hex string,
-	       'ofdT.Connection.Interface.Location/location': location,
-	       'ofdT.Connection.Interface.ContactGroups/groups': [],
-	       'ofdT.Connection/contact-id': 'escher@tuxedo.cat'
-	     },
-	  3: { 'ofdT.Connection.Interface.Aliasing/alias': 'Cami Cat',
-	        ⋮    ⋮    ⋮
-	     }
+~~~
+{ 1: { 'ofdT.Connection.Interface.Aliasing/alias': 'Harvey Cat',
+       'ofdT.Connection.Interface.Avatars/token': hex string,
+       'ofdT.Connection.Interface.Location/location': location,
+       'ofdT.Connection.Interface.ContactGroups/groups': [ 'Squid House' ],
+       'ofdT.Connection/contact-id': 'harvey@nom.cat'
+     },
+  2: { 'ofdT.Connection.Interface.Aliasing/alias': 'Escher Cat',
+       'ofdT.Connection.Interface.Avatars/token': hex string,
+       'ofdT.Connection.Interface.Location/location': location,
+       'ofdT.Connection.Interface.ContactGroups/groups': [],
+       'ofdT.Connection/contact-id': 'escher@tuxedo.cat'
+     },
+  3: { 'ofdT.Connection.Interface.Aliasing/alias': 'Cami Cat',
+        ⋮    ⋮    ⋮
+     }
 }
+~~~
 
 ## 20.3. Connections, Channels and Clients
 
