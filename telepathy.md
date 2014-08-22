@@ -365,17 +365,11 @@ Clients are discoverable via D-Bus because they publish services beginning with 
 
 > 빈 필터는 Handler가 어떤 채널 타입에도 관심이 없다는 것을 나타냅니다. 하지만 이름을 통해 배포한다면 여전히 채널들을 이러한 핸들러에 배포할 수 있습니다. 특정 채널을 다루기 위해 생성되는 임시 Handler들이 이러한 필터를 사용합니다.
 
-## 20.4. The Role of Language Bindings
-
 ## 20.4. 언어 바인딩의 역할
 
-As Telepathy is a D-Bus API, and thus can driven by any programming language that supports D-Bus. Language bindings are not required for Telepathy, but they can be used to provide a convenient way to use it.
+Telepathy는 D-Bus API이므로, D-Bus를 지원하는 어떠한 프로그래밍 언어로도 운용될 수 있습니다. Telepathy가 언어 바인딩을 필요로 하진 않지만, 언어 바인딩은 Telepathy를 편리하게 사용할 수 있게 합니다.
 
-Telepathy는 D-Bus API이므로, D-Bus를 지원하는 어떠한 프로그래밍 언어로도 운용될 수 있습니다. Telepathy가 언어 바인딩을 요구하진 않지만, 있으면 Telepathy를 편리하게 사용할 수 있습니다.
-
-Language bindings can be split into two groups: low-level bindings that include code generated from the specification, constants, method names, etc.; and high-level bindings, which are hand-written code that makes it easier for programmers to do things using Telepathy. Examples of high-level bindings are the GLib and Qt4 bindings. Examples of low-level bindings are the Python bindings and the original libtelepathy C bindings, though the GLib and Qt4 bindings include a low-level binding.
-
-언어 바인딩들은 두 개의 그룹으로 나눌 수 있습니다: 명세, 상수, 메서드 이름 등으로부터 생성된 코드를 포함하는 저수준 바인딩, 그리고 프로그래머들이 Telepathy를 응용하여 개발할 수 있기 쉽게 손으로 쓰인 고수준 바인딩이 있습니다. 고수준 바인딩의 예로는 Glib와 Qt4 바인딩이 있습니다. 저수준 바인딩의 예로는 파이썬 바인딩과 기존의 libtelepathy C 바인딩이 있지만, GLib와 Qt4 바인딩도 저수준 바인딩을 포함합니다.
+언어 바인딩들은 두 개의 그룹으로 나눌 수 있습니다: Telepathy 명세, 상수, 메서드 이름 등으로부터 생성된 코드를 포함하는 저수준 바인딩, 그리고 프로그래머들이 Telepathy를 응용하여 개발할 수 있기 쉽도록 손으로 짠 고수준 바인딩이 있습니다. 고수준 바인딩의 예로는 Glib와 Qt4 바인딩이 있습니다. 저수준 바인딩의 예로는 파이썬 바인딩과 기존의 libtelepathy C 바인딩이 있지만, GLib와 Qt4 바인딩도 저수준 바인딩을 포함합니다.
 
 ### 20.4.1. Asynchronous Programming
 
