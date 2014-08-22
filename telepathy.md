@@ -371,47 +371,29 @@ Telepathy는 D-Bus API이므로, D-Bus를 지원하는 어떠한 프로그래밍
 
 언어 바인딩들은 두 개의 그룹으로 나눌 수 있습니다: Telepathy 명세, 상수, 메서드 이름 등으로부터 생성된 코드를 포함하는 저수준 바인딩, 그리고 프로그래머들이 Telepathy를 응용하여 개발할 수 있기 쉽도록 손으로 짠 고수준 바인딩이 있습니다. 고수준 바인딩의 예로는 Glib와 Qt4 바인딩이 있습니다. 저수준 바인딩의 예로는 파이썬 바인딩과 기존의 libtelepathy C 바인딩이 있지만, GLib와 Qt4 바인딩도 저수준 바인딩을 포함합니다.
 
-### 20.4.1. Asynchronous Programming
-
 ### 20.4.1. 비동기 프로그래밍
 
-Within the language bindings, all method calls that make requests over D-Bus are asynchronous: the request is made, and the reply is given in a callback. This is required because D-Bus itself is asynchronous.
+언어 바인딩 내에서 D-Bus를 통해 요청을 보내는 모든 메서드 호출들은, 응답이 콜백으로 주어지는 비동기적 방식으로 동작합니다. D-Bus 자체가 비동기식이므로 이런 동작 방식이 요구됩니다.
 
-언어 바인딩에서 D-Bus로 요청을 보내는 모든 메서드 호출들은 응답이 콜백으로 주어지는 비동기적 방식으로 동작합니다. D-Bus 자체가 비동기식이므로 이런 동작 방식이 요구됩니다.
-
-Like most network and user interface programming, D-Bus requires the use of an event loop to dispatch callbacks for incoming signals and method returns. D-Bus integrates well with the GLib mainloop used by the GTK+ and Qt toolkits.
-
-대부분의 네트워크 및 사용자 인터페이스 프로그래밍과 같이, D-Bus는 들어오는 시그널과 메서드 반환에 대한 콜백 발생을 위해 이벤트 루프의 사용을 필요로 합니다. D-Bus는 GTK+와 Qt 툴킷들이 사용하는 GLip mainloop와 잘 통합됩니다.
+대부분의 네트워크와 사용자 인터페이스 프로그래밍과 같이, D-Bus 역시 들어오는 시그널과 메서드 반환에 대한 콜백 발생을 위해 이벤트 루프를 요구합니다. D-Bus는 GTK+와 Qt 툴킷들이 사용하는 GLip mainloop와 잘 통합됩니다.
 
 Some D-Bus language bindings (such as dbus-glib) provide a pseudo-synchronous API, where the main loop is blocked until the method reply is returned. Once upon a time this was exposed via the telepathy-glib API bindings. Unfortunately using pseudo-synchronous API turns out to be fraught with problems, and was eventually removed from telepathy-glib.
 
-> Why Pseudo-Synchronous D-Bus Calls Don't Work
+일부 D-Bus 언어 바인딩들(dbus-glib 등)은, 메서드 응답이 반환되기 전까지 메인 루프가 블락되는 가성 비동기 API를 제공합니다.  이 API들은 옛날에 telepathy-glib API 바인딩들이 노출했었습니다. 안타깝게도 가성 비동기 API는 많은 문제점들을 내포한다는 것이 드러났으며, 결국 telepath-glib에서 제거되었습니다.
 
-> 가성 비동기 D-Bus 호출을 쓸 수 없는 이유
+> 가성 비동기 D-Bus 호출을 사용할 수 없는 이유
 
-> The pseudo-synchronous interface offered by dbus-glib and other D-Bus bindings is implemented using a request-and-block technique. While blocking, only the D-Bus socket is polled for new I/O and any D-Bus messages that are not the response to the request are queued for later processing.
+> dbus-glib과 다른 D-Bus 바인딩들이 제공하는 가성 비동기 인터페이스는, 요청 후 블락하는 기법으로 작성되어 있습니다. 블락하는 도중엔 D-Bus 소켓만이 새로운 I/O를 위해 폴링되며, 해당 요청에 대한 응답이 아닌 D-Bus 메시지들은 큐에 쌓여 나중에 처리됩니다.
 
-> 가성 비동기 인터페이스는 요청 후 블러킹하는 기법으로 작성되어 있습니다. 블러킹하는 도중엔, D-Bus 소켓만이 새로운 I/O를 위해 폴링되며, 해당 요청에 대한 응답이 아닌 D-Bus 메시지들은 나중에 처리하기 위해 큐에 쌓입니다.
+> 이것은 몇 가지 피할 수 없는 주요 문제를 야기합니다:
 
-> This causes several major and inescapable problems:
+> * 호출자는 요청에 대한 응답을 받을 때 까지 블락되며, 호출자(존재한다면, 호출자의 사용자 인터페이스 역시)는 완전히 무반응 상태가 됩니다. 요청이 네트워크를 사용한다면, 이것은 시간이 걸립니다; 피호출자에 락이 걸린 상태라면 호출이 타임아웃 될 때 까지 무반응 상태를 유지하게 됩니다.
+쓰레드를 만드는 것 역시 비동기식 호출의 또다른 방식이므로 해결책이 되지 않습니다. 차라리 응답이 기존 이벤트 루프를 통해 들어오는 비동기 호출을 사용하는 것이 낫습니다.
+* 메시지들의 순서가 바뀔 수 있습니다. watched-for 응답 이전에 수신된 메시지들은 큐에 쌓이게 되며, 응답을 받은 이후에 클라이언트에 전달되게 됩니다.
+이것은 상태 변경에 대한 시그널(객체가 소멸되는 등)이, 해당 객체에 대한 메서드 호출이 실패한 후에 (`UnknownMethod` 예외와 함께) 들어오게 되는 상황에서 문제가 됩니다. 이런 상황에서는 사용자에게 어떤 오류 메시지를 보여줘야 할지 모호하게 됩니다. 반면 시그널을 먼저 수신할 수 있다면 대기중인 D-Bus 메서드 호출을 취소하거나 반환값을 무시하면 됩니다.
+* 서로에게 가성 비동기 호출을 보내는 두 프로세스는 서로의 쿼리에 대한 응답을 기다리는 데드락을 만들 수 있습니다. 이 상황은 다른 D-Bus 서비스를 호출하는 두 프로세스가 모두 D-Bus 서비스일 경우(Telepathy 클라이언트 등)에 일어날 수 있습니다. Channel Dispathcer는 채널을 배포하기 위해 클라이언트의 메서드를 호출하지만, 클라이언트들 역시 새로운 채널의 생성 요청을 위해 Channel Dispatcher의 메서드를 호출합니다(같은 과정 중 하나인, Account Manager을 호출할 수도 있습니다). 
 
-> 이것은 몇 가지 회피할 수 없는 주요 문제를 야기합니다:
-
-> * The caller is blocked while waiting for the request to be answered. It (and its user interface, if any) will be completely unresponsive. If the request requires accessing the network, that takes time; if the callee has locked up, the caller will be unresponsive until the call times out. 
-Threading is not a solution here because threading is just another way of making your calling asynchronous. Instead you may as well make asynchronous calls where the responses come in via the existing event loop.
-* Messages may be reordered. Any messages received before the watched-for reply will be placed on a queue and delivered to the client after the reply. 
-This causes problems in situations where a signal indicating a change of state (i.e., the object has been destroyed) is now received after the method call on that object fails (i.e., with the exception `UnknownMethod`). In this situation, it is hard to know what error to display to the user. Whereas if we receive a signal first, we can cancel pending D-Bus method calls, or ignore their responses.
-* Two processes making pseudo-blocking calls on each other can deadlock, with each waiting for the other to respond to its query. This scenario can occur with processes that are both a D-Bus service and call other D-Bus services (for example, Telepathy clients). The Channel Dispatcher calls methods on clients to dispatch channels, but clients also call methods on the Channel Dispatcher to request the opening of new channels (or equally they call the Account Manager, which is part of the same process).
-
-> * 호출자는 요청에 대한 응답을 받을 때 까지 블럭되며, 호출자(존재한다면 호출자의 사용자 인터페이스 역시)는 완전히 무반응 상태가 됩니다. 요청이 네트워크 이용을 필요로 하면, 이것은 시간이 걸리고, 피호출자에 락이 걸린 상태라면 호출이 타임아웃이 날 때 까지 무반응 상태를 유지하게 됩니다.
-쓰레드를 만드는 것 역시 비동기식 호출의 또다른 방식이므로 해결책이 되지 않습니다. 차라리 응답이 기존 이벤트 루프를 통해 들어오는 비동기 호출을 사용하는 것이 낫습니다. 
-* 메시지들이 재배치될 수 있습니다. watched-for 응답 이전에 수신된 메시지들은 큐에 쌓이게 되며 응답 이후에 클라이언트에 전달되게 됩니다.
-이것은 상태 변경에 대한 시그널(객체가 소멸됨)이 해당 객체에 대한 메서드 호출이 실패한 이후(`UnknownMethod` 예외와 함께)에 들어오게 되는 상황에서 문제가 됩니다. 이 상황에서는, 사용자에게 어떤 오류 메시지를 보여줘야 할지 모호하게 됩니다. 반면, 시그널을 먼저 수신하게 된다면, 대기중인 D-Bus 메서드 호출을 취소하거나 반환값을 무시할 수 있습니다. 
-* 서로에게 가성 비동기 호출을 보내는 두 프로세스는 서로의 쿼리에 대한 응답을 기다리는 데드락을 만들 수 있습니다. 이 상황은 다른 D-Bus 서비스를 호출하는 두 프로세스가 모두 D-Bus 서비스일 경우에 생길 수 있습니다(e.g., Telepathy 클라이언트). Channel Dispathcer는 채널을 배포하기 위해 클라이언트의 메서드를 호출하지만, 클라이언트들 역시 새로운 채널의 생성 요청을 위해 Channel Dispatcher의 메서드를 호출합니다(같은 과정 중 하나인, Account Manager을 호출할 수도 있습니다). 
-
-Method calls in the first Telepathy bindings, generated in C, simply used typedef callback functions. Your callback function simply had to implement the same type signature.
-
-C로 생성된 초기 Telepathy 바인딩들의 메서드 호출은 단순히 typedef 콜백 함수들을 사용하였습니다. 콜백 함수는 같은 타입 시그니쳐를 구현하기만 하면 되었습니다.
+C로 생성된 초기 Telepathy 바인딩들의 메서드 호출들은 단순히 typedef 콜백 함수들을 사용하였습니다. 콜백 함수는 같은 타입 시그니쳐를 구현하기만 하면 되었습니다.
 
 ~~~
 typedef void (*tp_conn_get_self_handle_reply) (
@@ -422,13 +404,9 @@ typedef void (*tp_conn_get_self_handle_reply) (
 );
 ~~~
 
-This idea is simple, and works for C, so was continued into the next generation of bindings.
+이 아이디어는 단순하고 C에 대해 동작하므로 다음 세대의 바인딩들에도 포함되었습니다.
 
-이 아이디어는 단순하고 C에 대해 동작하므로 다음 세대의 바인딩에도 포함되었습니다.
-
-In recent years, people have developed a way to use scripting languages such as Javascript and Python, as well as a C#-like language called Vala, that use GLib/GObject-based APIs via a tool called GObject-Introspection. Unfortunately, it's extremely difficult to rebind these types of callbacks into other languages, so newer bindings are designed to take advantage of the asynchronous callback features provided by the languages and GLib.
-
-최근 몇 년 간, 사람들은 GObject-Introspection이라는 GLib/GObject 기반의 API를 통해 자바스크립트나 파이썬, C#과 유사한 언어인 Vala 같은 스크립팅 언어를 사용하기 시작했습니다. 안타깝게도, 이러한 타입의 콜백을 다른 언어로 바인딩 하는 것은 매우 힘들기 때문에, 새로운 바인딩들은 해당 언어와 GLib에서 제공하는 비동기 콜백 기능을 사용하도록 설계되었습니다.
+최근 몇 년 간 사람들은 GObject-Introspection이라는 GLib/GObject 기반의 API를 통해 자바스크립트나 파이썬, 그리고 C#과 유사한 언어인 Vala 같은 스크립팅 언어를 사용하기 시작했습니다. 안타깝게도, 이러한 타입의 콜백을 다른 언어로 바인딩하는 것은 매우 힘들기 때문에, 새로운 바인딩들은 해당 언어와 GLib에서 제공하는 비동기 콜백 기능을 사용하도록 설계되었습니다.
 
 ### 20.4.2. 객체의 준비성
 
