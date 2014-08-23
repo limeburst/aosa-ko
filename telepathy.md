@@ -195,92 +195,63 @@ Connection들은 주로 해당하는 계정의 속성을 사용하여 만들어�
 
 > 그 이후로, 두 채널 타입은 모두 클라이언트 개발자에게 유용한 연락처 목록 정보를 노출하는, (enum 타입의) 연락처의 구독 상태, 속해 있는 그룹, 그리고 그룹에 있는 연락처들을 포함하는, Connection 자체 인터페이스로 교체되었습니다. 시그널은 연락처 목록이 준비되었는지 여부를 알려줍니다.
 
-### 20.3.3. Requesting Channels, Channel Properties and Dispatching
+### 20.3.3. 채널과 채널 속성의 요청, 그리고 배포
 
-Channels are requested using a map of properties you wish the desired channel to possess. Typically, the channel request will include the channel type, target handle type (contact or room) and target. However, a channel request may also include properties such as the filename and filesize for file transfers, whether to initially include audio and video for calls, what existing channels to combine into a conference call, or which contact server to conduct a contact search on.
+채널은 채널이 가지기 원하는 속성들의 매핑과 함께 요청될 수 있습니다. 일반적으로, 채널 요청은 채널 타입, 대상 핸들 타입(연락처 또는 대화방)과 대상을 포함합니다. 하지만, 채널 요청은 파일 전송에 대해서는 파일 이름이나 파일 크기, 전화에 대해서는 초기 음성이나 영상, 전화 회의에 합칠 기존의 채널, 또는 연락처 검색에 사용할 연락처 서버 등을 포함할 수도 있습니다.
 
-채널은 채널이 가지길 원하는 속성들의 매핑을 사용해서 요청할 수 있습니다. 일반적으로 채널 요청은 채널 타입, 타겟 핸들 타입(연락처 또는 대화방)과 타겟을 포함합니다. 하지만, 채널 요청은 파일 전송에 대해서 파일 이름이나 파일 크기, 전화 요청에 초기 음성이나 영상, 전화 회의에 합칠 기존의 채널, 연락처 검색에 사용할 연락처 서버 등을 포함할 수도 있습니다.
+채널 요청의 속성들은 ChannelType 속성(표 20.2) 등 Telepathy 인터페이스 명세에 정의되어 있는 속성들입니다. 이 속성들은 인터페이스의 이름공간에 의해 자격을 갖춥니다. 채널 요청에 포함될 수 있는 속성들은 그 사실이 Telepathy 명세에 정의되어 있습니다.
 
-The properties in the channel request are properties defined by interfaces of the Telepathy spec, such as the ChannelType property (Table 20.2). They are qualified with the namespace of the interface they come from. Properties which can be included in channel requests are marked as requestable in the Telepathy spec.
-
-채널 요청의 속성들은 ChannelType 속성(표 20.2) 등 Telepathy 인터페이스 명세에 정의되어 있는 속성들입니다. 이 속성들은 인터페이스의 이름공간에 의해 자격을 갖춥니다. 채널 요청에 포함될 수 있는 속성들은 요청될 수 있다고 Telepathy 명세에 정의되어 있습니다.
-
-Property | Value
+속성 | 값
 - | -
 `ofdT.Channel.ChannelType` | `ofdT.Channel.Type.Text`
-`ofdT.Channel.TargetHandleType` | `Handle_Type_Contact` (1)
+`ofdT.Channel.TargetHandleType` | `Handle_Type_Contact`
 `ofdT.Channel.TargetID` | `escher@tuxedo.cat`
 
 표 20.2: 채널 요청의 예시
 
-The more complicated example in Table 20.3 requests a file transfer channel. Notice how the requested properties are qualified by the interface from which they come. (For brevity, not all required properties are shown.)
+좀 더 복잡한, 파일 전송 채널을 요청하는 예시가 표 20.3에 있습니다. 요청된 속성들이 소속된 인터페이스에 대해 적합하다는 것을 확인할 수 있습니다. (간략함을 위해 필요한 속성들의 일부만 표시하였습니다).
 
-표 20.3의 좀 더 복잡한, 파일 전송 채널을 요청하는 예시가 있습니다. 요청된 속성들이 소속된 인터페이스에 대해 적합함을 확인할 수 있습니다. (간략함을 위해 필요한 속성들의 일부만 표시하였습니다).
-
-Property | Value
+속성 | 값
 - | -
-ofdT.Channel.ChannelType | ofdT.Channel.Type.FileTransfer
-ofdT.Channel.TargetHandleType | Handle_Type_Contact (1)
-ofdT.Channel.TargetID | escher@tuxedo.cat
-ofdT.Channel.Type.FileTransfer.Filename | meow.jpg
-ofdT.Channel.Type.FileTransfer.ContentType | image/jpeg
+`ofdT.Channel.ChannelType` | `ofdT.Channel.Type.FileTransfer`
+`ofdT.Channel.TargetHandleType` | `Handle_Type_Contact`
+`ofdT.Channel.TargetID` | `escher@tuxedo.cat`
+`ofdT.Channel.Type.FileTransfer.Filename` | `meow.jpg`
+`ofdT.Channel.Type.FileTransfer.ContentType` | `image/jpeg`
 
 표 20.3: 파일 전송 채널 요청
 
-Channels can either be created or ensured. Ensuring a channel means creating it only if it does not already exist. Asking to create a channel will either result in a completely new and separate channel being created, or in an error being generated if multiple copies of such a channel cannot exist. Typically you wish to ensure text channels and calls (i.e., you only need one conversation open with a person, and in fact many protocols do not support multiple separate conversations with the same contact), and wish to create file transfers and stateful channels.
+채널들은 생성되거나 확보될 수 있습니다. 채널을 확보한다는 것은 채널이 존재하지 않을 시에만 생성한다는 뜻입니다. 채널 생성을 요청하는 것은 완전히 새로운 별개의 채널을 생성하거나, 해당 채널의 사본이 존재할 수 없을 경우 오류를 냅니다. 보통 텍스트 채널과 통화를 확보하며(보통 한 사람 당 하나의 대화만을 원할 뿐더러, 많은 프로토콜들은 같은 연락처와의 다중 개별 대화를 지원하지 않습니다), 파일 전송과, 상태가 있는 채널을 생성합니다.
 
-채널들은 생성되거나 확보될 수 있습니다. 채널을 확보한다는 것은 채널이 존재하지 않을 시에만 생성한다는 뜻입니다. 채널 생성을 요청하는 것은 완전히 새롭고 별개의 채널이 생기거나, 해당 채널의 사본이 존재할 수 없을 시엔 오류가 납니다. 보통 텍스트 채널과 통화를 확보하며(i.e., 보통 한 사람에 대해 하나의 대화만 원할 뿐더러, 많은 프로토콜들은 같은 연락처와의 여러 개의 대화를 지원하지 않습니다), 파일 전송과, 상태가 있는 채널을 생성하길 원합니다.
+새롭게 생성된 채널들은 (요청되었거나 아니거나) Connection에서의 신호에 의해 선언됩니다. 이 신호은 채널의 불변 속성들의 매핑을 포함합니다. 이 속성들은 채널이 존재하는 동안 불변성이 보장되어 있습니다. 변하지 않을 것이라고 간주되는 속성들은 Telepathy의 명세에 표시되어 있으나, 보통 채널의 타입, 타켓 핸들 타입, 타겟, 창시자(채널을 만든 사람), 그리고 인터페이스들을 포함합니다. 물론 채널의 상태 같은 속성들은 포함되지 않습니다.
 
-Newly created channels (requested or otherwise) are announced by a signal from the Connection. This signal includes a map of the channel's immutable properties. These are the properties which are guaranteed not to change throughout the channel's lifetime. Properties which are considered immutable are marked as such in the Telepathy spec, but typically include the channel's type, target handle type, target, initiator (who created the channel) and interfaces. Properties such as the channel's state are obviously not included.
+> 옛 채널 요청 방식
 
-새롭게 생성된 채널들은(요청되었거나 아니거나) Connection에서 시그널에 의해 선언됩니다. 이 시그널은 채널의 불변 속성들의 매핑을 포함합니다. 이 속성들은 채널이 존재하는 동안 변하지 않음이 보장되어 있습니다. 변하지 않을 것이라고 간주되는 속성들은 Telepathy의 명세에 표시되어 있으나, 보통 채널의 타입, 타켓 핸들 타입, 타겟, 창시자(채널을 만든 사람), 그리고 인터페이스들을 포함합니다. 물론 채널의 상태 같은 속성들은 포함되지 않습니다.
+> 기존에는, 채널들은 타입, 핸들 타입, 그리고 대상 핸들으로 요청되었습니다. 하지만 모든 채널들이 타겟을 가지는 것은 아니고(연락처 검색 채널 등), 일부 채널들은 초기 채널 요청에 추가적인 정보를 포함해야 했기 때문에(파일 전송, 음성 메시지 요청, SMS 전송 채널 등) 충분히 유연하지 않았습니다.
 
-> Old-School Channel Requesting
+> 또, 채널을 요청할 때 두 개의 서로 다른 동작(고유함이 보장된 채널을 생성하거나, 단순히 채널이 존재하는지에 대한 보장만 하거나)이 일어날 수 있음이 발견되었으며, 이 전까지는 Connection이 어떤 동작이 일어날지 정해야 했습니다. 따라서, 기존의 방식은 새롭고, 더 유연하고, 더 명시적인 방식으로 교체되었습니다.
 
-> 옛날 방식의 채널 요청
+채널을 확보하거나 생성할 때 채널의 불변 속성들은 반환하는 것은 채널에 대한 프록시 객체를 훨씬 더 빠르게 만들 수 있게 합니다. 이제 이 정보를 확보하기 위해 요청을 보낼 필요가 없습니다. 표 20.4의 매핑은 (표 20.3의 채널 요청을 사용하여) 텍스트 채널을 요청할 때 포함될 수 있는 불변 속성들을 보여줍니다. 일부 속성들(TargetHandle과 InitiatorHandle 등)은 간결함을 위해 생략되었습니다.
 
-> Channels were originally requested simply by type, handle type and target handle. This wasn't sufficiently flexible because not all channels have a target (e.g., contact search channels), and some channels require additional information included in the initial channel request (e.g., file transfers, requesting voicemails and channels for sending SMSes).
-
-> 기존에는, 채널들은 타입, 핸들 타입, 그리고 타겟 핸들으로 요청되었습니다. 이것은 모든 채널들이 타겟을 가지기 않고(e.g., 연락처 검색 채널), 일부 채널들은 초기 채널 요청에 추가적인 정보를 포함해야 했기 때문에(e.g., 파일 전송, 음성 메시지 요청, SMS 전송 채널 등) 충분히 유연하지 않았습니다.
-
-> It was also discovered that two different behaviors might be desired when a channel was requested (either to create a guaranteed unique channel, or simply ensure a channel existed), and until this time the Connection had been responsible for deciding which behavior would occur. Hence, the old method was replaced by the newer, more flexible, more explicit ones.
-
-> 또, 채널을 요청할 때 두 개의 서로 다른 동작이 일어날 수 있음이 발견되었으며(고유함이 보장된 채널을 생성하거나, 단순히 채널이 존재하는지 확인하거나), 이 전까지는 Connection이 어떤 동작이 일어날지 정해야 했습니다. 따라서, 기존의 방식은 새롭고, 더 유연하고, 더 명시적인 방식으로 교체되었습니다.
-
-Returning a channel's immutable properties when you create or ensure the channel makes it much faster to create a proxy object for the channel. This is information we now don't have to request. The map in Table 20.4 shows the immutable properties that might be included when we request a text channel (i.e., using the channel request in Table 20.3). Some properties (including TargetHandle and InitiatorHandle) have been excluded for brevity.
-
-채널을 확보하거나 생성할 때 채널의 불변 속성들은 반환하는 것은 채널에 대한 프록시 객체를 만드는 것을 훨씬 빠르게 합니다. 이 정보은 이제 확보하기 위해 요청을 보낼 필요가 없습니다. 표 20.4의 매핑은 텍스트 채널을 요청할 때(즉, 표 20.3의 채널 요청을 사용하여) 포함될 수 있는 불변 속성들을 보여줍니다. 일부 속성들은(TargetHandle과 InitiatorHandle 등)은 간결함을 위해 생략되었습니다.
-
-Property | Value
+속성 | 값
 - | -
 `ofdT.Channel.ChannelType` | `Channel.Type.Text`
 `ofdT.Channel.Interfaces` | `{[} Channel.Interface.Messages`, `Channel.Interface.Destroyable`, `Channel.Interface.ChatState {]}`
-`ofdT.Channel.TargetHandleType` | `Handle_Type_Contact` (1)
+`ofdT.Channel.TargetHandleType` | `Handle_Type_Contact`
 `ofdT.Channel.TargetID` | `escher@tuxedo.cat`
 `ofdT.Channel.InitiatorID` | `danielle.madeley@collabora.co.uk`
 `ofdT.Channel.Requested` | `True`
 `ofdT.Channel.Interface.Messages.SupportedContentTypes` | `{[} text/html, text/plain {]}`
 
-Table 20.4: Example Immutable Properties Returned by a New Channel
+표 20.4: 새로운 채널이 반환된 불변 속성들의 예시
 
-표 20.4: 새로운 채널에 의해 반환된 불변 속성들의 예시
+요청하는 프로그램은 주로 Channel Dispatcher에 요청을 위한 계정, 채널 요청, 그리고 선택적으로 원하는 핸들러 이름(프로그램이 채널을 직접 다룰 때 유용합니다)을 포함하여 채널 요청을 보냅니다. 연결 대신 계정의 이름을 넘겨주는 것은, 필요할 경우 Channel Dispatcher가 Account Manager에 계정을 온라인 상태로 전환시킬 것을 요청할 수 있게 합니다.
 
-The requesting program typically makes a request for a channel to the Channel Dispatcher, providing the account the request is for, the channel request, and optionally the name of a the desired handler (useful if the program wishes to handle the channel itself). Passing the name of an account instead of a connection means that the Channel Dispatcher can ask the Account Manager to bring an account online if required.
+요청이 완료되면, Channel Dispatcher는 채널을 기명 Handler에 전달하거나 적절한 Handler(Handler와 다른 클라이언트에 대한 논의는 아래에 있습니다)를 찾습니다. 원하는 Handler의 이름을 선택 사항으로 만든 것은, 초기 요청 이후 채널과의 통신이 필요 없는 프로그램들이, 채널을 요청한 후 나머지는 다른 프로그램이 처리할 수 있게 하기 위함입니다 (이메일 클라이언트에서 텍스트 채팅을 시작하는 등).
 
-요청하는 프로그램은 주로 Channel Dispatcher에 요청을 위한 계정, 채널 요청, 그리고 선택적으로 원하는 핸들러 이름(프로그램이 채널을 직접 다룰 경우 유용합니다)을 포함하여 채널 요청을 보냅니다. 계정의 연결 대신 이름을 넘겨주는 것은 Channel Dispatcher가 필요할 경우 Account Manager에 계정을 온라인 상태로 전환시킬 것을 요청할 수 있게 합니다.
+![http://aosabook.org/images/telepathy/dispatching-model.png](채널 요청과 배포)
 
-Once the request is complete, the Channel Dispatcher will either pass the channel to the named Handler, or locate an appropriate Handler (see below for discussion on Handlers and other clients). Making the name of the desired Handler optional makes it possible for programs that have no interest in communication channels beyond the initial request to request channels and have them handled by the best program available (e.g., launching a text chat from your email client).
-
-요청이 완료되면, Channel Dispatcher는 채널을 기명 Handler에 전달하거나 적절한 Handler(Handler와 다른 클라이언트에 대한 논의는 아래에 있습니다)를 찾습니다. 원하는 Handler의 이름을 선택 사항으로 만든 것은 초기 요청 이후 채널과의 통신이 필요 없는 프로그램들이 채널을 요청한 후 다른 프로그램이 처리할 수 있게(e.g., 이메일 클라이언트에서 텍스트 채팅을 시작하는 등) 하기 위함입니다.
-
-![http://aosabook.org/images/telepathy/dispatching-model.png](Channel Request and Dispatching)
-![http://aosabook.org/images/telepathy/dispatching-model.png](Channel Request and Dispatching)
-
-그림 20.4: 채널 요청과 배포
-
-The requesting program makes a channel request to the Channel Dispatcher, which in turn forwards the request to the appropriate Connection. The Connection emits the NewChannels signal which is picked up by the Channel Dispatcher, which then finds the appropriate client to handle the channel. Incoming, unrequested channels are dispatched in much the same way, with a signal from the Connection that is picked up by the Channel Dispatcher, but obviously without the initial request from a program.
-
-요청하는 프로그램은 Channel Dispathcer에 채널 요청을 보내고, 그것은 또다시 적절한 Connection에 요청을 전달합니다. Connection은 NewChannels 시그널을 발신하고, 이 시그널은 Channel Dispatcher에 의해 수집되며 해당 채널을 처리할 수 있는 적절한 클라이언트를 찾습니다. 들어오는, 요청받지 않은 채널들은 비슷한 방식으로 배포됩니다. Connection으로부터의 시그널은 Connection Dispatcher에 의해 수집되지만, 초기에 프로그램으로부터의 요청은 존재하지 않습니다.
+요청하는 프로그램은 Channel Dispathcer에 채널 요청을 보내고, 채널 요청은 적절한 Connection에 전달됩니다. Connection은 NewChannels 신호를 발신하고, 이 신호는 다시 해당 채널을 처리할 적절한 클라이언트를 찾는 Channel Dispatcher에 의해 수집됩니다. 들어오는, 요청받지 않은 채널들도, 초기 프로그램으로부터의 요청이 없는 Connection으로부터의 시그널이 Connection Dispatcher에 의해 수집되는, 비슷한 방식으로 배포됩니다.
 
 ### 20.3.4. 클라이언트
 
