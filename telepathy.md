@@ -294,8 +294,6 @@ Telepathy는 D-Bus API이므로, D-Bus를 지원하는 어떠한 프로그래밍
 
 대부분의 네트워크와 사용자 인터페이스 프로그래밍과 같이, D-Bus 역시 들어오는 시그널과 메서드 반환에 대한 콜백 발생을 위해 이벤트 루프를 요구합니다. D-Bus는 GTK+와 Qt 툴킷들이 사용하는 GLip mainloop와 잘 통합됩니다.
 
-Some D-Bus language bindings (such as dbus-glib) provide a pseudo-synchronous API, where the main loop is blocked until the method reply is returned. Once upon a time this was exposed via the telepathy-glib API bindings. Unfortunately using pseudo-synchronous API turns out to be fraught with problems, and was eventually removed from telepathy-glib.
-
 일부 D-Bus 언어 바인딩들(dbus-glib 등)은, 메서드 응답이 반환되기 전까지 메인 루프가 블락되는 가성 비동기 API를 제공합니다.  이 API들은 옛날에 telepathy-glib API 바인딩들이 노출했었습니다. 안타깝게도 가성 비동기 API는 많은 문제점들을 내포한다는 것이 드러났으며, 결국 telepath-glib에서 제거되었습니다.
 
 > 가성 비동기 D-Bus 호출을 사용할 수 없는 이유
