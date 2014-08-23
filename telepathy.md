@@ -165,26 +165,15 @@ Connection은 연결 상태를 관리, 관찰하고, 채널을 요청하기 위�
 
 Connection들은 주로 해당하는 계정의 속성을 사용하여 만들어진 Account Manager에 의해 관리됩니다. Account Manager는 각 계정에 대한 사용자 존재 여부를 각 연결에 동기화시키고, 주어진 계정에 대한 연결 경로를 제공하기도 합니다.
 
-
-### 20.3.2. Channels
-
 ### 20.3.2. 채널
 
-Channels are the mechanism through which communications are carried out. A channel is typically an IM conversation, voice or video call or file transfer, but channels are also used to provide some stateful communication with the server itself, (e.g., to search for chat rooms or contacts). Each channel is represented by a D-Bus object.
+채널은 통신이 이루어지는 체계입니다. 채널은 주로 인스턴트 메신저 대화, 음성, 영상 통화나 파일 전송이지만, 서버 자체와의 상태 유지 통신(대화방이나 연락처 검색 등)을 제공할 수도 있습니다. 각 채널은 D-Bus 객체로 표현됩니다.
 
-채널은 통신이 이루어지는 메커니즘입니다. 채널은 주로 인스턴트 메신저 대화, 음성, 영상 통화나 파일 전송이지만, 서버 자체와의 상태 유지 통신(e.g., 대화방이나 연락처 검색)을 제공할 수도 있습니다. 각 채널은 D-Bus 객체로 나타내어집니다.
+체널은 주로 둘 이상의 사용자들 사이에서 이루어지며, 그 중 하나는 자신입니다. 채널은 주로 대상 식별자를 가지고 있으며, 이것은 1:1 통신일 경우엔 다른 연락처이거나, 다중 사용자 통신일 경우엔(대화방 등) 방 식별자입니다. 다중 사용자 채널은 `Group` 인터페이스를 제공하며, 이를 통해 현재 채널에 있는 연락처들을 알 수 있습니다.
 
-Channels are typically between two or more users, one of whom is yourself. They typically have a target identifier, which is either another contact, in the case of one-to-one communication; or a room identifier, in the case of multi-user communication (e.g., a chat room). Multi-user channels expose the `Group` interface, which lets you track the contacts who are currently in the channel.
+채널은 Connection에 속하며, 주로 Channel Dispatcher를 통해 Connection Manager로부터 요청이 들어오거나, 네트워크 이벤트(걸려오는 대화 등)에 대한 응답으로써 Connection에 의해 만들어지며, 이후 배포을 위해 Channel Dispatcher로 전달됩니다.
 
-체널은 주로 둘 이상의 사용자들간에 이루어지며, 그 중 하나는 자신입니다. 채널은 주로 타겟 식별자를 가지고 있으며, 이는 주로 1:1 통신일 경우엔 다른 연락처이거나, 다중 사용자 통신일 경우(e.g., 대화방)엔 방 식별자입니다. 다중 사용자 채널은 `Group` 인터페이스를 노출하며, 이를 통해 현재 채널에 있는 연락처들을 추적할 수 있습니다.
-
-Channels belong to a Connection, and are requested from the Connection Manager, usually via the Channel Dispatcher; or they are created by the Connection in response to a network event (e.g., incoming chat), and handed to the Channel Dispatcher for dispatching.
-
-채널은 Connection에 속하며, 주로 Channel Dispatcher를 통해 Connection Manager로부터 요청이 들어오거나, 네트워크 이벤트(e.g., 걸려오는 대화)의 응답으로써 Connection에 의해 만들어지며, 이후 연결을 위해 Channel Dispatcher로 넘어갑니다.
-
-The type of channel is defined by the channel's ChannelType property. The core features, methods, properties, and signals that are needed for this channel type (e.g., sending and receiving text messages) are defined in the appropriate `Channel.Type` D-Bus interface, for instance `Channel.Type.Text`. Some channel types may implement optional additional features (e.g., encryption) which appear as additional interfaces listed by the channel's `Interfaces` property. An example text channel that connects the user to a multi-user chatroom might have the interfaces shown in Table 20.1.
-
-채널의 타입은 채널의 `ChannelType` 속성에 정의되어 있습니다. 해당 채널 타입(e.g., 문자 메시지를 송수신함)에 필요한 핵심 기능, 메서드, 속성, 신호들은 `Channel.Type.Text` 처럼 적절한 `Channel.Type` D-Bus 인터페이스에 정의되어 있습니다. 어떤 채널 타입들은 선택적인 추가 기능(e.g., 암호화)을 구현할 수 있으며, 채널의 `Interfaces` 속성에 추가적 인터페이스로 나열되어 있습니다. 표 20.1에는 다중 사용자 대화방에 연결하는 텍스트 채널의 한 예가 가질 수 있는 인터페이스를 보여줍니다.
+채널의 타입은 `ChannelType` 속성에 정의되어 있습니다. 해당 채널 타입에 필요한 핵심 기능, 메서드, 속성, 신호(문자 메시지를 송수신하는 등)들은 `Channel.Type.Text` 처럼 적절한 `Channel.Type` D-Bus 인터페이스에 정의되어 있습니다. 어떤 채널 타입들은 선택적인 추가 기능(암호화 등)을 구현할 수 있으며, 채널의 `Interfaces` 속성에 추가적인 인터페이스로 정의되어 있습니다. 표 20.1에는 다중 사용자 대화방에 연결하는 텍스트 채널이 가질 수 있는 인터페이스의 예시를 보여줍니다.
 
 속성 | 목적
 - | -
@@ -196,25 +185,15 @@ The type of channel is defined by the channel's ChannelType property. The core f
 
 표 20.1: 예시 텍스트 채널
 
-> Contact List Channels: A Mistake
-
 > 연락처 목록 채널: 실수
 
-> In the first versions of the Telepathy specification, contact lists were considered a type of channel. There were several server-defined contact lists (subscribed users, publish-to users, blocked users), that could be requested from each Connection. The members of the list were then discovered using the Group interface, like for a multi-user chat.
+> 초기 Telepathy 명세에선 연락처 목록을 채널의 일종으로 정의했었습니다. 각 Connection에서 요청할 수 있는, 서버에서 지정하는 여러 연락처 목록들(구독한 사용자, 발행 대상 사용자, 차단된 사용자)이 있었으며, 목록의 구성원들은 다중 사용자 채팅과 같이 Group 인터페이스를 통해 발견되었습니다.
 
-> 초기 Telepathy 명세에선 연락처 목록을 채널의 일종으로 정의합니다. 각 Connection에서 요청할 수 있는, 서버에서 지정하는 여러 연락처 목록(구독한 사용자, 발행 대상 사용자, 차단된 사용자)이 있었으며, 목록의 구성원들은 다중 사용자 채팅과 같이 Group 인터페이스를 통해 발견되었습니다.
+> 기존 방식에서의 채널 생성은, 일부 프로토콜에서는 어느 정도의 시간이 걸리는 연락처 목록 가져오기를 한 다음에야 채널이 생성될 수 있었습니다. 클라이언트는 원하면 어느 때나 채널을 요청하고 준비되면 받을 수 있지만, 연락처가 많은 사용자들에게 이 요청은 종종 타임아웃이 나게 됩니다. 클라이언트의 구독/발행/차단 상태를 결정짓기 위해서는 세 가지 채널을 확인해야 했습니다.
 
-> Originally this would allow for channel creation to occur only once the contact list had been retrieved, which takes time on some protocols. A client could request the channel whenever it liked, and it would be delivered once ready, but for users with lots of contacts this meant the request would occasionally time out. Determining the subscription/publish/blocked status of a client required checking three channels.
+> 연락처 그룹(친구 그룹 등) 역시 그룹 당 하나의 채널의 형태로 노출되어 있었습니다. 이러한 구조는 클라이언트 개발자들이 다루기 매우 까다로운 것으로 증명되었습니다. 연락처가 속해 있는 그룹들의 목록을 가져오는 등의 작업은 클라이언트 측에서 매우 많은 양의 코드를 필요로 했습니다. 게다가 채널을 통해서만 정보를 받아올 수 있었기 때문에 연락처의 그룹이나 구독 상태를 Contacts 인터페이스를 통해 발행할 수 없었습니다. 
 
-> 기존에 방식에서의 채널 생성은, 일부 프로토콜에서는 어느 정도의 시간이 걸리는, 연락처 목록을 가져 온 다음에 한 번만 채널이 생성되었습니다. 클라이언트는 채널을 원할 때 요청하고 준비가 되면 받을 수 있지만, 연락처가 많은 사용자들에겐 이 요청은 종종 타임아웃이 나게 됩니다. 클라이언트의 구독/발행/차단 상태를 결정짓기 위해서는 세 가지 채널을 확인해야 했습니다.
-
-> Contact Groups (e.g., Friends) were also exposed as channels, one channel per group. This proved extremely difficult for client developers to work with. Operations like getting the list of groups a contact was in required a significant amount of code in the client. Further, with the information only available via channels, properties such as a contact's groups or subscription state could not be published via the Contacts interface.
-
-> 연락처 그룹(e.g., 친구들) 역시 그룹 당 하나의 채널의 형태로 노출되어 있었습니다. 이러한 구조는 클라이언트 개발자들이 다루기 매우 힘든 것으로 증명되었습니다. 연락처가 속해 있는 그룹의 목록을 가져오는 등의 작업은 클라이언트 측에서 매우 많은 양의 코드를 필요로 했습니다. 또, 채널을 통해서만 정보를 받아올 수 있기 때문에, 연락처의 그룹이나 구독 상태를 Contacts 인터페이스를 통해 발행할 수 없었습니다. 
-
-> Both channel types have since been replaced by interfaces on the Connection itself which expose contact roster information in ways more useful to client authors, including subscription state of a contact (an enum), groups a contact is in, and contacts in a group. A signal indicates when the contact list has been prepared.
-
-> 두 채널 타입 모두 클라이언트 개발자에게 유용한 연락처 목록 정보를 노출하는, 연락처의 구독 상태(enum 형의), 연락처가 속해 있는 그룹, 그리고 그룹에 있는 연락처들을 포함하는 Connection 자체의 인터페이스로 교체되었습니다. 시그널은 연락처 목록이 준비되었는지 여부를 알려줍니다.
+> 그 이후로, 두 채널 타입은 모두 클라이언트 개발자에게 유용한 연락처 목록 정보를 노출하는, (enum 타입의) 연락처의 구독 상태, 속해 있는 그룹, 그리고 그룹에 있는 연락처들을 포함하는, Connection 자체 인터페이스로 교체되었습니다. 시그널은 연락처 목록이 준비되었는지 여부를 알려줍니다.
 
 ### 20.3.3. Requesting Channels, Channel Properties and Dispatching
 
