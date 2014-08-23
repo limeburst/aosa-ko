@@ -20,17 +20,11 @@ Bash의 이름은 스티븐 본(현 유닉스 셸인 `/bin/sh`의, Bell Labs 유
 
 다른 GNU 소프트웨어처럼, bash는 꽤나 포터블합니다. 현재 거의 모든 버전의 유닉스에서 작동하며, Cygwin이나 MinGW처럼 Windows 호스트 환경에서 자체적으로 이식한 버전이 존재하며, QNX와 Minix 같은 Unix-like 운영체제를 위해 이식된 버전도 함께 배포합니다. Microsoft's Services for Unix(SFU)에서 제공하는 환경처럼 Posix 환경만 있으면 빌드 및 실행할 수 있습니다.
 
-## 3.2. Syntactic Units and Primitives
-
 ## 3.2. 구문 단위와 기본형
-
-### 3.2.1. Primitives
 
 ### 3.2.1. 기본형
 
-To bash, there are basically three kinds of tokens: reserved words, words, and operators. Reserved words are those that have meaning to the shell and its programming language; usually these words introduce flow control constructs, like `if` and `while`. Operators are composed of one or more metacharacters: characters that have special meaning to the shell on their own, such as `|` and `>`. The rest of the shell's input consists of ordinary words, some of which have special meaning—assignment statements or numbers, for instance—depending on where they appear on the command line.
-
-Bash에는 예약어, 단어, 연산자의 세 종류의 토큰이 있습니다. 예약어는 `if`나 `while` 등의 흐름 제어 구문을 제공하기 위한 셸과 셸의 프로그래밍 언어에서 의미를 지니는 단어들입니다. 연산자들은 `|`와 `>` , 셸에서 독립적으로 의미를 가지는 문자들이며, 하나 이상의 메타 문자로 이루어져 있습니다. 셸의 나머지 입력은 보통의 단어들로 이루어져 있으며, 그중 몇몇 단어들은 커맨드 라인에서 나타나는 위치에 따라 의미를 가지는 등, 특별한 의미를 부여하는 대입문이나 숫자들입니다.
+Bash에는 예약어, 단어, 연산자 세 종류의 토큰이 있습니다. 예약어는 `if`나 `while` 등의 흐름 제어 구문을 제공하기 위한, 셸과 셸 프로그래밍 언어에서 특별한 의미를 가지는 단어들입니다. 연산자들은 `|`와 `>` 처럼 셸에서 독립적으로 의미를 가지는 문자들이며, 하나 이상의 메타 문자로 이루어져 있습니다. 셸의 나머지 입력은 보통의 단어들로 이루어져 있으며, 그중 몇몇 단어들은 커맨드 라인에서 나타나는 위치에 따라 특별한 의미를 가지는 등, 특별한 대입문이나 숫자들입니다.
 
 ### 3.2.2. Variables and Parameters
 
