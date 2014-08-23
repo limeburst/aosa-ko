@@ -282,58 +282,34 @@ The requesting program makes a channel request to the Channel Dispatcher, which 
 
 요청하는 프로그램은 Channel Dispathcer에 채널 요청을 보내고, 그것은 또다시 적절한 Connection에 요청을 전달합니다. Connection은 NewChannels 시그널을 발신하고, 이 시그널은 Channel Dispatcher에 의해 수집되며 해당 채널을 처리할 수 있는 적절한 클라이언트를 찾습니다. 들어오는, 요청받지 않은 채널들은 비슷한 방식으로 배포됩니다. Connection으로부터의 시그널은 Connection Dispatcher에 의해 수집되지만, 초기에 프로그램으로부터의 요청은 존재하지 않습니다.
 
-### 20.3.4. Clients
-
 ### 20.3.4. 클라이언트
 
-Clients handle or observe incoming and outgoing communications channels. A client is anything that is registered with the Channel Dispatcher. There are three types of clients (though a single client may be two, or all three, types if the developer wishes):
+클라이언트들은 수신 및 발신 채널들을 처리하거나 관찰합니다. Channel Dispatcher에 등록 된 어떠한 것이든 클라이언트가 될 수 있습니다. Telepathy에는 세 종류의 클라이언트가 있습니다 (개발자가 원할 경우 하나의 클라이언트는 이 종류들 중 두 개, 혹은 세 개 모두의 종류가 될 수도 있습니다):
 
-클라이언트들은 수신 및 발신 채널들을 처리하거나 관찰합니다. 클라이언트는 Channel Dispatcher에 등록 된 어떤 것이 될수도 있습니다. Telepathy에는 세 종류의 클라이언트가 있습니다(개발자가 원할 경우 하나의 클라이언트는 이 종류들 중에 두 개, 혹은 세 개 모두의 종류가 될 수 있습니다):
-
-* Observers: Observe channels without interacting with them. Observers tend to be used for chat and activity logging (e.g., incoming and outgoing VoIP calls).
-* Approvers: Responsible for giving users an opportunity to accept or reject an incoming channel.
-* Handlers: Actually interact with the channel. That might be acknowledging and sending text messages, sending or receiving a file, etc. A Handler tends to be associated with a user interface.
-
-* Observer: 채널에 개입하지 않고 관찰합니다. Observer들은 채팅과 활동 기록(수신 및 발신 VoIP 통화 등)에 주로 쓰입니다.
-* Approver: 사용자들이 수신 채널을 허용하거나 차단할 수 있는 기회를 줍니다.
+* Observer: 채널에 개입하지 않고 관찰만 합니다. Observer들은 주로 채팅과 활동(수신 및 발신 VoIP 통화 등)을 기록하기 위해 사용됩니다.
+* Approver: 사용자들이 수신 채널을 허용하거나 차단할 수 있는 기회를 주는 역할을 합니다.
 * Handler: 문자 메시지들을 승인하거나 보내기, 파일을 보내거나 받기 등 채널과 실제로 상호 작용을 합니다. Handler는 사용자 인터페이스와 주로 연관됩니다.
 
-Clients offer D-Bus services with up to three interfaces: Client.Observer, Client.Approver, and Client.Handler. Each interface provides a method that the Channel Dispatcher can call to inform the client about a channel to observe, approve or handle.
+클라이언트들은 `Client.Observer`, `Client.Approver`, 그리고 `Client` 총 세 개 까지의 인터페이스에 D-Bus 서비스를 제공할 수 있습니다. 각 인터페이스는 Channel Dispatcher가 클라이언트에게 관찰, 승인, 혹은 처리할 채널에 대해 알려 주기 위해 호출할 수 있는 메서드를 제공합니다. 
 
-클라이언트들은 Client.Observer, Client.Approver, 그리고 Client 총 세 개의 인터페이스들에게 D-Bus 서비스를 제공할 수 있습니다. 각 인터페이스는 Channel Dispatcher가 클라이언트에게 관찰, 승인, 혹은 처리할 채널에 대해 알려 주기 위해 호출할 수 있는 메서드를 제공합니다. 
+Channel Dispatcher는 채널을 클라이언트 그룹에 순차적으로 배포합니다. 먼저, 채널은 모든 적절한 Observer들에게 배포됩니다. Observer들이 모두 반환된 이후, 채널들은 모든 적절한 Approver들에게 배포됩니다. 첫번째 Approver가 채널을 허용하거나 차단하면, 다른 Approver들에게 그 여부가 전달되며, 최종적으로 채널이 Handler에 배포됩니다. 채널 배포가 단계별로 진행되는 이유는, Handler가 채널을 변경시키기 전에, Observer들을 구성하기 위한 시간이 필요할 수도 있기 때문입니다.
 
-The Channel Dispatcher dispatches the channel to each group of clients in turn. First, the channel is dispatched to all appropriate Observers. Once they have all returned, the channel is dispatched to all the appropriate Approvers. Once the first Approver has approved or rejected the channel, all other Approvers are informed and the channel is finally dispatched to the Handler. Channel dispatching is done in stages because Observers might need time to get set up before the Handler begins altering the channel.
-
-Channel Dispatcher는 클라이언트들의 그룹에 채널을 순차적으로 배포합니다. 먼저, 채널을 모든 적절한 Observer들에게 배포합니다. 모두 반환된 이후, 채널은 모든 적절한 Approver들에게 배포됩니다. 첫번째 Approver가 채널을 허용하거나 차단했을 때, 모든 Approver들에게 채널이 Handler에 최종적으로 배포되었다는 정보가 전달됩니다. 채널 배포는 Observer들이 Handler가 채널을 변경시키기 전에, 구성하는 데 시간이 필요할 수 있기 때문에 단계별로 실행됩니다.
-
-Clients expose a channel filter property which is a list of filters read by the Channel Dispatcher so that it knows what sorts of channels a client is interested in. A filter must include at least the channel type, and target handle type (e.g., contact or room) that the client is interested in, but it can contain more properties. Matching is done against the channel's immutable properties, using simple equality for comparison. The filter in Table 20.5 matches all one-to-one text channels.
-
-클라이언트들은 Channel Dispatcher가 읽어들여 클라이언트가 관심 있어하는 채널들의 종류를 알 수 있게 하는 채널 필터의 목록인 채널 필터 속성을 드러냅니다. 필터는 최소한 클라이언트가 관심 있어 하는 채널 타입과 타겟 핸들 타입(연락처 또는 대화방)을 포함해야 하며, 더 많은 속성들을 포함할 수도 있습니다. 매칭은 채널의 불변 속성에 대해 단순히 동등성을 비교하여 이루어집니다. 표 20.5의 필터는 모든 1:1 텍스트 채널에 매칭됩니다.
+클라이언트들은 채널 필터 속성을 노출합니다. 채널 필터 속성은, 클라이언트가 관심 있는 채널의 종류를 알기 위해, Channel Dispatcher가 읽는 채널 필터의 목록입니다. 필터는 최소한 클라이언트가 관심 있는 채널 타입과 타겟 핸들 타입(연락처, 대화방 등)을 포함해야 하며, 더 많은 속성들을 포함할 수도 있습니다. 매칭은 채널의 불변 속성에 대한 단순 동등성 비교로 이루어집니다. 표 20.5의 필터는 모든 1:1 텍스트 채널에 매칭됩니다.
 
 Property | Value
 - | -
 `ofdT.Channel.ChannelType` | `Channel.Type.Text`
 `ofdT.Channel.TargetHandleType` | `Handle_Type_Contact` (1)
 
-Table 20.5: Example Channel Filter
-
 표 20.5: 채널 필터의 예시
 
-Clients are discoverable via D-Bus because they publish services beginning with the well-known name `ofdT.Client` (for example `ofdT.Client.Empathy.Chat`). They can also optionally install a file which the Channel Dispatcher will read specifying the channel filters. This allows the Channel Dispatcher to start a client if it is not already running. Having clients be discoverable in this way makes the choice of user interface configurable and changeable at any time without having to replace any other part of Telepathy.
-
-클라이언트들은 잘 알려진 이름 `ofdT.Client`으로 시작하는 서비스들(예를 들어, `ofdT.Client.Empathy.Chat`)을 발행하기 때문에 D-Bus를 통해 발견될 수 있습니다. 또, Channel Dispatcher가 읽고 채널 필터를 정의할 수 있도록 선택적으로 파일을 설치할 수도 있습니다. 이것은 Channel Dispather가 클라이언트가 실행되고 있지 않을 경우에 클라이언트를 실행할 수 있도록 합니다. 이러한 방식으로 클라이언트를 발견 가능할 수 있게 하는 것은 Telepathy의 다른 부분을 교체하지 않고도 사용자 인터페이스를 어느 때라도 설정, 수정 가능할 수 있게 합니다.
-
-> All or Nothing
+클라이언트들은 잘 알려진 이름 `ofdT.Client`으로 시작하는 서비스들(`ofdT.Client.Empathy.Chat` 등)을 발행하기 때문에 D-Bus를 통해 발견될 수 있습니다. 또, Channel Dispatcher가 읽을, 채널 필터를 정의하는 파일을 설치할 수도 있습니다. 이를 통해 클라이언트가 실행되고 있지 않을 경우에 Channel Dispather가 클라이언트를 실행할 수 있습니다. 이러한 방식으로 클라이언트를 발견할 수 있게 하는 것은 Telepathy의 다른 부분을 교체하지 않고도 사용자 인터페이스를 어느 때라도 설정하거나 수정할 수 있게 합니다.
 
 > 모 아니면 도
 
-> It is possible to provide a filter indicating you are interested in all channels, but in practice this is only useful as an example of observing channels. Real clients contain code that is specific to channel types.
+> 모든 채널에 관심이 있다는 것을 나타내는 필터를 제공할 수도 있지만, 이런 필터는 채널 관찰에 대한 예시로서밖엔 쓸모가 없습니다. 실제 클라이언트들은 채널 타입에 종속적인 코드를 가집니다.
 
-> 모든 채널에 관심이 있다는 것을 나타내는 필터를 제공할 수도 있지만, 실제로는 채널 관찰에 대한 예시로서만 쓸모가 있습니다. 실제 클라이언트들은 채널 타입에 종속적인 코드를 가집니다.
-
-> An empty filter indicates a Handler is not interested in any channel types. However it is still possible to dispatch a channel to this handler if you do so by name. Temporary Handlers which are created on demand to handle a specific channel use such a filter.
-
-> 빈 필터는 Handler가 어떤 채널 타입에도 관심이 없다는 것을 나타냅니다. 하지만 이름을 통해 배포한다면 여전히 채널들을 이러한 핸들러에 배포할 수 있습니다. 특정 채널을 다루기 위해 생성되는 임시 Handler들이 이러한 필터를 사용합니다.
+> 빈 채널 필터는 Handler가 어떤 채널 타입에도 관심이 없다는 것을 나타냅니다. 하지만 이름을 사용해 채널을 배포한다면 여전히 이런 핸들러에 채널을 배포할 수 있습니다. 특정 채널을 다루기 위해 생성되는 임시 Handler들이 이러한 필터를 사용합니다.
 
 ## 20.4. 언어 바인딩의 역할
 
