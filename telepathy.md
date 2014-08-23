@@ -155,25 +155,16 @@ connection[CONNECTION_INTERFACE_CONTACTS].GetContactAttributes(
 }
 ~~~
 
-## 20.3. Connections, Channels and Clients
-
 ## 20.3. Connection, Channel, 그리고 Client
-
-### 20.3.1. Connections
 
 ### 20.3.1. Connection
 
-A Connection is created by the Connection Manager to establish a connection to a single protocol/account. For example, connecting to the XMPP accounts `escher@tuxedo.cat` and `cami@egg.cat` would result in two Connections, each represented by a D-Bus object. Connections are typically set up by the Account Manager, for the currently enabled accounts.
+Connection은 하나의 프로토콜/계정 당 하나의 연결을 위해 Connection Manager에 의해 만들어 집니다. 예를 들어, XMPP 계정 `escher@tuxedo.cat`과 `cami@egg.cat`에 연결하는 것은 D-Bus 객체로 표현되는 두 개의 Connection을 만들게 됩니다. Connection은 주로, 현재 활성화된 계정에 대해, Account Manager에 의해 구성됩니다.
 
-Connection은 하나의 계정 당 하나의 프로토콜을 연결하기 위해 Connection Manager에 의해 만들어집니다. 예를 들어, XMPP 계정인 `escher@tuxedo.cat`과 `cami@egg.cat`에 연결하는 것은 D-Bus 객체로 표현된 두 개의 Connection을 만들게 됩니다. Connection은 주로 현재 활성화된 계정에 대해, Account Manager에 의해 구성됩니다.
+Connection은 연결 상태를 관리, 관찰하고, 채널을 요청하기 위한 몇 가지 필수적인 기능들을 제공하며, 프로토콜의 기능에 따라 선택적인 기능들을 제공하기도 합니다. 이러한 기능들은 선택적인 (이전 장에서 다뤄졌던 것 처럼) D-Bus 인터페이스로 제공되며, Connection의 `Interfaces` 속성에서 확인할 수 있습니다.
 
-The Connection provides some mandatory functionality for managing and monitoring the connection status and for requesting channels. It can then also provide a number of optional features, depending on the features of the protocol. These are provided as optional D-Bus interfaces (as discussed in the previous section) and listed by the Connection's `Interfaces` property.
+Connection들은 주로 해당하는 계정의 속성을 사용하여 만들어진 Account Manager에 의해 관리됩니다. Account Manager는 각 계정에 대한 사용자 존재 여부를 각 연결에 동기화시키고, 주어진 계정에 대한 연결 경로를 제공하기도 합니다.
 
-Connection은 연결 상태를 관찰, 관리하고, 채널을 요청하기 위한 몇 가지 필수적인 기능을 제공하며, 프로토콜의 기능에 따라 몇가지 선택적인 기능을 제공하기도 합니다. 이러한 기능들은 선택적인 (이전 장에서 다뤄졌던 것 처럼) D-Bus 인터페이스로 제공되며, Connection의 `Interfaces` 속성에 의해 나열됩니다.
-
-Typically Connections are managed by the Account Manager, created using the properties of the respective accounts. The Account Manager will also synchronize the user's presence for each account to its respective connection and can be asked to provide the connection path for a given account.
-
-Connection들은 주로 Account Manager에 의해 관리되며, 해당하는 계정의 속성을 사용하여 만들어집니다. Account Manager는 각 계정에 대한 사용자의 부재 여부를 각 연결에 동기화시키고, 주어진 계정에 대한 연결 경로를 제공하기도 합니다.
 
 ### 20.3.2. Channels
 
