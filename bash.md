@@ -220,13 +220,9 @@ The parser returns a single C structure representing a command (which, in the ca
 
 구문 분석기는 하나의 C 구조체를 반환하여(반복문 같은 컴파운드 명령에 경우엔 차례로 다른 명령들을 포함할 수 있습니다), 셸의 다음 작업 단계인 단어 확장을 위해 넘겨줍니다. 명령 구조는 명령 객체와 단어의 목록으로 이루어져 있습니다. 대부분의 단어 목록은, 문맥에 따라, 다음 장에서 설명될 변형들의 대상이 됩니다.
 
-## 3.5. Word Expansions
-
 ## 3.5. 단어 확장
 
-After parsing, but before execution, many of the words produced by the parsing stage are subjected to one or more word expansions, so that (for example) $OSTYPE is replaced with the string "linux-gnu".
-
-구문 분석 이후와 실행 이전에, 구문 분석 단계에서 생성된 여러 단어들은 (예를 들어) $OSTYPE이 "linux-gnu"로 치활될 수 있도록 하나 또는 그 이상의 단어 확장의 대상이 됩니다.
+구문 분석 단계와 실행 단계 사이에, 구문 분석 단계에서 생성된 여러 단어들은, (예를 들어) `$OSTYPE`이 `"linux-gnu"`로 치환될 수 있도록, 한 번 또는 그 이상의 단어 확장 단계의 대상이 됩니다.
 
 ### 3.5.1. Parameter and Variable Expansions
 
