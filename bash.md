@@ -84,13 +84,9 @@ Bash는 셸 프로그램이 저장되어 여러 번 사용할 수 있게 합니�
 
 `WORD_LIST`는 셸 어디에서나 찾아볼 수 있을 정도로 많이 사용됩니다. 간단한 명령도 word list이며, 확장의 결과도 word list이며, 내장 명령어들도 매개 변수로 word list를 받습니다.
 
-## 3.3. Input Processing
-
 ## 3.3. 입력 처리
 
-The first stage of the bash processing pipeline is input processing: taking characters from the terminal or a file, breaking them into lines, and passing the lines to the shell parser to transform into commands. As you would expect, the lines are sequences of characters terminated by newlines.
-
-Bash 처리 파이프라인의 첫 번째 단계는 파일이나 터미널로부터 문자열을 가져와, 줄 단위로 분리하고, 명령으로 변환시키기 위해 셸 파서에 넘겨주는 입력 처리입니다. 예상하셨듯이, 이 줄들은 개행 문자로 끝나는 문자열들의 서열입니다.
+Bash 처리 파이프라인의 첫 번째 단계는 파일이나 터미널로부터 문자열을 가져와, 줄 단위로 분리하고, 명령으로 변환시키기 위해 셸 구문 분석기에 넘겨주는 입력 처리입니다. 예상하셨듯이, 이 줄들은 개행 문자로 끝나는 문자열들의 서열입니다.
 
 ### 3.3.1. Readline and Command Line Editing
 
