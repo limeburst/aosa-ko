@@ -282,13 +282,9 @@ Variable expansion is where the difference between single and double quotes beco
 
 변수 확장은 따옴표와 쌍따옴표의 차이가 명백히 드러나는 곳입니다. 따옴표는 모든 확장을 억제합니다. 따옴표로 싸여진 문자열들은 아무런 편집이 가해지지 않고 확장 과정을 지나는 반면, 쌍따옴표는 일부 확장은 허용하고 나머지는 억제합니다. 단어 확장과 명령, 수식, 그리고 프로세스 치환이 일어납니다. 쌍따옴표는 결과물이 다뤄지는 방식에만 영향을 미치지만, 중괄호와 물결표는 그렇지 않습니다.
 
-### 3.5.3. Word Splitting
-
 ### 3.5.3. 단어 분리
 
-The results of the word expansions are split using the characters in the value of the shell variable `$IFS` as delimiters. This is how the shell transforms a single word into more than one. Each time one of the characters in `$IFS` appears in the result, bash splits the word into two. Single and double quotes both inhibit word splitting.
-
-단어 확장의 결과물은 셸 변수 `$IFS` 값에 있는 문자들을 구분자로서 사용하여 분리됩니다. 이것은 셸이 하나의 단어를 그 이상의 단어들로 변환시키는 방식입니다. `$IFS`에 있는 문자들 중 하나가 결과문에 나타날 때 마다, bash는 해당 단어를 두 개의 단어로 분리시킵니다. 따옴표나 쌍따옴표는 단어 분리를 방지합니다.
+단어 확장의 결과물은 셸 변수 `IFS`에 있는 문자들을 구분자로 사용하여 분리됩니다. 이것은 셸이 하나의 단어를 그 이상의 단어들로 변환시키는 방식입니다. `$IFS`에 있는 문자들 중 하나가 결과물에 나타날 때 마다, bash는 해당 단어를 두 개의 단어로 분리시킵니다. 따옴표나 쌍따옴표는 단어 분리를 방지합니다.
 
 ### 3.5.4. Globbing
 
