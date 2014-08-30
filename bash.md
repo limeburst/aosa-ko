@@ -276,7 +276,7 @@ Variable expansion is where the difference between single and double quotes beco
 
 ### 3.5.3. 단어 분리
 
-단어 확장의 결과물은 셸 변수 `IFS`에 있는 문자들을 구분자로 사용하여 분리됩니다. 이것은 셸이 하나의 단어를 그 이상의 단어들로 변환시키는 방식입니다. `$IFS`에 있는 문자들 중 하나가 결과물에 나타날 때 마다, bash는 해당 단어를 두 개의 단어로 분리시킵니다. 따옴표나 쌍따옴표는 단어 분리를 방지합니다.
+단어 확장의 결과물은 셸 변수 `IFS`에 있는 문자들을 구분자로 사용하여 분리됩니다. 이것은 셸이 하나의 단어를 그 이상의 단어들로 변환시키는 방식입니다. `$IFS`[^1]에 있는 문자들 중 하나가 결과물에 나타날 때 마다, bash는 해당 단어를 두 개의 단어로 분리시킵니다. 따옴표나 쌍따옴표는 단어 분리를 방지합니다.
 
 ### 3.5.4. 글로빙
 
@@ -326,9 +326,9 @@ A recent addition to the redirection syntax allows users to direct the shell to 
 
 리다이렉션 문법에 최근에 추가된 것은, 사용자들이 관리하는 것이 아닌, 셸이 직접 적합한 파일 서술자를 고르고 지정된 변수에 할당시키게 하는 것입니다. 이것을 프로그래머가 파일 서술자들을 관리하는 것의 부담을 덜어주지만, 추가적인 처리를 요구합니다: 셸은 파일 서술자를 올바른 곳에 복사해야 하며, 특정 변수에 할당되어 있다는 것을 보장해야 합니다. 이것은 낱말 분석기에서 구문 분석기, 그리고 명령 실행으로 정보가 전달되는 예시 중 하나입니다. 분석기는 단어를 변수 할당을 포함하는 리다이렉션으로 분류합니다; 구문 분석기는, 적절한 문법 프로덕션의 문맥에서, 할당을 요한다는 사실을 알리는 플래그를 가진 리다이렉션 객체를 만들고, 리다이렉션 코드는 플래그를 해석하여 파일 서술자 번호가 올바른 변수에 할당되어 있는지 보장하게 됩니다.
 
-The hardest part of implementing redirection is remembering how to undo redirections. The shell deliberately blurs the distinction between commands executed from the filesystem that cause the creation of a new process and commands the shell executes itself (builtins), but, no matter how the command is implemented, the effects of redirections should not persist beyond the command's completion2. The shell therefore has to keep track of how to undo the effects of each redirection, otherwise redirecting the output of a shell builtin would change the shell's standard output. Bash knows how to undo each type of redirection, either by closing a file descriptor that it allocated, or by saving file descriptor being duplicated to and restoring it later using `dup2`. These use the same redirection objects as those created by the parser and are processed using the same functions.
+The hardest part of implementing redirection is remembering how to undo redirections. The shell deliberately blurs the distinction between commands executed from the filesystem that cause the creation of a new process and commands the shell executes itself (builtins), but, no matter how the command is implemented, the effects of redirections should not persist beyond the command's completion[^2]. The shell therefore has to keep track of how to undo the effects of each redirection, otherwise redirecting the output of a shell builtin would change the shell's standard output. Bash knows how to undo each type of redirection, either by closing a file descriptor that it allocated, or by saving file descriptor being duplicated to and restoring it later using `dup2`. These use the same redirection objects as those created by the parser and are processed using the same functions.
 
-리다이렉션을 구현하는 데에 있어서 가장 어려운 부분은 리다이렉션을 취소하는 방법을 기억하는 것입니다. 셸은, 새로운 프로세스를 생성하는, 파일 시스템에서부터 실행된 명령들과, 셸 자체적으로 실행하는 프로세스(빌트인)의 구분을, 일부러 모호하게 하지만, 명령이 어떻게 구현되었든 간에, 리다이렉션의 효과는 명령이 끝난 이후에 남아있어선 안됩니다. 따라서, 셸은 각 리다이렉션의 영향을 되돌리는 방법을 알고 있어야 하며, 그렇지 않을 경우 셸 빌트인의 출력을 리다이렉트 하는 것은 셸의 표준 출력을 변경시킬 것입니다. Bash는, 리다이렉션이 할당한 파일 서술자를 닫거나, 복사되는 파일 서술자를 저장하고 추후에 `dup2`을 사용하여 복원하는 등, 각 종류의 리다이렉션을 되돌리는 방법을 알고 있습니다. 이 작업들은 구문 분석기가 생성하는 것들과 같은 리다이렉션 객체를 사용하며, 같은 함수를 사용하여 처리됩니다.
+리다이렉션을 구현하는 데에 있어서 가장 어려운 부분은 리다이렉션을 취소하는 방법을 기억하는 것입니다. 셸은, 새로운 프로세스를 생성하는, 파일 시스템에서부터 실행된 명령들과, 셸 자체적으로 실행하는 프로세스(빌트인)의 구분을, 일부러 모호하게 하지만, 명령이 어떻게 구현되었든 간에, 리다이렉션의 효과는 명령이 끝난 이후에 남아있어선 안됩니다[^2]. 따라서, 셸은 각 리다이렉션의 영향을 되돌리는 방법을 알고 있어야 하며, 그렇지 않을 경우 셸 빌트인의 출력을 리다이렉트 하는 것은 셸의 표준 출력을 변경시킬 것입니다. Bash는, 리다이렉션이 할당한 파일 서술자를 닫거나, 복사되는 파일 서술자를 저장하고 추후에 `dup2`을 사용하여 복원하는 등, 각 종류의 리다이렉션을 되돌리는 방법을 알고 있습니다. 이 작업들은 구문 분석기가 생성하는 것들과 같은 리다이렉션 객체를 사용하며, 같은 함수를 사용하여 처리됩니다.
 
 Since multiple redirections are implemented as simple lists of objects, the redirections used to undo are kept in a separate list. That list is processed when a command completes, but the shell has to take care when it does so, since redirections attached to a shell function or the "`.`" builtin must stay in effect until that function or builtin completes. When it doesn't invoke a command, the `exec` builtin causes the undo list to simply be discarded, because redirections associated with `exec` persist in the shell environment.
 
@@ -465,3 +465,8 @@ Bash는 크고 복잡한 자유 소프트웨어의 좋은 예입니다. Bash는 
 Bash는 스티븐 본이 작성한 7th Edition 유닉스 셸부터, 많은 기존 프로젝트들의 영향을 받았습니다. Bash에 가장 큰 영향은 미친 건 bash의 동작의 상당한 부분을 정의한 Posix 표준이었습니다. 이러한 하위 호환성과 표준 준수의 조합은 그 나름의 도전을 제시했습니다.
 
 Bash는 GNU 프로젝트로서의 일부로서, bash가 존재하는 기반이 되는 동기와 체제를 얻었습니다. GNU 없인 bash도 없었을 것입니다. 또, bash는 적극적인 사용자 커뮤니티의 혜택도 얻었습니다. 사용자들의 의견은 지금까지의 bash를 만들어 왔으며, 자유 소프트웨어로서의 장점을 입증합니다.
+
+## 각주
+
+[^1]: 대부분의 경우, 이 중 한 문자의 서열.
+[^2]: `exec` 빌트인은 이 규칙에 대한 예외입니다.
