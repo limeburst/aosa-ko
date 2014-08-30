@@ -1,6 +1,6 @@
 # Telepathy
 
-Telepathy는 음성, 영상, 텍스트, 파일 전송 등을 다루는 실시간 통신을 위한 모듈화된 프레임워크입니다. Telepathy의 차별점은 다양한 인스턴트 메시지 프로토콜의 세부사항을 추상화 한다는 점이 아니라, 여러 응용 프로그램이 동시에 사용하는 프린터 서비스처럼, 통신을 하나의 서비스로써 제공한다는 점입니다. Telepathy는 이것을 달성하기 위해 D-Bus 메시지 버스와 모듈화된 설계를 광범위하게 사용합니다.
+Telepathy[^1]는 음성, 영상, 텍스트, 파일 전송 등을 다루는 실시간 통신을 위한 모듈화된 프레임워크입니다. Telepathy의 차별점은 다양한 인스턴트 메시지 프로토콜의 세부사항을 추상화 한다는 점이 아니라, 여러 응용 프로그램이 동시에 사용하는 프린터 서비스처럼, 통신을 하나의 서비스로써 제공한다는 점입니다. Telepathy는 이것을 달성하기 위해 D-Bus 메시지 버스와 모듈화된 설계를 광범위하게 사용합니다.
 
 서비스로서의 통신은 응용 프로그램 간의 통신 수단을 제공하므로 굉장히 유용합니다. 서비스로서의 통신은, 이메일 클라이언트에서 연락처의 상태를 확인하고, 해당 연락처와 통신을 시작하고, 파일 브라우저에서 바로 파일을 전송하거나, Telepathy에서 Tubes로 알려진 기능인 응용 프로그램 내에서 연락처 간의 협업 기능 제공 등, 흥미로운 많은 일을 가능하게 합니다. 
 
@@ -18,7 +18,7 @@ Telepathy는 2005년 로버트 맥퀸(Robert McQueen)이 만들었으며, 그 �
 
 ## 20.1. Telepathy 프레임워크의 구성요소
 
-Telepathy는 모듈화되어 있으며, 각 모듈들은 D-Bus 메시징 버스를 통해 통신합니다. 대부분의 모듈은 사용자 세션 버스를 사용합니다. 이 통신은 Telepathy 명세에 상세히 명시되어 있습니다. 그림 20.1에 Telepathy 프레임워크의 구성요소들이 나와 있습니다.
+Telepathy는 모듈화되어 있으며, 각 모듈들은 D-Bus 메시징 버스를 통해 통신합니다. 대부분의 모듈은 사용자 세션 버스를 사용합니다. 이 통신은 Telepathy 명세[^2]에 상세히 명시되어 있습니다. 그림 20.1에 Telepathy 프레임워크의 구성요소들이 나와 있습니다.
 
 ![Telepathy 구성요소 예시](http://aosabook.org/images/telepathy/telepathy-components.png)
 
@@ -42,7 +42,7 @@ Telepathy는 모듈화되어 있으며, 각 모듈들은 D-Bus 메시징 버스�
 
 ## 20.2. Telepathy가 D-Bus를 사용하는 방식
 
-Telepathy 구성요소들은 D-Bus 메시징 버스를 통해 통신하며, 주로 사용자의 세션 버스를 사용합니다. D-Bus는 다양한 IPC 시스템에서 공통적으로 찾아볼 수 있는 기능을 제공합니다. 서비스는 `/org/freedesktop/Telepathy/AccountManager3`처럼, 엄격한 이름 공간의 객체 경로를 가진 객체를 발행하며, 각 객체는 몇 가지 인터페이스를 구현합니다. 이 인터페이스들 역시 `org.freedesktop.DBus.Properties` 그리고 `ofdT.Connection` 같은 형식의 엄격한 이름 공간을 가지며, 각 인터페이스는 호출, 듣기, 또는 요청 가능한 메서드와 시그널, 그리고 속성들을 제공합니다.
+Telepathy 구성요소들은 D-Bus 메시징 버스를 통해 통신하며, 주로 사용자의 세션 버스를 사용합니다. D-Bus는 다양한 IPC 시스템에서 공통적으로 찾아볼 수 있는 기능을 제공합니다. 서비스는 `/org/freedesktop/Telepathy/AccountManager`[^3]처럼, 엄격한 이름 공간의 객체 경로를 가진 객체를 발행하며, 각 객체는 몇 가지 인터페이스를 구현합니다. 이 인터페이스들 역시 `org.freedesktop.DBus.Properties` 그리고 `ofdT.Connection` 같은 형식의 엄격한 이름 공간을 가지며, 각 인터페이스는 호출, 듣기, 또는 요청 가능한 메서드와 시그널, 그리고 속성들을 제공합니다.
 
 ![D-Bus 서비스가 발행한 객체들의 개념적 표현](http://aosabook.org/images/telepathy/bus-hierarchy-conceptual.png)
 
@@ -354,7 +354,7 @@ typedef void (*tp_conn_get_self_handle_reply) (
 
 ## 20.6. Telepathy 확장하기: 사이드카
 
-Telepathy 명세는 통신 프로토콜이 노출하는 폭넓은 범위의 기능을 다루려 하지만, 어떤 프로토콜들은 프로토콜 자체가 확장될 수 있습니다. Telepathy 개발자들은 Telepathy 명세를 확장하지 않고도 사용자의 Telepathy 연결을 확장할 수 있게 하고 싶었습니다. 이는 사이드카를 통해 가능합니다.
+Telepathy 명세는 통신 프로토콜이 노출하는 폭넓은 범위의 기능을 다루려 하지만, 어떤 프로토콜들은 프로토콜 자체가 확장될 수 있습니다[^4]. Telepathy 개발자들은 Telepathy 명세를 확장하지 않고도 사용자의 Telepathy 연결을 확장할 수 있게 하고 싶었습니다. 이는 사이드카를 통해 가능합니다.
 
 사이드카는 일반적으로 연결 관리자의 플러그인에 의해 구현됩니다. 클라이언트들은 주어진 D-Bus 인터페이스를 구현하는 사이드카를 요청하는 메서드를 호출합니다. 예를 들어, 어떤 사람의 XEP-0016 사생활 목록 구현체는 `com.example.PrivacyLists`라는 인터페이스를 구현할 수 있습니다. 이 메서드는 (추가적으로 다른 인터페이스를 구현할 수도 있는) 해당 인터페이스를 구현하는 플러그인이 제공하는 D-Bus 객체를 반환합니다. 이 객체는 메인 연결 객체와 공존하게 됩니다(따라서 오토바이의 사이드카라는 이름을 가지게 되었습니다).
 
@@ -387,3 +387,10 @@ Telepathy는 D-Bus의 사용 방식을 계속 반복해 개션하며 개발되�
 * _Contacts 인터페이스는 여러 인터페이스로부터의 정보를 한번에 가져올 수 있습니다._ 연락처에 대한 정보를 가져오기 위해 `GetAll`을 여러 번 호출하는 대신, Contacts 인터페이스에 모든 정보에 대한 요청을 보내 D-Bus로의 왕복 요청 갯수를 줄일 수 있습니다.
 * _애매한 추상화는 사용하지 않습니다._ 연락처 목록과 연락처 그룹을 Group 인터페이스를 구현하는 채널로 노출시키는 것이 기존의 추상화를 사용했기 때문에 처음에는 좋은 아이디어 같아 보였습니다. 하지만 이 결정은 클라이언트 구현을 어렵게 만들었으며, 결국엔 적절하지 않았습니다.
 * _API가 미래의 요구사항을 충족시킬 수 있도록 보장합니다._ 기존의 채널 요청 API는 단순한 채널 요청만 보낼 수 있게 하는 등, 유연하지 못했습니다. 이런 방식은 더 많은 정보를 필요로 하는 채널에 요청을 보낼 때 우리의 요구사항에 맞출 수 없었습니다. 이 API는 결국 훨씬 더 유연한 새로운 API로 교체되어야 했습니다.
+
+## 각주
+
+[^1]: [http://telepathy.freedesktop.org/](http://telepathy.freedesktop.org/) 또는 [http://telepathy.freedesktop.org/doc/book/](http://telepathy.freedesktop.org/doc/book/) 의 개발자 매뉴얼 참조.
+[^2]: [http://telepathy.freedesktop.org/spec/](http://telepathy.freedesktop.org/spec/)
+[^3]: 여기서부터 `/org/freedesktop/Telepathy/`와 `org.freedesktop.Telepathy`는 공간 절약을 위해 `ofdT`로 줄여 쓰겠습니다.
+[^4]: Extensible Messaging and Presence Protocol (XMPP) 등.
