@@ -290,21 +290,13 @@ As with the parser, the word expansion code handles characters whose representat
 
 구문 분석기와 마찬가지로, 단어 확장 코드 역시 1 바이트 이상을 필요로 하는 문자열들도 다룹니다. 예를 들어, 변수 길이 확장(`${#variable}`)은 길이를 바이트가 아니라 문자 단위로 세며, 해당 작업을 하는 코드는, 멀티바이트 문자열이 존재하는, 확장이나, 확장에 있어 특별한 의미를 가지는 문자열들의 끝을 정확히 판단할 수 있습니다.
 
-## 3.6. Command Execution
-
 ## 3.6. 명령 실행
 
-The command execution stage of the internal bash pipeline is where the real action happens. Most of the time, the set of expanded words is decomposed into a command name and set of arguments, and passed to the operating system as a file to be read and executed with the remaining words passed as the rest of the elements of `argv`.
+실질적인 동작은 Bash 내부 파이프라인의 명령 실행 단계에서 일어납니다. 대부분의 경우, 확장된 단어들은 명령의 이름과 매개 변수들로 분해됩니다. 그리고, `argv`를 이루게 되는 나머지 단어들과 함께 읽고 실행할 수 있는 파일로서 운영체제에 전달됩니다.
 
-내부 bash 파이프라인의 명령 실행 단계는 진짜 동작이 일어나는 곳입니다. 대부분의 경우, 확장된 단어들의 집합은 명령의 이름과 매개 변수의 집합으로 분해되며, 읽고 실행할 파일과, 그 나머지 단어들을 `argv`의 요소로서, 운영체제에게 전달됩니다.
+지금까지는 일부러 Posix에서 단순한 명령으로 불리는 명령 이름과 매개 변수의 집합을 가진 명령에 대한 설명에 촛점을 맞췄습니다. 이 명령들은 가장 흔한 종류의 명령이지만, bash는 그 이상을 제공합니다.
 
-The description thus far has deliberately concentrated on what Posix calls simple commands—those with a command name and a set of arguments. This is the most common type of command, but bash provides much more.
-
-지금까지는 일부러 Posix가 단순한 명령으로 부르는, 명령 이름과 매개 변수의 집합을 가진 것들에 집중하였습니다. 이 명령들은 가장 흔한 종류의 명령이지만, bash는 그 이상을 제공합니다.
-
-The input to the command execution stage is the command structure built by the parser and a set of possibly-expanded words. This is where the real bash programming language comes into play. The programming language uses the variables and expansions discussed previously, and implements the constructs one would expect in a high-level language: looping, conditionals, alternation, grouping, selection, conditional execution based on pattern matching, expression evaluation, and several higher-level constructs specific to the shell.
-
-명령 실행 단계로의 입력은 구문 분석기에 의해 만들어진 명령 구조와 확장되었을 수도 있는 단어의 집합입니다. 이곳은 bash 프로그래밍 언어가 빛을 발하는 곳입니다. Bash 프로그래밍 언어는 위에서 언급된 변수와 확장을 사용하여, 고수준 언어에서 기대할 수 있는 반복문, 변형, 그룹, 패턴 매칭을 기반으로 한 조건 실행문, 표현식 평가, 그리고 몇 가지 셸에 종속적인 고수준 구문 등의 구문들을 구현합니다.
+명령 실행 단계의 입력은, 구문 분석기에 의해 만들어진 명령 구조와, 확장되었을 수도 있는 단어의 집합입니다. 이 단계는 bash 프로그래밍 언어가 빛을 발하는 곳입니다. Bash 프로그래밍 언어는 위에서 언급된 변수와 확장을 사용하여 고수준 언어에서 볼 수 있는 반복문, 변형, 그룹, 패턴 매칭을 기반으로 한 조건 실행문, 표현식 평가, 그리고 몇 가지 셸에 종속적인 고수준 구문 등의 구문들을 구현합니다.
 
 ### 3.6.1. Redirection
 
