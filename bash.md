@@ -333,29 +333,17 @@ Bash builtins use the same internal primitives as the rest of the shell. Each bu
 
 Bash 빌트인들은 셸의 다른 부분과 같은 내부 기본형을 사용합니다. 각 빌트인은 C 언어의 함수들을 사용하여 구현되어 있습니다. 단어들은 단어 확장 단계에서 출력된 단어들이며, 빌트인들은 이 단어들을 명령 이름과 매개 변수로 취급합니다. 대부분의 경우, 빌트인들은 두 개의 예외를 제외하고는 다른 명령들에 적용되는 것과 같은 표준 확장 규칙이 적용됩니다. 대입문을 매개 변수로 받는 bash 빌트인들(`declare`, `export` 등)은 셸이 변수 할당에 사용되는 같은 확장 규칙이 적용됩니다. 이곳은 `WORD_DESC` 구조체의 `flags` 멤버가 셸의 내부 파이프라인의 단계 간 정보를 전달하기 위해 사용되는 곳입니다.
 
-### 3.6.3. Simple Command Execution
+### 3.6.3. 단순한 명령의 실행
 
-### 3.6.3. 단순한 명령 실행
+단순한 명령들은 가장 흔히 마주치게 되는 명령입니다. 파일 시스템으로부터 읽어들인 명령들의 검색과 실행, 그리고 반환값의 수집은 셸의 수많은 나머지 기능들을 포함합니다.
 
-Simple commands are the ones most commonly encountered. The search for and execution of commands read from the filesystem, and collection of their exit status, covers many of the shell's remaining features.
+셸 변수 할당(`var=value`의 형태를 가지는 단어)은 그 자체로 단순한 명령입니다. 대입문들은 커맨드 라인에서 명령 앞에 오거나 단독으로 존재할 수 있습니다. 대입문이 명령 앞에 올 땐, 변수들은 각자의 환경 내에서(빌트인 명령이나 셸 명령 앞에 올 땐, 몇 가지 예외를 제외하고는, 빌트인이나 함수가 실행되는 동안에는 영속됩니다), 실행된 명령에 전달됩니다. 그렇지 않을 때엔 대입문은 셸의 상태를 변경시킵니다.
 
-단순한 명령들은 가장 흔히 마주치게 되는 명령입니다. 파일시스템으로부터 읽어들인 명령들의 검색과 실행, 그리고 반환값의 수집은 셸의 수많은 나머지 기능들을 포함합니다.
+셸 함수나 빌트인이 아닌 명령이 주어졌을 때, bash는 파일 시스템에서 그 명령의 이름을 가진 실행 파일을 검색합니다. `PATH` 변수는 쌍점으로 구분된, 검색할 디렉토리들을 가집니다. 사선(또는 다른 디렉토리 구분자)이 들어가 있는 명령들은 검색하지 않고 바로 실행됩니다.
 
-Shell variable assignments (i.e., words of the form `var=value`) are a kind of simple command themselves. Assignment statements can either precede a command name or stand alone on a command line. If they precede a command, the variables are passed to the executed command in its environment (if they precede a built-in command or shell function, they persist, with a few exceptions, only as long as the builtin or function executes). If they're not followed by a command name, the assignment statements modify the shell's state.
+명령이 `PATH` 검색을 통해 발견되면, bash는 명령 이름과 해당하는 절대 경로를 해시 테이블에 저장하고, 다음 `PATH` 검색에 참고합니다. 명령을 찾을 수 없는 경우, 특정 이름을 가진 함수가 정의되어 있는 경우, 명령 이름과 매개 변수들을 이 함수의 매개 변수로 넘겨 실행합니다. 일부 리눅스 배포판들은 찾을 수 없는 명령의 설치를 제안하기 위해 이 기능을 사용합니다.
 
-셸 변수 할당(`var=value`의 형태를 가지는 단어)은 이 자체로 단순한 명령입니다. 대입문들은 커맨드 라인에서 명령 앞에 오거나 단독적으로 존재할 수 있습니다. 대입문이 명령 앞에 올 땐, 변수들은 (빌트인 명령이나 셸 명령 앞에 올 땐, 몇 가지 예외를 제외하고는, 빌트인이나 함수가 실행되는 도중에는 영속됩니다) 각자의 환경 내에서, 실행된 명령에 전달됩니다. 그렇지 않을 때에 대입문은 셸의 상태를 변경시킵니다.
-
-When presented a command name that is not the name of a shell function or builtin, bash searches the filesystem for an executable file with that name. The value of the `PATH` variable is used as a colon-separated list of directories in which to search. Command names containing slashes (or other directory separators) are not looked up, but are executed directly.
-
-셸 함수나 빌트인이 아닌 명령이 주어졌을 때엔, bash는 파일 시스템에서 그 명령의 이름을 가진 실행 가능한 파일을 검색합니다. `PATH` 변수의 값은 검색할 디렉토리들을 쌍점으로 구분하여 가집니다. 사선(또는 다른 디렉토리 구분자)이 들어가 있는 명령들은 검색되지 않고 바로 실행됩니다.
-
-When a command is found using a `PATH` search, bash saves the command name and the corresponding full pathname in a hash table, which it consults before conducting subsequent PATH searches. If the command is not found, bash executes a specially-named function, if it's defined, with the command name and arguments as arguments to the function. Some Linux distributions use this facility to offer to install missing commands.
-
-명령이 `PATH` 검색을 통해 발견되면, bash는 명령 이름과 해당되는 절대경로를 저장하고, 다음 `PATH` 검색에 참고합니다. 명령을 찾을 수 없는 경우, bash는, 정의되어 있는 경우, 특별한 이름을 가진 함수를, 명령 이름과 매개 변수들을 함수의 매개 변수로 넘겨 실행합니다. 일부 리눅스 배포판들은 이 기능을, 없는 명령의 설치를 제안하기 위해 사용합니다.
-
-If bash finds a file to execute, it forks and creates a new execution environment, and executes the program in this new environment. The execution environment is an exact duplicate of the shell environment, with minor modifications to things like signal disposition and files opened and closed by redirections.
-
-Bash가 실행할 파일을 찾을 경우, 포크 후 새로운 실행 환경을 만들고, 명령을 이 새로운 환경에서 실행합니다. 실행 환경은, 시그널 처리와 리다이렉션에 의해 열리거나 닫힌 파일들에 대한 사소한 수정 사항을 제외하고는, 셸 환경의 완벽한 사본입니다.
+Bash가 실행할 파일을 찾은 경우, 포크 후 새로운 실행 환경을 만들어 명령을 이 환경에서 실행시킵니다. 이 실행 환경은 시그널 처리와 리다이렉션에 의해 열리거나 닫힌 파일들에 대한 사소한 수정 사항을 제외하고는 셸 환경의 완벽한 사본입니다.
 
 ### 3.6.4. Job Control
 
