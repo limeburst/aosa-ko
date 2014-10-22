@@ -120,61 +120,35 @@ Readline을 사용하지 않을 때 셸은 `stdio`나 셸 자체의 버퍼링된
 
 멀티바이트 문자열 처리는 셸의 초기 구현이 생긴지 한참 후에, 기존 코드에 미치는 영향을 최소화시키는 방향으로 추가되었습니다. 멀티바이트 문자열을 지원하는 로케일에서 셸은 입력을 바이트 버퍼(C `char`)에 저장하지만, 이 바이트열이 멀티바이트 문자열일 수도 있다고 가정합니다. Readline은 (멀티바이트 문자열이 화면 영역을 얼마나 차지하고 있는지, 문자를 화면에 표시할 때 버퍼에서 읽어야 할 바이트 수를 알고 있는 것이 핵심인) 멀티바이트 문자열을 화면에 표시하는 방법, 줄 위에서 바이트 단위가 아니라 문자 단위로 왔다 갔다 하는 방법 등을 알고 있습니다. 그 외에는, 셸의 입력 처리에서는 멀티바이트 문자열은 별다른 영향을 미치지 않습니다. 이후에 다뤄질 셸의 다른 부분들에서는 멀티바이트 문자열을 인식할 수 있어야 하며, 입력 처리를 할 때 고려해야 합니다.
 
-## 3.4. Parsing
-
 ## 3.4. 구문 분석
 
-The initial job of the parsing engine is lexical analysis: to separate the stream of characters into words and apply meaning to the result. The word is the basic unit on which the parser operates. Words are sequences of characters separated by metacharacters, which include simple separators like spaces and tabs, or characters that are special to the shell language, like semicolons and ampersands.
+구문 분석 엔진의 첫번째 일은, 문자열 스트림을 단어로 나누고 결과에 의미를 부여하는 낱말 분석입니다. 낱말은 구문 분석기가 인식하는 가장 기본적인 단위입니다. 낱말은 메타 문자로 분리된 문자열이며, 메타 문자에는 공백이나 탭 등 단순한 구분자, 세미콜론, 앰퍼샌드 등 셸에서 특별한 의미를 지니는 문자들이 있습니다.
 
-구문 분석 엔진의 첫번째 일은 문자열 스트림을 단어로 나누고 결과에 의미를 부여하는 낱말 분석입니다. 낱말은 구문 분석기가 동작하는 기본적인 단위입니다. 낱말은 메타 문자로 분리된 문자열이며, 메타 문자는 공백이나 탭 등 단순한 구분자나, 세미콜론이나 앰퍼샌드 등 셸에서 특별한 의미를 지니는 문자들을 포함합니다.
+셸의 고질적인 문제는, 톰 더프가 Plan 9의 셸인 `rc`에 대한 논문에서 언급했던 것처럼, 아무도 Bourne 셸 문법을 모른다는 것입니다. Posix 셸 위원회는, 비록 문맥 의존성이 많지만, 유닉스 셸의 결정적인 문법을 발표했다는 점에서 공을 인정할 필요가 있습니다. 이 문법은 고전 Bourne 셸의 구문 분석기가 오류 없이 지원하던 구조을 지원하지 않는 등, 완벽하지는 않지만, 우리가 가진 가장 최선의 문법입니다.
 
-One historical problem with the shell, as Tom Duff said in his paper about rc, the Plan 9 shell, is that nobody really knows what the Bourne shell grammar is. The Posix shell committee deserves significant credit for finally publishing a definitive grammar for a Unix shell, albeit one that has plenty of context dependencies. That grammar isn't without its problems—it disallows some constructs that historical Bourne shell parsers have accepted without error—but it's the best we have.
+Bash 구문 분석기는 초기 버전의 Posix 문법에서 기인하였으며, 제가 알기로 Yacc이나 Bison으로 구현된 유일한 Bourn 식의 구문 분석기입니다. Bash 구문 분석기에는 Bash 구문 분석기만의 문제점들이 있습니다. 셸 문법은 yacc 스타일의 구문 분석엔 적합하지 않으며, 복잡한 낱말 분석과, 구문 분석기와 낱말 분석기 간의 많은 협력이 필요합니다.
 
-셸의 고질적인 문제는, 톰 더프가 Plan 9의 셸인 `rc`에 대한 논문에서 언급했던 것처럼, 아무도 Bourne 셸 문법을 모른다는 것입니다. Posix 셸 위원회는 비록 문맥 의존성이 많지만 유닉스 셸의 결정적 문법을 발표했다는 점에서 그 공을 인정할 필요가 있습니다. 이 문법은, 고전 Bourne 셸 구문 분석기가 오류 없이 지원하던 구성을 지원하지 않는 등 완벽하지는 않지만 우리가 가진 가장 최선의 문법입니다.
-
-The bash parser is derived from an early version of the Posix grammar, and is, as far as I know, the only Bourne-style shell parser implemented using Yacc or Bison. This has presented its own set of difficulties—the shell grammar isn't really well-suited to yacc-style parsing and requires some complicated lexical analysis and a lot of cooperation between the parser and the lexical analyzer.
-
-Bash 구문 분석기는 초기 버전의 Posix 문법에서 기인하였으며, 제가 알기로 Yacc이나 Bison으로 구현된 유일한 Bourn 형식 구문 분석기입니다. Bash 구문 분석기에는 Bash 구문 분석기만의 문제점들이 있습니다. 셸 문법은 yacc 스타일 구문 분석엔 적합하지 않으며, 복잡한 낱말 분석과, 구문 분석기와 낱말 분석기 간의 많은 협력이 필요합니다.
-
-In any event, the lexical analyzer takes lines of input from readline or another source, breaks them into tokens at metacharacters, identifies the tokens based on context, and passes them on to the parser to be assembled into statements and commands. There is a lot of context involved—for instance, the word for can be a reserved word, an identifier, part of an assignment statement, or other word, and the following is a perfectly valid command: that displays `for`.
-
-어쨌거나, 낱말 분석기는 readline이나 다른 곳으로부터 여러 줄의 입력을 받아, 메타 문자를 기준으로 토큰들로 분리하고, 토큰을 문맥에 따라 식별하여 구문 분석기가 선언문과 명령들로 구성할 수 있도록 전달합니다. 이 작업엔 문맥이 많이 개입됩니다. 예를 들어, 단어 for는 예약어, 식별자, 대입문의 일부, 또는 다른 단어일 수도 있습니다. 다음은 `for`를 표시하는 완벽히 유효한 명령입니다:
+어쨌거나, 낱말 분석기는 readline이나 다른 곳으로부터 여러 줄의 입력을 받아, 메타 문자를 기준으로 토큰들로 분리하고, 토큰을 문맥에 따라 식별하여 구문 분석기가 선언문과 명령들로 구성할 수 있도록 전달합니다. 이 작업은 많은 문맥을 필요로 합니다. 예를 들어, 단어 for는 예약어, 식별자, 대입문의 일부, 또는 다른 단어일 수도 있습니다. 다음은 `for`를 표시하는 완벽히 유효한 명령입니다:
 
 ~~~
 for for in for; do for=for; done; echo $for
 ~~~
 
-At this point, a short digression about aliasing is in order. Bash allows the first word of a simple command to be replaced with arbitrary text using aliases. Since they're completely lexical, aliases can even be used (or abused) to change the shell grammar: it's possible to write an alias that implements a compound command that bash doesn't provide. The bash parser implements aliasing completely in the lexical phase, though the parser has to inform the analyzer when alias expansion is permitted.
-
 이 시점에서, 별칭에 대한 이야기를 잠깐 할까 합니다. Bash는 단순한 명령의 첫번째 단어를 별칭을 사용하여 임의의 문자열로 교체할 수 있게 합니다. 별칭은 완전한 단어이므로, 셸의 문법을 바꾸기 위해 사용(혹은 남용)될 수 있습니다. 별칭을 사용해 bash가 제공하지 않는 컴파운드 명령을 구현하는 것도 가능합니다. 구문 분석기가 언제 별칭을 확장할 수 있는지 낱말 분석기에게 알려 주어야 하지만, Bash 구문 분석기는 낱말 분석 단계에서의 별칭을 완벽히 구현합니다.
 
-Like many programming languages, the shell allows characters to be escaped to remove their special meaning, so that metacharacters such as `&` can appear in commands. There are three types of quoting, each of which is slightly different and permits slightly different interpretations of the quoted text: the backslash, which escapes the next character; single quotes, which prevent interpretation of all enclosed characters; and double quotes, which prevent some interpretation but allow certain word expansions (and treats backslashes differently). The lexical analyzer interprets quoted characters and strings and prevents them from being recognized by the parser as reserved words or metacharacters. There are also two special cases, `$'…'` and `$"…"`, that expand backslash-escaped characters in the same fashion as ANSI C strings and allow characters to be translated using standard internationalization functions, respectively. The former is widely used; the latter, perhaps because there are few good examples or use cases, less so.
-
-다른 프로그래밍 언어들처럼, 셸은 문자열의 특수한 의미를 없애기 위해 예외 문자의 사용을 허용하며, 따라서 `&` 등의 메타문자를 명령에 사용할 수 있습니다. 인용된 문자열의 해석이 조금씩 다른, 세 종류의 인용이 있습니다. 백슬래시는 다음에 오는 문자를 탈출시키며, 작은 따옴표는 감싸는 모든 문자열들의 해석을 방지하고, 쌍따옴표는 몇 종류의 해석을 방지하지만 (백슬래시를 다르게 다루는 동시에) 특정 단어 확장을 허용합니다. 낱말 분석기는 인용된 문자들과 문자열을을 해석하고 구문 분석기에 의해 예약어나 메타문자열로 해석되는 것을 방지합니다. 백슬래시로 탈출된 문자열들을, ANSI C 문자열같은 방식으로, 문자들이 표준 국제화 함수에 의해 번역될 수 있게 확장시키는 두 가지 특수한 경우인 `$'…'` 과 `$"…"`이 있습니다. 전자는 널리 사용되지만, 후자는 용례가 별로 없기 때문에 덜 사용됩니다.
-
-The rest of the interface between the parser and lexical analyzer is straightforward. The parser encodes a certain amount of state and shares it with the analyzer to allow the sort of context-dependent analysis the grammar requires. For example, the lexical analyzer categorizes words according to the token type: reserved word (in the appropriate context), word, assignment statement, and so on. In order to do this, the parser has to tell it something about how far it has progressed parsing a command, whether it is processing a multiline string (sometimes called a "here-document"), whether it's in a case statement or a conditional command, or whether it is processing an extended shell pattern or compound assignment statement.
+수많은 다른 프로그래밍 언어들처럼, 셸은 문자열의 특수한 의미를 없애기 위한 예외 문자의 사용을 허용하므로, `&` 등의 메타문자를 명령에 사용할 수 있습니다. 인용된 문자열의 해석이 조금씩 달라지는, 세 종류의 인용이 있습니다. 백슬래시는 다음에 오는 문자를 탈출시키며, 작은 따옴표는 감싸는 모든 문자열들의 해석을 방지하고, 쌍따옴표는 몇 종류의 해석을 방지하지만 (백슬래시를 다르게 다루는 동시에) 특정 단어의 확장을 허용합니다. 낱말 분석기는 인용된 문자들과 문자열을을 해석하고 구문 분석기에 의해 예약어나 메타문자열로 해석되는 것을 방지합니다. 백슬래시로 탈출된 문자열들을, ANSI C 문자열같은 방식으로, 문자들이 표준 국제화 함수에 의해 번역될 수 있게 확장시키는 두 가지 특수한 경우인 `$'…'` 과 `$"…"`이 있습니다. 전자는 널리 사용되지만, 후자는 용례가 별로 없기 때문에 덜 사용됩니다.
 
 구문 분석기와 낱말 분석기 간의 나머지 인터페이스는 간단합니다. 구문 분석기는 문법이 요구하는 상태 종속적인 분석을 위해 상태를 인코딩하여 낱말 분석기와 공유합니다. 예를 들어, 낱말 분석기는 토큰 타입에 따라, (적절한 문맥에서) 예약어, 단어, 대입문 등으로 단어를 분류합니다. 이를 위해 구문 분석기는 명령을 얼마나 분석하였는지, ("here-document"로도 불리는) 여러 줄로 이루어진 문자열을 분석하고 있는지, case문이나 조건문을 분석하고 있는지, 아니면 확장된 셸 형태나 컴파운드 대입문을 분석하고 있는지에 대해 알려주어야 합니다.
 
-Much of the work to recognize the end of the command substitution during the parsing stage is encapsulated into a single function (`parse_comsub`), which knows an uncomfortable amount of shell syntax and duplicates rather more of the token-reading code than is optimal. This function has to know about here documents, shell comments, metacharacters and word boundaries, quoting, and when reserved words are acceptable (so it knows when it's in a `case` statement); it took a while to get that right.
+구문 분석 단계에서, 명령어 치환의 끝을 알기 위한 대부분의 작업은 하나의 함수(`parse_comsub`) 안에 있습니다. 이 함수는 셸 구문에 대해 불편할 정도로 많이 알고 있으며, 토큰을 읽어들이는 코드의 많은 부분을 중복하여 가집니다. 이 함수는 here document, 셸 주석, 메타문자열, 단어 경계, 인용, 그리고 (`case`문에 있을때 그 사실을 알기 위해)을 예약어를 언제 허용할지에 대한 정보를 알아야 합니다. 이 함수가 올바른 동작을 하게 만드는 데에는 굉장히 오랜 시간이 걸렸습니다.
 
-구문 분석 단계에서, 명령어 치환의 끝을 알기 위한 대부분의 작업은 하나의 함수(`parse_comsub`)로 감싸여져 있으며, 이 함수는 셸 구문에 대해 불편할 정도로 많이 알고 있으며, 토큰을 읽어들이는 코드의 많은 부분을 중복하여 가집니다. 이 함수는 here document, 셸 주석, 메타문자열, 단어 경계, 인용, 그리고 (`case`문에 있을때 그 사실을 알기 위해)을 예약어를 언제 허용할지에 대한 정보를 알아야 합니다. 이 함수가 올바른 동작을 하는 데에는 굉장히 오랜 시간이 걸렸습니다.
+단어 확장 도중에 명령어 치환이 일어날 경우, bash는 구조체의 정확한 끝을 알아내기 위해 구문 분석기를 사용합니다. 이것은 문자열을 `eval`을 위한 명령어로 바꾸는 작업과 비슷하지만, 명령이 문자열의 끝으로 끊기지는 않습니다. 이를 위해 구문 분석기는 오른쪽 괄호를 유효한 명령 종결자로 인식해야 하며, 이것은 낱말 분석기가 (올바른 문맥에서) 오른쪽 괄호를 EOF를 뜻하는 것으로 표시하기를 요구합니다. 구문 분석기는, 또, 명령을 읽어들이는 중 프롬프트 문자열 확장의 일환으로 명령어 치환이 구문 분석되거나 실행될 수 있기 때문에, `yyparse`를 재귀적으로 호출하기 이전에 구문 분석기의 상태를 저장하고 복원시켜야 합니다. 입력 함수들이 미리 읽기를 구현하기 때문에, 이 함수는 bash가 입력을 문자열, 파일, 또는 readline을 통해 터미널로부터 읽던 bash 입력 포인터를 올바른 곳으로 되돌려야 합니다. 이것은 입력을 보존하기 위해서 뿐만이 아니라, 명령 치환 확장 함수가 실행할 정확한 문자열을 구성하기 위해서이기도 합니다.
 
-When expanding a command substitution during word expansion, bash uses the parser to find the correct end of the construct. This is similar to turning a string into a command for `eval`, but in this case the command isn't terminated by the end of the string. In order to make this work, the parser must recognize a right parenthesis as a valid command terminator, which leads to special cases in a number of grammar productions and requires the lexical analyzer to flag a right parenthesis (in the appropriate context) as denoting EOF. The parser also has to save and restore parser state before recursively invoking `yyparse`, since a command substitution can be parsed and executed as part of expanding a prompt string in the middle of reading a command. Since the input functions implement read-ahead, this function must finally take care of rewinding the bash input pointer to the right spot, whether bash is reading input from a string, a file, or the terminal using readline. This is important not only so that input is not lost, but so the command substitution expansion functions construct the correct string for execution.
+프로그래밍 가능한, 단어 자동 완성에 의해 비슷한 문제가 야기됩니다. 다른 명령을 구문 분석하는 도중 임의의 명령을 실행할 수 있게 되는 문제 등이 있습니다. 이러한 문제들은 호출 주변에서 구문 분석기의 상태를 저장하고 복원시킴으로서 해결할 수 있습니다.
 
-단어 확장 중에 명령어 치환을 확장할 때에, bash는 구조체의 정확한 끝을 알아내기 위해 구문 분석기를 사용합니다. 이것은 문자열을 `eval`을 위한 명령어로 바꾸는 작업과 비슷하지만, 명령이 문자열의 끝으로 끝나지는 않습니다. 이를 위해, 구문 분석기는 오른쪽 괄호를 유효한 명령 종결자로 인식해야 하며, 이것은 낱말 분석기가 (올바른 문맥에서) 오른쪽 괄호를 EOF를 뜻하는 것으로 표시하기를 요구합니다. 또, 구문 분석기는, 명령을 읽어들이는 도중에 프롬프트 문자열 확장의 일환으로 명령 치환이 구문 분석 및 실행될 수 있기 때문에, `yyparse`를 재귀적으로 호출하기 전에 구문 분석기의 상태를 저장하고 복원시켜야 합니다. 입력 함수들이 미리 읽기를 구현하기 때문에, 이 함수는 bash가 입력을 문자열, 파일, 또는 readline을 통한 터미널로부터 읽던 bash 입력 포인터를 올바른 곳으로 되돌려야 합니다. 이것은 입력을 보존하기 위해서 뿐만이 아니라, 명령 치환 확장 함수가 실행될 정확한 문자열을 구성하기 위해서이기도 합니다.
+인용 역시, 상반되는 동작과, 논쟁의 이유가 됩니다. 첫 Posix 셸 표준이 발행된 20년 후, 표준 심의회원들은 아직도 모호한 인용에 대한 적절한 작동 방식에 대해 논쟁하고 있습니다. 전과 같이, Bourne 셸은 작동 방식에 대해 관찰할 수 있는 레퍼런스 구현체로서의 가치만을 지닙니다.
 
-Similar problems are posed by programmable word completion, which allows arbitrary commands to be executed while parsing another command, and solved by saving and restoring parser state around invocations.
-
-프로그래밍 가능한 단어 자동 완성에 의해 다른 명령을 구문 분석하는 도중 임의의 명령을 실행할 수 있게 되는 등 비슷한 문제들이 야기되며, 호출 주변에서 구문 분석기의 상태를 저장하고 복원시킴으로서 해결할 수 있습니다.
-
-Quoting is also a source of incompatibility and debate. Twenty years after the publication of the first Posix shell standard, members of the standards working group are still debating the proper behavior of obscure quoting. As before, the Bourne shell is no help other than as a reference implementation to observe behavior.
-
-인용 역시 상반되는 동작과 논쟁의 이유가 됩니다. 첫 Posix 셸 표준이 발행된 20년 후, 표준 심의회원들은 아직도 모호한 인용에 대한 적절한 작동 방식에 대해 논쟁하고 있습니다. 전과 같이, Bourne 셸은 작동 방식에 대해 관찰할 수 있는 레퍼런스 구현체로서의 가치만을 지닙니다.
-
-The parser returns a single C structure representing a command (which, in the case of compound commands like loops, may include other commands in turn) and passes it to the next stage of the shell's operation: word expansion. The command structure is composed of command objects and lists of words. Most of the word lists are subject to various transformations, depending on their context, as explained in the following sections.
-
-구문 분석기는 하나의 C 구조체를 반환하여(반복문 같은 컴파운드 명령에 경우엔 차례로 다른 명령들을 포함할 수 있습니다), 셸의 다음 작업 단계인 단어 확장을 위해 넘겨줍니다. 명령 구조는 명령 객체와 단어의 목록으로 이루어져 있습니다. 대부분의 단어 목록은, 문맥에 따라, 다음 장에서 설명될 변형들의 대상이 됩니다.
+구문 분석기는 명령을 의미하는 하나의 C 구조체를 반환하여(반복문 같은 컴파운드 명령에 경우엔 차례로 다른 명령들을 포함할 수 있습니다), 셸의 다음 작업 단계인, 단어 확장을 위해 넘겨줍니다. 명령 구조는 명령 객체와 단어의 목록으로 이루어져 있습니다. 대부분의 단어 목록은 문맥에 따라, 다음 장에서 설명될 변환들의 대상이 됩니다.
 
 ## 3.5. 단어 확장
 
