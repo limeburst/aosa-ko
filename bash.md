@@ -162,17 +162,11 @@ for for in for; do for=for; done; echo $for
 
 변수의 상태에 따라 다르게 동작하는 확장들도 있습니다. 변수가 할당된 여부에 따라 서로 다른 확장이나 대입이 일어나게 할 수 있습니다. 예를 들어, `${parameter:-word}`는 지정되었을 경우 `parameter`로 확장되며, 그렇지 않거나 빈 문자열이 지정되었을 땐 `word`로 확장됩니다.
 
-### 3.5.2. And Many More
-
 ### 3.5.2. 그리고 더
 
-Bash does many other kinds of expansion, each of which has its own quirky rules. The first in processing order is brace expansion, which turns:
-
-Bash에는 다른 종류의 확장들도 있으며, 각각의 까다로운 규칙을 가집니다. 처리 순서에서 가장 먼저 오는 확장은 중괄호 확장입니다.
+Bash에는 다른 종류의 확장들도 많이 있으며, 각각의 까다로운 규칙을 가집니다. 처리 순서에서 가장 먼저 오는 확장은 중괄호 확장입니다.
 
     pre{one,two,three}post
-
-into:
 
 를
 
@@ -180,25 +174,15 @@ into:
 
 로 확장시킵니다.
 
-There is also command substitution, which is a nice marriage of the shell's ability to run commands and manipulate variables. The shell runs a command, collects the output, and uses that output as the value of the expansion.
+명령어 치환은 셸의 명령어 실행 기능과 변수 조작 기능의 혼합입니다. 명령어 치환으로, 셸은 명령을 실행하고, 출력을 받아, 해당 출력을 확장의 값으로 사용할 수 있습니다.
 
-명령어 치환은 셸의 명령어 실행 기능과 변수 조작 기능의 혼합입니다. 셸이 명령을 실행하고, 출력을 받아, 해당 출력을 확장의 값으로 사용합니다.
+명령어 치환의 문제점 중 하나는, 감싼 명령어를 즉시 실행시켜 명령이 끝날 때 까지 기다린다는 점이며, 따라서 셸이 명령에 입력을 보낼 수 있는 쉬운 방법이 없다는 것입니다. Bash는 이러한 결점을 보완하기 위해, 명령어 치환과 셸 파이프라인의 혼합인, 프로세스 치환이라는 기능을 사용합니다. 명령어 치환처럼 Bash는 명령어를 실행시키지만, 백그라운드에서 실행시키므로 명령이 끝날 때 까지 기다릴 필요가 없습니다. 프로세스 치환의 핵심은 bash가 명령에 대한 입출력 파이프를 만들고, 파이프를 확장의 결과가 될 파일명으로 노출하는 것입니다.
 
-One of the problems with command substitution is that it runs the enclosed command immediately and waits for it to complete: there's no easy way for the shell to send input to it. Bash uses a feature named process substitution, a sort of combination of command substitution and shell pipelines, to compensate for these shortcomings. Like command substitution, bash runs a command, but lets it run in the background and doesn't wait for it to complete. The key is that bash opens a pipe to the command for reading or writing and exposes it as a filename, which becomes the result of the expansion.
+다음은 물결표 확장입니다. 기존엔 `~alan`을 앨런의 홈 디렉토리에 대한 참조로 변환시키려는 의도였지만, 몇 년 간 수많은 다른 디렉토리들에 대한 참조로도 사용할 수 있도록 확장되었습니다.
 
-명령어 치환의 문제점 중 하나는, 감싼 명령어를 즉시 실행시켜 명령이 끝날 때 까지 기다린다는 점이며, 이 때문에 셸이 명령에 입력을 보낼 수 있는 쉬운 방법이 없다는 것입니다. Bash는 이러한 결점을 보완하기 위해, 명령어 치환과 셸 파이프라인의 혼합인, 프로세스 치환이라는 기능을 사용합니다. 명령어 치환처럼 Bash는 명령어를 실행시키지만, 명령을 백그라운드에서 실행시켜, 명령이 끝날 때 까지 기다릴 필요가 없습니다. 프로세스 치환의 핵심은 bash가 명령에 대한 입출력 파이프를 만들고, 확장의 결과가 될 파일명으로 노출하는 것입니다.
+마지막으로, 수식 확장이 있습니다. `$((expression))`은 `expression`이 C 언어의 표현식과 같은 방식으로 해석되게 합니다. 표현식의 결과물이 확장의 결과가 됩니다.
 
-Next is tilde expansion. Originally intended to turn `~alan` into a reference to Alan's home directory, it has grown over the years into a way to refer to a large number of different directories.
-
-다음은 물결표 확장입니다. 기존엔 `~alan`을 앨런의 홈 디렉토리에 대한 참조로 변환시키기 위한 의도였지만, 몇 년 간 수많은 다른 디렉토리들에 대한 참조로도 사용할 수 있도록 확장되었습니다.
-
-Finally, there is arithmetic expansion. `$((expression))` causes `expression` to be evaluated according to the same rules as C language expressions. The result of the expression becomes the result of the expansion.
-
-마지막으로, 수식 확장이 있습니다. `$((expression))`는 `expression`이 C 언어 표현식 해석 방식으로 해석되게 합니다. 표현식의 결과물이 확장의 결과가 됩니다.
-
-Variable expansion is where the difference between single and double quotes becomes most apparent. Single quotes inhibit all expansions—the characters enclosed by the quotes pass through the expansions unscathed—whereas double quotes permit some expansions and inhibit others. The word expansions and command, arithmetic, and process substitution take place—the double quotes only affect how the result is handled—but brace and tilde expansion do not.
-
-변수 확장은 따옴표와 쌍따옴표의 차이가 명백히 드러나는 곳입니다. 따옴표는 모든 확장을 억제합니다. 따옴표로 싸여진 문자열들은 아무런 편집이 가해지지 않고 확장 과정을 지나는 반면, 쌍따옴표는 일부 확장은 허용하고 나머지는 억제합니다. 단어 확장과 명령, 수식, 그리고 프로세스 치환이 일어납니다. 쌍따옴표는 결과물이 다뤄지는 방식에만 영향을 미치지만, 중괄호와 물결표는 그렇지 않습니다.
+변수 확장은 따옴표와 쌍따옴표의 차이가 명백히 드러나는 곳입니다. 따옴표는 모든 확장을 억제합니다. 따옴표로 싸여진 문자열들은 아무런 편집이 가해지지 않은 채로 확장 과정을 거치는 반면, 쌍따옴표는 일부 확장은 허용하고 나머지는 억제합니다. 허용되는 확장에는 단어 확장과 명령, 수식, 그리고 프로세스 치환이 있습니다. 쌍따옴표는 결과물이 다뤄지는 방식에만 영향을 미치지만, 중괄호와 물결표는 그렇지 않습니다.
 
 ### 3.5.3. 단어 분리
 
